@@ -1,4 +1,5 @@
 import { h } from 'vue'
+import type { App } from 'vue'
 import DefaultTheme from 'vitepress/theme-without-fonts'
 import './my-fonts.css'
 import MusicPlayer from './components/MusicPlayer.vue'
@@ -6,7 +7,7 @@ import Visitor from './components/Visitor.vue'
 import './style/index.css'
 
 export default Object.assign({}, DefaultTheme, {
-  enhanceApp({ app }) {
+  enhanceApp({ app }: { app: App }) {
     app.component('MusicPlayer', MusicPlayer)
   },
   Layout: () =>
