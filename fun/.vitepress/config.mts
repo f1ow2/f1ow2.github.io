@@ -43,7 +43,7 @@ export default defineConfig({
     },
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2025-present WithoutSolution'
+      copyright: 'Copyright © 2025-present f1ow2'
     },
     // https://vitepress.dev/reference/default-theme-config
     nav,

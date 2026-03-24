@@ -1,7 +1,7 @@
 <template>
   <img
     class="visitor"
-    :src="`https://visitor-badge.laobi.icu/badge?page_id=withoutsolution.fun`"
+    :src="`https://visitor-badge.laobi.icu/badge?page_id=f1ow2.fun`"
     onerror="this.style.display='none'"
   />
 </template>
