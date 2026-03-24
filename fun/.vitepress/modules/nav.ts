@@ -51,7 +51,6 @@ export const nav = [
       {
         items: [
           { text: 'Skills', link: '/cyber/skills.md' },
-          { text: 'SRC', link: '/srcdiary/srcskills.md' },
           { text: 'shells', link: '/cyber/shells.md' },
           { text: 'web pentesting', link: '/security/webpentesting.md' },
           { text: 'network security', link: '/cyber/networksecurity.md' },
@@ -82,15 +81,14 @@ export const nav = [
       { text: 'arch', link: '/linux/archlinuxApp.md' },
     ]
   },
-  // {
-  //   text: 'go',
-  //   items: [
-  //     { text: 'go issues', link: '/go/goIssues.md' },
-  //     { text: 'go algo', link: '/go/goAlgo.md' },
-  //     { text: 'goBasics', link: '/go/go基础.md' },
-  //     { text: 'goPro', link: '/go/go进阶.md' },
-  //   ]
-  // },
+  {
+    text: 'SRC',
+    items: [
+      { text: 'SRC', link: '/srcdiary/srcskills.md' },
+      { text: 'tips', link: '/srcdiary/tips.md' },
+      { text: 'privilege escalation', link: '/srcdiary/SRCPE.md' },
+    ]
+  },
   {
     component: 'MusicPlayer',
     // 可选的 props 传递给组件
