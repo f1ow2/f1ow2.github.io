@@ -46,7 +46,7 @@ Ctrl + W：删除光标左侧的一个单词。
 
 Ctrl + C：强制终止当前程序。
 
-注意：这是“杀掉”程序。如果你在跑 nmap 或 ping，按这个它们就结束了。
+注意：这是"杀掉"程序。如果你在跑 nmap 或 ping，按这个它们就结束了。
 
 Ctrl + Z：挂起当前程序（放入后台）。
 
@@ -111,8 +111,55 @@ sudo apt-get install proxychains4
 
 sudo vim /etc/proxychains4.conf
 ```
+### 使用 Alias
 
+可以为常用的网络命令（如 `curl`, `wget`, `nmap`）设置别名，让它们自动挂载代理。
+
+在文件末尾添加以下行：
+
+```bash
+alias pc='proxychains4'
+alias curl='proxychains4 curl'
+alias wget='proxychains4 wget'
+alias nmap='proxychains4 nmap'
+```
+
+```bash
+source ~/.zshrc
+```
+
+```bash
+curl -Is https://www.google.com.hk/ | head -n 1
+```
+
+### 开启一个"代理子 Shell"
+
+```bash
+proxychains4 zsh
+```
+- **效果：** 现在你进入了一个新的 Zsh 环境，在这个窗口里输入的**任何**网络请求命令都会默认经过 `proxychains`。
+
+- **退出：** 输入 `exit` 即可回到普通终端。
 ---
+
+### 配合环境变量（针对部分工具）
+
+有些工具（如 `apt` 或特定的 Python 脚本）可能不完全受 `proxychains` 拦截。如果你是想解决全局流量问题，设置环境变量通常更彻底：
+
+```bash
+export http_proxy="http://127.0.0.1:端口"
+export https_proxy="http://127.0.0.1:端口"
+```
+
+### 其它
+
+- `quiet_mode` : 当你频繁使用 `proxychains` 时，终端会刷出大量的 `[proxychains] DLL init` 调试信息。为了让体验更像“默认”工具，建议关闭日志输出： 找到 `#quiet_mode`，去掉前面的分号 `#`
+
+⚠️ 注意事项
+
+- **DNS 泄露：** 确保 `/etc/proxychains4.conf` 中的 `proxy_dns` 是开启状态（没有#），这对于 Kali 的匿名性至关重要。
+
+- **本地服务：** 默认使用代理可能导致无法连接局域网设备或本地实验环境（如 127.0.0.1），因此**不建议**直接将 `sudo` 或整个系统底层的网络调用全局指向代理。
 
 ## 3.SSH
 
@@ -156,7 +203,7 @@ sudo openvpn --config yourname.ovpn --socks-proxy proxyip port
 2.  点击菜单：**虚拟机 (VM)** -\> **设置 (Settings)**。
 3.  选项卡：**选项 (Options)** -\> **共享文件夹 (Shared Folders)**。
 4.  右侧选择：**总是启用 (Always enabled)**。
-5.  在下方添加了您的 Windows 文件夹，并确保没有勾选“只读”。
+5.  在下方添加了您的 Windows 文件夹，并确保没有勾选"只读"。
 
 -----
 
@@ -181,7 +228,7 @@ sudo reboot
 
 ### 第三步：手动挂载（核心解决步骤）
 
-重启回来后，如果文件夹还是没出现，请执行以下“终极命令”。
+重启回来后，如果文件夹还是没出现，请执行以下"终极命令"。
 
 1.  **检查 VM 是否识别到了文件夹：**
     输入以下命令，如果能看到您在 Windows 设置的文件夹名字，说明连接是通的，只是没挂载上。

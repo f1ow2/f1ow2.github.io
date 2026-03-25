@@ -330,7 +330,7 @@ Often during pentests you may obtain a shell without having tty, yet wish to int
 ```bash
 python3 -c 'import pty;pty.spawn("/bin/bash")'
 ```
-Which uses Python to spawn a better-featured bash shell. At this point, our shell will look a bit prettier, but we still won’t be able to use tab autocomplete or the arrow keys.
+Which uses Python to spawn a better-featured bash shell. At this point, our shell will look a bit prettier, but we still won't be able to use tab autocomplete or the arrow keys.
 
 **Step two is:**
 
