@@ -15,6 +15,16 @@ outline: deep
 
 ---
 
+### 有用的命令
+
+```bash
+# 查看bash历史
+cat .bash_history
+
+# 查看是否是容器
+ls -al /.dockerenv
+```
+
 ### SUID 提权枚举 (Suid)
 
 ```bash

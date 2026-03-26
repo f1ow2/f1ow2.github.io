@@ -50,6 +50,8 @@ features:
 
 ## web
 
+* [Exploit Notes](https://exploitnotes.org)
+  
 * [Wayback Machine](https://web.archive.org/)
 
 * [withsecure](https://labs.withsecure.com/home)
