@@ -1,0 +1,26 @@
+import { h } from 'vue'
+import type { App } from 'vue'
+import DefaultTheme from 'vitepress/theme-without-fonts'
+import './my-fonts.css'
+import MusicPlayer from './components/MusicPlayer.vue'
+import Visitor from './components/Visitor.vue'
+import './style/index.css'
+import CloudflareAISearch from './components/CFAISearch.vue'
+import ChatPage from './components/chatpage.vue'
+
+
+
+export default Object.assign({}, DefaultTheme, {
+  enhanceApp({ app }: { app: App }) {
+    app.component('MusicPlayer', MusicPlayer),
+    app.component('ChatPage', ChatPage) 
+  },
+  Layout: () =>
+    h(DefaultTheme.Layout, null, {
+      // 相关插槽
+      // https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/Layout.vue
+      'nav-bar-title-after': () => h(Visitor),
+      // 挂载CloudflareAISearch
+      'layout-bottom': () => h(CloudflareAISearch)
+    })
+})
