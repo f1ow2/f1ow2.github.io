@@ -32,9 +32,9 @@ export default defineConfig({
   },
   themeConfig: {
     logo: '/butterfly-flower.png',
-    search: {
-      provider: 'local'
-    },
+    // search: {
+    //   provider: 'local'
+    // },
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2025-present f1ow2'

@@ -28,7 +28,6 @@ features:
     icon: 
       src: /caterpillar.png
     details: The caterpillar molts not once, but many times—to outgrow itself, not its past.
-    link: /chat.md
   - icon: 
       src: /cocoon.png
     title: cocoon  
