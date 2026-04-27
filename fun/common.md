@@ -180,6 +180,10 @@ Host Intrusion Prevention System (HIPS) protects workstations and servers throug
 
 **HTML Application (HTA)** files are files that contain HTML, JScript, and or VBScript code that can be executed on client system. This can to lead to more dynamic applications or remote code execution on a client or victim.
 
+## HTML
+
+HTML stands for **HyperText Markup Language**. It is the standard markup language used to create and structure the content of web pages. It is not a programming language, but rather a way to tell a web browser how to display text, images, and other media.
+
 ## HTTP
 
 **Hypertext Transfer Protocol** (HTTP) is the protocol that specifies how a web browser and a web server communicate. a **stateless** application-level **request/response** protocol that uses **extensible semantics** and **self-descriptive** message payloads for flexible interaction with network-based **hypertext information** systems (RFC7230 2014.6)

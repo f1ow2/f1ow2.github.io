@@ -368,7 +368,7 @@ There are many other processes involved in your browser making a request to a we
 
 Websites are primarily created using:
 
-- HTML, to build websites and define their structure
+- [HTML](../common.md#html), to build websites and define their structure
 - CSS, to make websites look pretty by adding styling options
 - JavaScript, implement complex features on pages using interactivity
 
@@ -390,17 +390,17 @@ Websites are primarily created using:
 
 The HTML structure (as shown in the screenshot) has the following components:
 
-- The **\<!DOCTYPE html>** defines that the page is a HTML5 document. This helps with standardisation across different browsers and tells - the browser to use HTML5 to interpret the page.
-- The **\<html>** element is the root element of the HTML page - all other elements come after this element.
-- The **\<head>** element contains information about the page (such as the page title)
-- The **\<body>** element defines the HTML document's body; only content inside of the body is shown in the browser.
-- The **\<h1>** element defines a large heading
-- The **\<p>** element defines a paragraph
-- There are many other elements (tags) used for different purposes. For example, there are tags for buttons (**\<button>**), images (**\<img>**), lists, and much more. 
+- The `<!DOCTYPE html>` defines that the page is a HTML5 document. This helps with standardisation across different browsers and tells - the browser to use HTML5 to interpret the page.
+- The `<html>` element is the root element of the HTML page - all other elements come after this element.
+- The `<head>` element contains information about the page (such as the page title)
+- The `<body>` element defines the HTML document's body; only content inside of the body is shown in the browser.
+- The `<h1>` element defines a large heading
+- The `<p>` element defines a paragraph
+- There are many other elements (tags) used for different purposes. For example, there are tags for buttons (`<button>`), images (`<img>`), lists, and much more. 
 
-Tags can contain attributes such as the class attribute which can be used to style an element (e.g. make the tag a different color) **\<p class="bold-text">**, or the src attribute which is used on images to specify the location of an image: **\<img src="img/cat.jpg">**.An element can have multiple attributes each with its own unique purpose, e.g., **\<p attribute1="value1" attribute2="value2">**.
+Tags can contain attributes such as the class attribute which can be used to style an element (e.g. make the tag a different color) `<p class="bold-text">`, or the src attribute which is used on images to specify the location of an image: `<img src="img/cat.jpg">`.An element can have multiple attributes each with its own unique purpose, e.g., `<p attribute1="value1" attribute2="value2">`.
 
-Elements can also have an id attribute (**\<p id="example">**), which is unique to the element. Unlike the class attribute, where multiple elements can use the same class, an element must have different id's to identify them uniquely. Element id's are used for styling and to identify it by JavaScript.
+Elements can also have an id attribute (`<p id="example">`), which is unique to the element. Unlike the class attribute, where multiple elements can use the same class, an element must have different id's to identify them uniquely. Element id's are used for styling and to identify it by JavaScript.
 
 You can view the HTML of any website by right-clicking and selecting "View Page Source" (Chrome) / "Show Page Source" (Safari).
 
@@ -408,11 +408,11 @@ You can view the HTML of any website by right-clicking and selecting "View Page 
 
 JavaScript (JS) is one of the most popular coding languages in the world and allows pages to become interactive. HTML is used to create the website structure and content, while JavaScript is used to control the functionality of web pages - without JavaScript, a page would not have interactive elements and would always be static. JS can dynamically update the page in real-time, giving functionality to change the style of a button when a particular event on the page occurs (such as when a user clicks a button) or to display moving animations.
 
-JavaScript is added within the page source code and can be either loaded within **\<script>** tags or can be included remotely with the src attribute: **\<script src="/location/of/javascript_file.js">\</script>**
+JavaScript is added within the page source code and can be either loaded within `<script>` tags or can be included remotely with the src attribute: `<script src="/location/of/javascript_file.js"></script>`
 
-The following JavaScript code finds a HTML element on the page with the id of "demo" and changes the element's contents to "Hack the Planet" : **document.getElementById("demo").innerHTML = "Hack the Planet"**;
+The following JavaScript code finds a HTML element on the page with the id of "demo" and changes the element's contents to "Hack the Planet" : `document.getElementById("demo").innerHTML = "Hack the Planet"`;
 
-HTML elements can also have events, such as "onclick" or "onhover" that execute JavaScript when the event occurs. The following code changes the text of the element with the demo ID to Button Clicked: **\<button onclick='document.getElementById("demo").innerHTML = "Button Clicked";'>Click Me!\</button>** - onclick events can also be defined inside the JavaScript script tags, and not on elements directly. 
+HTML elements can also have events, such as "onclick" or "onhover" that execute JavaScript when the event occurs. The following code changes the text of the element with the demo ID to Button Clicked: `<button onclick='document.getElementById("demo").innerHTML = "Button Clicked";'>Click Me!</button>` - onclick events can also be defined inside the JavaScript script tags, and not on elements directly. 
 
 ### Sensitive Data Exposure
 
@@ -451,7 +451,7 @@ When a user has control of how their input is displayed, they can submit HTML (o
 
 ![HTML injection](<assets/html injection.svg>)
 
-The image above shows how a form outputs text to the page. Whatever the user inputs into the "What's your name" field is passed to a JavaScript function and output to the page, which means if the user adds their own HTML or JavaScript in the field, it's used in the sayHi function and is added to the page - this means you can add your own HTML (such as a **\<h1>** tag) and it will output your input as pure HTML.
+The image above shows how a form outputs text to the page. Whatever the user inputs into the "What's your name" field is passed to a JavaScript function and output to the page, which means if the user adds their own HTML or JavaScript in the field, it's used in the sayHi function and is added to the page - this means you can add your own HTML (such as a `<h1>` tag) and it will output your input as pure HTML.
 
 The general rule is never to trust user input. To prevent malicious input, the website developer should sanitise everything the user enters before using it in the JavaScript function; in this case, the developer could remove any HTML tags.
 
@@ -522,10 +522,10 @@ There's not much of a limit to what a backend language can achieve, and these ar
 
 If index.php was built like this:
 
-**\<html>\<body>Hello \<?php echo $_GET["name"]; ?>\</body>\</html>**
+`<html><body>Hello <?php echo $_GET["name"]; ?></body></html>`
 
 It would output the following to the client:
 
-**\<html>\<body>Hello adam\</body>\</html>**
+`<html><body>Hello adam</body></html>`
 
 You'll notice that the client doesn't see any PHP code because it's on the Backend. This interactivity opens up a lot more security issues for web applications that haven't been created securely, as you learn in further modules.
