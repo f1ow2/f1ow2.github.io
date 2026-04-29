@@ -27,7 +27,7 @@ outline: deep
 
 [HTTP Message](../cyber/WebApplication.md#http-messages)
 
-<span style="font-size: 23px;">**ABNF （扩充巴科斯-瑙尔范式）操作符**</span>
+<span style="font-size: 23px;">**ABNF (扩充巴科斯-瑙尔范式)操作符**</span>
 
 - **空白字符：用来分隔定义中的各个元素**
   - method SP request-target SP HTTP-version CRLF
@@ -42,24 +42,25 @@ outline: deep
 - **可选序列 `[]`:**
   - [ message-body ]
 
-<span style="font-size: 23px;">**ABNF （扩充巴科斯-瑙尔范式）核心规则**</span>
+<span style="font-size: 23px;">**ABNF (扩充巴科斯-瑙尔范式)核心规则**</span>
 
 | 规则   | 形式定义                                  | 意义                                    |
 | ------ | ----------------------------------------- | --------------------------------------- |
-| ALPHA  | %x41-5A / %x61-7A                         | 大写和小写ASCII字母（A-Z, a-z）         |
-| DIGIT  | %x30-39                                   | 数字（0-9）                             |
-| HEXDIG | DIGIT / "A" / "B" / "C" / "D" / "E" / "F" | 十六进制数字（0-9, A-F, a-f）           |
+| ALPHA  | %x41-5A / %x61-7A                         | 大写和小写ASCII字母(A-Z, a-z)         |
+| DIGIT  | %x30-39                                   | 十进制数字(0-9)                            |
+| HEXDIG | DIGIT / "A" / "B" / "C" / "D" / "E" / "F" | 十六进制数字(0-9, A-F, a-f)           |
 | DQUOTE | %x22                                      | 双引号                                  |
 | SP     | %x20                                      | 空格                                    |
 | HTAB   | %x09                                      | 横向制表符                              |
-| WSP    | SP / HTAB                                 | 空格或横向制表符                        |
-| LWSP   | *(WSP / CRLF WSP)                         | 直线空白（晚于换行）                    |
-| VCHAR  | %x21-7E                                   | 可见（打印）字符                        |
-| CHAR   | %x01-7F                                   | 任何7-位US-ASCII字符，不包括NUL（%x00） |
-| OCTET  | %x00-FF                                   | 8位数据                                 |
+| WSP    | SP / HTAB                                 | 空格或横向制表符(White Space单个空白符)      |
+| OWS    | *WSP                                      | 可选空格或横向制表符(`Optional`即零个或多个空白符) |
+| LWSP   | *(WSP / CRLF WSP)                         | 直线空白(晚于换行)                    |
+| VCHAR  | %x21-7E                                   | 可见(打印)字符                        |
+| CHAR   | %x01-7F                                   | 任何7-位US-ASCII字符，不包括NUL(%x00) |
+| OCTET  | %x00-FF                                   | 8位数据(8bit 更精确的byte)               |
 | CTL    | %x00-1F / %x7F                            | 控制字符                                |
-| CR     | %x0D                                      | 回车                                    |
-| LF     | %x0A                                      | 换行                                    |
+| CR     | %x0D                                      | 回车(carriage return)                  |
+| LF     | %x0A                                      | 换行(line feed)                       |
 | CRLF   | CR LF                                     | 互联网标准换行                          |
 | BIT    | "0" / "1"                                 | 二进制数字                              |
 
@@ -89,7 +90,7 @@ outline: deep
 **按类型**
 
 - XHR、JS、CSS、Img、Media、Font、Doc、WS (WebSocket)、Manifest 或 Other(此处未列出的任何其他类型)
-- 多类型，按住 Command (Mac) 或 Ctrl（Windows、Linux）
+- 多类型，按住 Command (Mac) 或 Ctrl(Windows、Linux)
 - 按时间过滤：概览面板，拖动滚动条
 - 隐藏 Data URLs：CSS 图片等小文件以 BASE64 格式嵌入 HTML 中，以减少 HTTP 请求数
 
@@ -98,7 +99,7 @@ outline: deep
 - **domain**：仅显示来自指定域的资源。 您可以使用通配符字符 (*) 纳入多个域
 - **has-response-header**：显示包含指定 HTTP 响应标头的资源
 - **is**：使用 **is:running** 可以查找 WebSocket 资源，**is:from-cache** 可查找缓存读出的资源
-- **larger-than**： 显示大于指定大小的资源（以字节为单位）。 将值设为 1000 等同于设置为1k
+- **larger-than**： 显示大于指定大小的资源(以字节为单位)。 将值设为 1000 等同于设置为1k
 - **method**：显示通过指定 HTTP 方法类型检索的资源
 - **mime-type**：显示指定 MIME 类型的资源
 
@@ -116,10 +117,10 @@ outline: deep
 
 [Uniform Resource Locator](../cyber/WebApplication.md#uniform-resource-locator)
 
-- **URL**：RFC1738 （1994.12），**Uniform Resource Locator**，表示资源的位置，期望提供查找资源的方法
-- **URN**：RFC2141 （1997.5），**Uniform Resource Name**，期望为资源提供持久的、位置无关的标识方式，并允许简单地将多个命名空间映射到单个URN命名空间
+- **URL**：RFC1738 (1994.12)，**Uniform Resource Locator**，表示资源的位置，期望提供查找资源的方法
+- **URN**：RFC2141 (1997.5)，**Uniform Resource Name**，期望为资源提供持久的、位置无关的标识方式，并允许简单地将多个命名空间映射到单个URN命名空间
   - 例如磁力链接 magnet:?xt=urn:sha1:YNCKHTQC5C
-- **URI**：RFC1630 （1994.6）、RFC3986 （2005.1，取代 RFC2396 和 RFC2732 ），**Uniform Resource Identifier**，用以区分资源，是 URL 和 URN 的超集，用以取代 URL 和 URN 概念
+- **URI**：RFC1630 (1994.6)、RFC3986 (2005.1，取代 RFC2396 和 RFC2732 )，**Uniform Resource Identifier**，用以区分资源，是 URL 和 URN 的超集，用以取代 URL 和 URN 概念
 
 ---
 
@@ -190,7 +191,7 @@ outline: deep
   - asterisk-form = "*“
     - 仅用于 OPTIONS 方法
 
-<span style="font-size: 23px;">**常见方法（RFC7231）**</span>
+<span style="font-size: 23px;">**常见方法(RFC7231)**</span>
 
 - **GET**：主要的获取信息方法，大量的性能优化都针对该方法，幂等方法
 - **HEAD**：类似 GET 方法，但服务器不发送 BODY，用以获取 HEAD 元数据，幂等方法
@@ -203,7 +204,7 @@ outline: deep
 
 <span style="font-size: 23px;">**用于文档管理的 WEBDAV 方法(RFC2518)**</span>
 
-- **PROPFIND**：从 Web 资源中检索以 XML 格式存储的属性。它也被重载，以允许一个检索远程系统的集合结构（也叫目录层次结构）
+- **PROPFIND**：从 Web 资源中检索以 XML 格式存储的属性。它也被重载，以允许一个检索远程系统的集合结构(也叫目录层次结构)
 - **PROPPATCH**：在单个原子性动作中更改和删除资源的多个属性
 - **MKCOL**：创建集合或者目录
 - **COPY**：将资源从一个 URI 复制到另一个 URI
@@ -222,7 +223,7 @@ outline: deep
 
 <span style="font-size: 23px;">**响应码分类：1xx**</span>
 
-- 响应码规范：RFC6585 （2012.4）、RFC7231 （2014.6）
+- 响应码规范：RFC6585 (2012.4)、RFC7231 (2014.6)
 - **1xx**：请求已接收到，需要进一步处理才能完成，HTTP1.0 不支持
   - **100 Continue**：上传大文件前使用
     - 由客户端发起请求中携带 Expect: 100-continue 头部触发
@@ -236,7 +237,7 @@ outline: deep
   - **200 OK**: 成功返回响应。
   - **201 Created**: 有新资源在服务器端被成功创建。
   - **202 Accepted**: 服务器接收并开始处理请求，但请求未处理完成。这样一个模糊的概念是有意如此设计，可以覆盖更多的场景。例如异步、需要长时间处理的任务。
-  - **203 Non-Authoritative Information**：当代理服务器修改了 origin server 的原始响应包体时（例如更换了HTML中的元素值），代理服务器可以通过修改200为203的方式告知客户端这一事实，方便客户端为这一行为作出相应的处理。203响应可以被缓存。
+  - **203 Non-Authoritative Information**：当代理服务器修改了 origin server 的原始响应包体时(例如更换了HTML中的元素值)，代理服务器可以通过修改200为203的方式告知客户端这一事实，方便客户端为这一行为作出相应的处理。203响应可以被缓存。
   - **204 No Content**：成功执行了请求且不携带响应包体，并暗示客户端无需更新当前的页面视图。
   - **205 Reset Content**：成功执行了请求且不携带响应包体，同时指明客户端需要更新当前页面视图。
   - **206 Partial Content**：使用 range 协议时返回部分响应内容时的响应码
@@ -264,7 +265,7 @@ outline: deep
   - **404 Not Found**：服务器没有找到对应的资源
   - **410 Gone**：服务器没有找到对应的资源，且明确的知道该位置永久性找不到该资源
   - **405 Method Not Allowed**：服务器不支持请求行中的 method 方法
-  - **406 Not Acceptable**：对客户端指定的资源表述不存在（例如对语言或者编码有要求），服务器返回表述列表供客户端选择。
+  - **406 Not Acceptable**：对客户端指定的资源表述不存在(例如对语言或者编码有要求)，服务器返回表述列表供客户端选择。
   - **408 Request Timeout**：服务器接收请求超时
   - **409 Conflict**：资源冲突，例如上传文件时目标位置已经存在版本更新的资源
   - **411 Length Required**：如果请求含有包体且未携带 Content-Length 头部，且不属于chunk类请求时，返回 411
@@ -410,10 +411,10 @@ outline: deep
 
 <span style="font-size: 19px;">**国际化与本地化**</span>
 
-- **internationalization（i18n，i 和 n 间有 18 个字符）**
+- **internationalization(i18n，i 和 n 间有 18 个字符)**
   - 指设计软件时，在不同的国家、地区可以不做逻辑实现层面的修改便能够以不
 同的语言显示
-- **localization（l10n，l 和 n 间有 10 个字符）**
+- **localization(l10n，l 和 n 间有 10 个字符)**
   - 指内容协商时，根据请求中的语言及区域信息，选择特定的语言作为资源表述
 
 <span style="font-size: 19px;">**资源表述的元数据头部**</span>
@@ -445,7 +446,7 @@ outline: deep
 
 **使用 Content-Length 头部明确指明包体长度**
 - Content-Length = 1*DIGIT
-  - 用 10 进制（不是 16 进制）表示包体中的**字节**个数，且必须与实际传输的包体长度一致
+  - 用 10 进制(不是 16 进制)表示包体中的**字节**个数，且必须与实际传输的包体长度一致
 - **优点**：接收端处理更简单
 
 ---
@@ -457,7 +458,7 @@ outline: deep
 
 - **优点**:
   - 基于长连接持续推送动态内容
-  - 压缩体积较大的包体时，不必完全压缩完（计算出头部）再发送，可以边发送边压缩
+  - 压缩体积较大的包体时，不必完全压缩完(计算出头部)再发送，可以边发送边压缩
   - 传递必须在包体传输完才能计算出的 Trailer 头部
 
 <span style="font-size: 19px;">**不定长包体的 chunk 传输方式**</span>
@@ -488,7 +489,7 @@ outline: deep
   - 请求修饰首部 (例如控制类和条件类的，如 Cache-Control，Max-Forwards，或者 TE)
   - 身份验证首部 (例如 Authorization 或者 Set-Cookie)
   - Content-Encoding, Content-Type, Content-Range，以及 Trailer 自身
-- Trailer 一般放：校验和（MD5/SHA）、签名、请求 / 追踪 ID、自定义 X- 元信息。
+- Trailer 一般放：校验和(MD5/SHA)、签名、请求 / 追踪 ID、自定义 X- 元信息。
 
 *响应头*
 
@@ -510,7 +511,7 @@ X-Request-ID: abc123\r\n
 
 <span style="font-size: 19px;">**MIME**</span>
 
-- **MIME（ Multipurpose Internet Mail Extensions ）**
+- **MIME( Multipurpose Internet Mail Extensions )**
 - `content := "Content-Type" ":" type "/" subtype *(";" parameter)`
   - type := discrete-type / composite-type
     - discrete-type := "`text`" / "`image`" / "`audio`" / "`video`" / "`application`" / extension-token
@@ -537,7 +538,7 @@ filename="filename.jpg"
 
 <span style="font-size: 19px;">**HTML FORM 表单**</span>
 
-- [HTML](../cyber/web.md#html)：HyperText Markup Language，结构化的标记语言（非编程语言）
+- [HTML](../cyber/web.md#html)：HyperText Markup Language，结构化的标记语言(非编程语言)
   - 浏览器可以将 HTML 文件渲染为可视化网页
 - FORM 表单：HTML 中的元素，提供了交互控制元件用来向服务器通过 HTTP 协议提交信息，常见控件有：
   - Text Input Controls：文本输入控件
@@ -586,3 +587,185 @@ filename="filename.jpg"
   - **close-delimiter = "--" boundary "--" CRLF**
 
 ---
+
+#### Range
+
+<span style="font-size: 23px;">**多线程、断点续传、随机点播等场景的步骤**</span>
+
+1. 客户端明确任务：从哪开始下载
+     - 本地是否已有部分文件
+       - 文件已下载部分在服务器端发生改变？
+     - 使用几个线程并发下载
+2. 下载文件的指定部分内容
+3. 下载完毕后拼装成统一的文件
+
+<span style="font-size: 23px;">**HTTP Range规范(RFC7233)**</span>
+
+- 允许服务器基于客户端的请求只发送响应包体的一部分给到客户端，而客户端自动将多个片断的包体组合成完整的体积更大的包体
+  - 支持断点续传
+  - 支持多线程下载
+  - 支持视频播放器实时拖动
+- 服务器通过 Accept-Range 头部表示是否支持 Range 请求
+  - Accept-Ranges = acceptable-ranges
+  - 例如：
+    - Accept-Ranges: bytes：支持
+    - Accept-Ranges: none：不支持
+
+<span style="font-size: 19px;">**Range 请求范围的单**</span>
+
+**基于字节，设包体总长度为 10000**
+- 第 1 个 500 字节：bytes=0-499 
+- 第 2 个 500 字节
+  - bytes=500-999
+  - bytes=500-600,601-999 
+  - bytes=500-700,601-999
+- 最后 1 个 500 字节：
+  - bytes=-500
+  - bytes=9500
+- 仅要第 1 个和最后 1 个字节：bytes=0-0,-1
+
+**通过Range头部传递请求范围，如：Range: bytes=0-499**
+
+```bash
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=0-5'
+abcdef
+
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=20-'
+uvwxyz
+```
+
+<span style="font-size: 19px;">**Range 条件请求**</span>
+
+- 如果客户端已经得到了 Range 响应的一部分，并想在这部分响应未过期的情况下，获取其他部分的响应
+  - 常与 If-Unmodified-Since 或者 If-Match 头部共同使用
+- If-Range = entity-tag / HTTP-date
+  - 可以使用 Etag 或者 Last-Modified
+
+```bash
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=0-5' -I
+HTTP/1.1 206 Partial Content
+Date: Wed, 29 Apr 2026 01:17:45 GMT
+Server: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02
+Last-Modified: Tue, 28 Apr 2026 03:03:28 GMT
+ETag: "1a-6507c79b08b87"
+Accept-Ranges: bytes
+Content-Length: 6
+Content-Range: bytes 0-5/26
+Content-Type: text/plain
+
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=7-13' -H 'If-Match: "1a-6507c79b08b87"'
+hijklmn
+
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=7-13' -H 'If-Match: "1a-6507c79b08b88"'
+HTTP/1.1 412 Precondition Failed
+```
+<span style="font-size: 19px;">**服务器响应**</span>
+
+**206 Partial Content**
+- Content-Range 头部：显示当前片断包体在完整包体中的位置
+- Content-Range = byte-content-range / other-content-range
+  - byte-content-range = bytes-unit SP ( byte-range-resp / unsatisfied-range )
+    - byte-range-resp = **byte-range** "/" ( `complete-length / "*"` )
+      - `complete-length = 1*DIGIT`
+        - 完整资源的大小，如果未知则用 `*` 号替代
+      - **byte-range = first-byte-pos "-" last-byte-pos**
+- 例如：
+  - Content-Range: bytes **42-1233**/`1234`
+  - Content-Range: bytes **42-1233**/`*`
+
+**416 Range Not Satisfiable**
+  - 请求范围不满足实际资源的大小，其中 Content-Range 中的 complete-length 显示完整响应的长度，例如：
+  - Content-Range: bytes */1234
+
+**200 OK**
+  - 服务器不支持 Range 请求时，则以 200 返回完整的响应包体
+
+<span style="font-size: 19px;">**多重范围与 multipart**</span>
+
+- 请求：
+  - Range: bytes=0-50, 100-150
+- 响应：
+  - Content-Type: multipart/byteranges; boundary=...
+```bash
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=0-5,7-12' -I
+HTTP/1.1 206 Partial Content
+Date: Wed, 29 Apr 2026 01:49:44 GMT
+Server: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02
+Last-Modified: Tue, 28 Apr 2026 03:03:28 GMT
+ETag: "1a-6507c79b08b87"
+Accept-Ranges: bytes
+Content-Length: 195
+Content-Type: multipart/byteranges; boundary=22ca962bccb77f88
+
+# curl 192.168.22.22/letter.txt -H 'Range: bytes=0-5,7-12'
+
+--22ca962bccb77f88
+Content-type: text/plain
+Content-range: bytes 0-5/26
+
+abcdef
+--22ca962bccb77f88
+Content-type: text/plain
+Content-range: bytes 7-12/26
+
+hijklm
+--22ca962bccb77f88--
+
+```
+
+### cookie和session
+
+[cookie](../cyber/web.md#cookies)
+
+<span style="font-size: 23px;">**Cookie 是什么？**</span>
+
+**RFC6265, HTTP State Management Mechanism**
+
+**保存在客户端、由浏览器维护、表示应用状态的 HTTP 头部**
+
+- 存放在内存或者磁盘中
+- 服务器端生成 Cookie 在响应中通过Set-Cookie 头部告知客户端(允许多个 Set-Cookie 头部传递多个值)
+- 客户端得到 Cookie 后，后续请求都会自动将 Cookie 头部携带至请求中
+
+<span style="font-size: 23px;">**Cookie 与 Set-Cookie头部的定义**</span>
+
+- Cookie 头部中可以存放多个 name/value 名值对
+  - cookie-header = "Cookie:" OWS cookie-string OWS   
+    - cookie-string = `cookie-pair *`( ";" SP `cookie-pair` )
+      - cookie-pair = `cookie-name "=" cookie-value`
+- Set-Cookie 头部一次只能传递 1 个 name/value 名值对，响应中可以含多个头部
+  - set-cookie-header = "Set-Cookie:" SP set-cookie-string 
+    - set-cookie-string = cookie-pair *( ";" SP `cookie-av` ) 
+      - cookie-pair = cookie-name "=" cookie-value
+      - `cookie-av`：描述 cookie-pair 的可选属性(**Attribute–Value**)
+
+<span style="font-size: 19px;">**Set-Cookie 中描述 cookie-pair 的属性**</span>
+
+**cookie-av** = `expires-av / max-age-av / domain-av / path-av / secure-av / httponly-av / extension-av`
+- expires-av = `"Expires=" sane-cookie-date`
+  - cookie 到日期 sane-cookie-date 后失效
+- max-age-av = `"Max-Age=" non-zero-digit *DIGIT`
+  - cookie 经过 *DIGIT 秒后失效。max-age 优先级高于 expires
+- domain-av = `"Domain=" domain-value`
+  - 指定 cookie 可用于哪些域名，默认可以访问当前域名
+- path-av = `"Path=" path-value`
+  - 指定 Path 路径下才能使用 cookie
+- secure-av = `"Secure"`
+  - 只有使用 TLS/SSL 协议(https)时才能使用 cookie
+- httponly-av = `"HttpOnly"`
+  - 不能使用  JavaScript(Document.cookie 、XMLHttpRequest 、Request APIs)访问到 cookie
+
+<span style="font-size: 19px;">**Cookie 使用的限制**</span>
+
+- RFC 规范对**浏览器**使用 Cookie 的**要求**
+  - 每条 Cookie 的长度（包括 name、value 以及描述的属性等总长度）至少支持 4096 octets（字节）
+  - 每个域名下至少支持 50 个 Cookie
+  - 一个浏览器总共至少要支持 3000 个 Cookie
+- 代理服务器传递 Cookie 时会有限制
+
+<span style="font-size: 19px;">**Cookie 在协议设计上的问题**</span>
+
+- Cookie 会被附加在每个 HTTP 请求中，所以无形中增加了流量
+- 由于在 HTTP 请求中的 Cookie 是明文传递的，所以安全性成问题（除
+非用 HTTPS） 
+- Cookie 的大小不应超过 4KB，故对于复杂的存储需求来说是不够用的
