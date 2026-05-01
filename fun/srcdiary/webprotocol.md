@@ -715,6 +715,8 @@ hijklm
 
 ### cookie和session
 
+#### cookie
+
 [cookie](../cyber/web.md#cookies)
 
 <span style="font-size: 23px;">**Cookie 是什么？**</span>
@@ -752,8 +754,12 @@ hijklm
   - 指定 Path 路径下才能使用 cookie
 - secure-av = `"Secure"`
   - 只有使用 TLS/SSL 协议(https)时才能使用 cookie
+  - 使用 Secure 属性确保 HTTPS 传输(防**中间人攻击**)
 - httponly-av = `"HttpOnly"`
-  - 不能使用  JavaScript(Document.cookie 、XMLHttpRequest 、Request APIs)访问到 cookie
+  - 不能使用 JavaScript(Document.cookie 、XMLHttpRequest 、Request APIs)访问到 cookie
+  - 通过 HttpOnly 属性防止 JavaScript 访问(防**XSS攻击**)
+- `SameSite` 	控制跨站请求时是否发送 Cookie（Strict/Lax/None） 
+  - 使用 SameSite 属性和 CSRF Token 防护(**CSRF攻击**)
 
 <span style="font-size: 19px;">**Cookie 使用的限制**</span>
 
@@ -766,6 +772,40 @@ hijklm
 <span style="font-size: 19px;">**Cookie 在协议设计上的问题**</span>
 
 - Cookie 会被附加在每个 HTTP 请求中，所以无形中增加了流量
-- 由于在 HTTP 请求中的 Cookie 是明文传递的，所以安全性成问题（除
-非用 HTTPS） 
+- 由于在 HTTP 请求中的 Cookie 是明文传递的，所以安全性成问题（除非用 HTTPS） 
 - Cookie 的大小不应超过 4KB，故对于复杂的存储需求来说是不够用的
+
+<span style="font-size: 19px;">**登录场景下 Cookie 与 Session 的常见用法**</span>
+
+![登录场景下 Cookie 与 Session 的常见用法](<assets/登录场景下 Cookie 与 Session 的常见用法.png>)
+
+<span style="font-size: 19px;">**第三方 Cookie**</span>
+
+浏览器允许对于不安全域下的资源（如广告图片）响应中的 Set-Cookie 保存，并在后续访问该域时自动使用 Cookie
+
+- 用户踪迹信息的搜集
+
+![third cookie](<assets/third cookie.png>)
+
+<span style="font-size: 23px;">**无状态的 REST 架构 VS 状态管理**</span>
+
+- **应用状态与资源状态**
+  - 应用状态：应由客户端管理，不应由服务器管理
+    - 如浏览器目前在哪一页
+    - REST 架构要求服务器不应保存应用状态
+  - 资源状态：应由服务器管理，不应由客户端管理
+    - 如数据库中存放的数据状态，例如用户的登陆信息
+- **HTTP 请求的状态**
+  - 有状态的请求：服务器端保存请求的相关信息，每个请求可以使用以前保留的请求相关信息
+    - 服务器 session 机制使服务器保存请求的相关信息
+    - cookie 使请求可以携带查询信息，与 session 配合完成有状态的请求
+  - 无状态的请求：服务器能够处理的所有信息都来自当前请求所携带的信息
+    - 服务器不会保存 session 信息
+    - 请求可以通过 cookie 携带
+
+---
+
+#### 同源策略与跨域访问
+
+
+
