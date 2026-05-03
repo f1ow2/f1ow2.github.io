@@ -1,4 +1,4 @@
-# 🔑 密码与ID生成器
+# 🛠️ 生成器
 
 <script setup>
 import { ref } from 'vue'
