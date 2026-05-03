@@ -13,6 +13,9 @@ hero:
     - theme: brand
       text: shortcut
       link: /shortcut.md
+    - theme: brand
+      text: tools
+      link: /tools/generator.md
     - theme: alt
       text: linux
       link: /linux/linuxCommands.md

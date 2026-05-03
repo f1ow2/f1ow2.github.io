@@ -15,29 +15,6 @@ export const sidebar = {
       ]
     }
   ],
-  '/docker/': [
-    {
-      text: 'docker',
-      collapsed: false,
-      items: [
-        { text: 'docker基础', link: '/docker/docker基础.md' },
-        { text: 'docker进阶', link: '/docker/docker进阶.md' },
-        { text: 'docker应用', link: '/docker/dockerApp.md' },
-      ]
-    }
-  ],
-  '/go/': [
-    {
-      text: 'go',
-      collapsed: true,
-      items: [
-        { text: 'go issues', link: '/go/goIssues.md' },
-        { text: 'go algo', link: '/go/goAlgo.md' },
-        { text: 'goBasics', link: '/go/go基础.md' },
-        { text: 'goPro', link: '/go/go进阶.md' },
-      ]
-    }
-  ],
   '/windows/': [
     {
       text: 'windows',
@@ -45,6 +22,15 @@ export const sidebar = {
       items: [
         { text: 'windows常用命令', link: '/windows/WindowsCommand.md' },
         { text: 'windows基础', link: '/windows/WindowsFundamentals.md' },
+      ]
+    }
+  ],
+  '/tools/': [
+    {
+      text: 'tools',
+      items: [
+        { text: '🔑 密码与ID生成器', link: '/tools/generator.md' },
+        { text: '📍 Bookmarklet', link: '/tools/bookmarklet.md' },
       ]
     }
   ]
