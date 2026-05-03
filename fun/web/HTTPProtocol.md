@@ -1,17 +1,17 @@
 ---
-title: "Web Protocol"
+title: "HTTP Protocol"
 quote: geektime-webprotocol
 categories:
   - 技术
   - 教程
-tags: [web, protocol, capture package]
+tags: [web, HTTP]
 sidebar: false
 outline: deep
 ---
 
-# Web Protocol
+# HTTP Protocol
 
-## HTTP1
+## intro
 
 **Hypertext Transfer Protocol** (HTTP) is the protocol that specifies how a web browser and a web server communicate. a **stateless** application-level **request/response** protocol that uses **extensible semantics** and **self-descriptive** message payloads for flexible interaction with network-based **hypertext information** systems (RFC7230 2014.6)
 
@@ -83,7 +83,7 @@ outline: deep
 
 ---
 
-### 浏览器抓包
+## 浏览器抓包
 
 <span style="font-size: 23px;">**过滤器Filter**</span>
 
@@ -177,7 +177,7 @@ outline: deep
       - 空路径
 ---
 
-### request-line
+## request-line
 
 <span style="font-size: 19px;">**request-line = method SP request-target SP HTTP-version CRLF**</span>
 - method 方法：指明操作目的，动词 
@@ -214,7 +214,7 @@ outline: deep
 
 ---
 
-### status-line
+## status-line
 
 <span style="font-size: 19px;">**status-line = HTTP-version SP status-code SP reason-phrase CRLF**</span>
 
@@ -297,7 +297,7 @@ outline: deep
 
 ---
 
-### header
+## header
 
 <span style="font-size: 23px;">**Host 头部**</span>
 
@@ -428,7 +428,7 @@ outline: deep
 
 ---
 
-### Body
+## Body
 
 <span style="font-size: 23px;">**HTTP 包体：承载的消息内容**</span>
 
@@ -440,7 +440,7 @@ outline: deep
   - 1xx、204、304 对应的响应
   - CONNECT 方法对应的 2xx 响应
 
-#### 两种传输HTTP包体的方式
+### 两种传输HTTP包体的方式
 
 <span style="font-size: 19px;">**发送 HTTP 消息时已能够确定包体的全部长度**</span>
 
@@ -534,7 +534,7 @@ X-Request-ID: abc123\r\n
   - 如 Content-Disposition: form-data; name="fieldName"; 
 filename="filename.jpg"
 
-#### 提交表单请求时包体格式
+### 提交表单请求时包体格式
 
 <span style="font-size: 19px;">**HTML FORM 表单**</span>
 
@@ -588,7 +588,7 @@ filename="filename.jpg"
 
 ---
 
-#### Range
+### Range
 
 <span style="font-size: 23px;">**多线程、断点续传、随机点播等场景的步骤**</span>
 
@@ -713,9 +713,7 @@ hijklm
 
 ```
 
-### cookie和session
-
-#### cookie
+## cookie
 
 [cookie](../cyber/web.md#cookies)
 
@@ -805,7 +803,170 @@ hijklm
 
 ---
 
-#### 同源策略与跨域访问
+## 同源策略与跨域访问
 
+[CORS & SOP](../webapp/ClientSideAttacks.md#cors和sop)
 
+### SOP
 
+<span style="font-size: 23px;">**没有同源策略**</span>
+
+- 没有[同源策略](../common.md#sop)下的 **Cookie** 只能保证用户请求来自于同一浏览器，不能确保是用户自愿发出的
+- 站点 B 的脚本就可以随意修改站点 A 的 DOM 结构
+
+![如果没有同源策略](assets/如果没有同源策略.png)
+
+<span style="font-size: 23px;">**浏览器的同源策略**</span>
+
+**限制了从同一个源加载的文档或脚本如何与来自另一个源的资源进行交互**
+
+<span style="font-size: 19px;">**什么是源**</span>
+
+由三个部分组成
+
+    - 协议(protocol)
+    - 域名(host)
+    - 端口(port)
+
+![Same-origin policy](<assets/Same-origin policy.png>)
+
+<span style="font-size: 19px;">**安全性与可用性需要一个平衡点**</span>
+
+**可用性：HTML 的创作者决定跨域请求是否对本站点安全**
+  - `<script><img><iframe><link><video><audio>`带有 **src** 属性可以跨域访问
+  - 允许**跨域写**操作：例如**表单提交**或者重定向请求
+    - CSRF安全性问题
+
+**安全性：浏览器需要防止站点 A 的脚本向站点 B 发起危险动作**
+  - Cookie、LocalStorage 和 IndexDB 无法读取
+  - DOM 无法获得（防止跨域脚本篡改 DOM 结构）
+  - AJAX 请求不能发送
+
+<span style="font-size: 19px;">**同源策略作用**</span>
+
+**核心作用**
+
+- 阻止跨域读取数据
+- 限制 AJAX/Fetch 响应内容访问
+- 限制 DOM/Cookie 跨域访问(仅限读取)
+
+示例代码
+
+```javascript
+fetch('htpp://another-site.com/api/data')
+    .then(res => res.json())
+    .catch(err => console.log('跨域请求被阻止:', err));
+```
+
+浏览器错误提示
+
+```bash
+Access to fetch at 'htpp://another-site.com/api/data'
+from origin 'http://mysite.com'
+has been blocked by CORS policy
+```
+
+<span style="font-size: 23px;">**跨站请求伪造攻击**</span>
+
+[CSRF](../webapp/ClientSideAttacks.md#csrf)
+
+<span style="font-size: 19px;">**CSRF的一种防攻击方式**</span>
+
+![CSRF的一种防攻击方式](assets/CSRF的一种防攻击方式.png)
+
+### CORS
+
+**浏览器同源策略下的[跨域访问](../common.md#cors)解决方案：**
+- 如果站点 A 允许站点 B 的脚本访问其资源，必须在 HTTP 响应中显式的告知浏览器：站点 B 是被允许的
+  - 访问站点 A 的请求，浏览器应告知该请求来自站点 B
+  - 站点 A 的响应中，应明确哪些跨域请求是被允许的
+
+**策略 1：简单请求**
+- GET/HEAD/POST 方法之一
+- 仅能使用 CORS 安全的头部：Accept、Accept-Language、Content-Language、Content-Type
+- Content-Type 值只能是： text/plain、multipart/form-data、application/x-www-form-urlencoded 三者其中之一
+
+**策略 2：简单请求以外的其他请求**
+
+- 访问资源前，需要先发起 **prefilght 预检请求**（方法为 `OPTIONS`）询问何种请求是被允许的
+
+<span style="font-size: 19px;">**简单请求的跨域访问**</span>
+
+- 请求中携带 **Origin** 头部告知来自哪个域
+- 响应中携带 **Access-Control-Allow-Origin** 头部表示允许哪些域
+- 浏览器放行
+
+![cors simple request](<assets/cors simple request.png>)
+
+<span style="font-size: 19px;">**预检(复杂)请求**</span>
+
+- **预检请求头部**
+  - Access-Control-Request-Method
+  - Access-Control-Request-Headers
+
+- **预检请求响应**
+  - Access-Control-Allow-Methods
+  - Access-Control-Allow-Headers
+  - Access-Control-Max-Age
+
+![cors prefilght request](<assets/cors prefilght request.png>)
+
+<span style="font-size: 19px;">**跨域访问资源：请求头部**</span>
+
+**Origin（RFC6454）**：一个页面的资源可能来自于多个域名，在 AJAX 等子请求中标明来源于某个域名下的脚本，以通过服务器的安全校验
+- **origin** = `"Origin:" OWS origin-list-or-null OWS `
+  - **origin-list-or-null** = `%x6E %x75 %x6C %x6C / origin-list` 
+    - **origin-list** = `serialized-origin *( SP serialized-origin )` 
+      - **serialized-origin** = `scheme "://" host [ ":" port ]`
+- Access-Control-Request-Method
+  - 在 preflight 预检请求 (OPTIONS) 中，告知服务器接下来的请求会使用哪些方法
+- Access-Control-Request-Headers
+  - 在 preflight 预检请求 (OPTIONS) 中，告知服务器接下来的请求会传递哪些头部
+
+<span style="font-size: 19px;">**跨域访问资源：响应头部**</span>
+
+- Access-Control-Allow-Methods
+  - 在 preflight 预检请求的响应中，告知客户端后续请求允许使用的方法
+- Access-Control-Allow-Headers
+  - 在 preflight 预检请求的响应中，告知客户端后续请求允许携带的头部
+- Access-Control-Max-Age
+  - 在 preflight 预检请求的响应中，告知客户端该响应的信息可以缓存多久
+- Access-Control-Expose-Headers
+  - 告知浏览器哪些响应头部可以供客户端使用，默认情况下只有 Cache-Control、Content-Language、
+Content-Type、Expires、Last-Modified、Pragma 可供使用
+- Access-Control-Allow-Origin
+  - 告知浏览器允许哪些域访问当前资源，*表示允许所有域。为避免缓存错乱，响应中需要携带 Vary: Origin
+- Access-Control-Allow-Credentials
+  - 告知浏览器是否可以将 Credentials 暴露给客户端使用，Credentials 包含 cookie、authorization 类头部、TLS证书等。
+
+## 条件请求
+
+<span style="font-size: 19px;">**资源 URI 与资源表述 Representation**</span>
+
+**资源 R 可被定义为随时间变化的函数 M<sub>R</sub>(t)**
+
+- 静态资源：创建后任何时刻值都不变，例如指定版本号的库文件
+- 动态资源：其值随时间而频繁地变化，例如某新闻站点首页
+
+**优点**
+
+- 提供了无需人为设定类型或者实现方式的情况下，同一资源多种不同来源的信息
+- 基于请求特性进行内容协商，使资源的渲染延迟绑定
+- 允许表述概念而不是具体的 Representation，故资源变化时不用修改所有链接
+
+<span style="font-size: 23px;">**Preconditon 条件请求**</span>
+
+**目的**
+- 由客户端携带条件判断信息，而服务器预执行条件验证过程成功后，再返回资源的表述
+
+**常见应用场景**
+- 使缓存的更新更有效率（如 304 响应码使服务器不用传递包体）
+- 断点续传时对之前内容的验证
+- 当多个客户端并行修改同一资源时，防止某一客户端的更新被错误丢弃
+
+<span style="font-size: 19px;">**强验证器与弱验证器的概念**</span>
+
+- **验证器 validator**：根据客户端请求中携带的相关头部，以及服务器资源
+的信息，执行两端的资源验证
+  - **强验证器**：服务器上的资源表述只要有变动（例如版本更新或者元数据更新），那么以旧的验证头部访问一定会导致验证不过
+  - **弱验证器**：服务器上资源变动时，允许一定程度上仍然可以验证通过（例如一小段时间内仍然允许缓存有效）

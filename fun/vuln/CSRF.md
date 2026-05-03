@@ -14,36 +14,5 @@ outline: 2
 
 [SOP](../common.md#sop)(Same-origin policy) 浏览器的一项安全机制，限制一个源的文档或脚本如何与另一个源的资源进行交互。
 
-<span style="font-size: 23px;">**什么是源**</span>
+[同源策略与跨域访问](../web/HTTPProtocol.md#同源策略与跨域访问)
 
-由三个部分组成
-
-    - 协议(protocol)
-    - 域名(host)
-    - 端口(port)
-
-![Same-origin policy](<assets/Same-origin policy.png>)
-
-<span style="font-size: 23px;">**同源策略作用**</span>
-
-核心作用
-
-- 阻止跨域读取数据
-- 限制 AJAX/Fetch 响应内容访问
-- 限制 DOM/Cookie 跨域访问(仅限读取)
-
-示例代码
-
-```javascript
-fetch('htpp://another-site.com/api/data')
-    .then(res => res.json())
-    .catch(err => console.log('跨域请求被阻止:', err));
-```
-
-浏览器错误提示
-
-```bash
-Access to fetch at 'htpp://another-site.com/api/data'
-from origin 'http://mysite.com'
-has been blocked by CORS policy
-```

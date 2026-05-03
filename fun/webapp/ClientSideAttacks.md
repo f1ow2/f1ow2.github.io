@@ -557,7 +557,7 @@ As mentioned before, this wouldn't really do anything. However, the issue was we
 
 In the end, the weaponised exploit affected thousands of users. It is worth remembering that this was in 2010. If such a bug were found today, the impact would be even larger.
 
-## CORS & SOP
+## CORS和SOP
 
 Cross-Origin Resource Sharing, also known as [CORS](../common.md#cors), is a mechanism that allows web applications to request resources from different domains securely. This is crucial in web security as it prevents malicious scripts on one page from obtaining access to sensitive data on another web page through the browser.
 

@@ -76,12 +76,26 @@ export const nav = [
   {
     text: 'linux',
     items: [
-      { text: 'commands', link: '/linux/linuxCommands.md' },
-      { text: 'kali', link: '/linux/kali.md' },
-      { text: 'shells', link: '/linux/LinuxShell.md' },
-      { text: 'arch', link: '/linux/archlinuxApp.md' },
-      { text: 'docker', link: '/linux/docker.md' },
-      { text: 'encoding', link: '/linux/encoding.md' },
+      {
+        items: [
+          { text: 'commands', link: '/linux/linuxCommands.md' },
+          { text: 'kali', link: '/linux/kali.md' },
+          { text: 'shells', link: '/linux/LinuxShell.md' },
+          { text: 'arch', link: '/linux/archlinuxApp.md' },
+          { text: 'docker', link: '/linux/docker.md' },
+          { text: 'encoding', link: '/linux/encoding.md' },
+        ]
+      },
+      {
+        items: [
+          { text: 'HTTP protocol', link: '/web/HTTPProtocol.md' },
+          { text: 'WebSocket protocol', link: '/web/WebSocketProtocol.md' },
+          { text: 'HTTP/2 protocol', link: '/web/HTTP2Protocol.md' },
+          { text: 'TLS/SSL protocol', link: '/web/TLSProtocol.md' },
+          { text: 'TCP protocol', link: '/web/TCPProtocol.md' },
+          { text: 'IP protocol', link: '/web/IPProtocol.md' },
+        ]
+      }
     ]
   },
   {
@@ -89,9 +103,8 @@ export const nav = [
     items: [
       {
         items: [
-          { text: 'tips', link: '/srcdiary/tips.md' },
           { text: 'SRC', link: '/srcdiary/srcskills.md' },
-          { text: 'web protocol', link: '/srcdiary/webprotocol.md' },
+          { text: 'tips', link: '/srcdiary/tips.md' },
           { text: 'web security', link: '/srcdiary/websecurity.md' },
           { text: 'python security', link: '/srcdiary/python4sec.md' },
           { text: 'privilege escalation', link: '/srcdiary/SRCPE.md' },
