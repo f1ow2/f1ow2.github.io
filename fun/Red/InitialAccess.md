@@ -609,7 +609,7 @@ A dictionary attack is a technique used to guess passwords by using well-known w
 
 **hashcat**
 
-[details](../cyber/tools.md#hashcat)
+[details](../cyber/tool.md#hashcat)
 ```bash
 hashcat -a 0 -m 0 F806FC5A2A0D5BA2471600758452799C /usr/share/wordlists/rockyou.txt --show
 ```

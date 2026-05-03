@@ -203,7 +203,7 @@ Connection closed by foreign host.
 ```
 ### Netcat
 
-[Netcat](./tools.md#netcat) or simply `nc` has different applications that can be of great value to a pentester. Netcat supports both TCP and UDP protocols. It can function as a client that connects to a listening port; alternatively, it can act as a server that listens on a port of your choice. Hence, it is a convenient tool that you can use as a simple client or server over TCP or UDP.
+[Netcat](./tool.md#netcat) or simply `nc` has different applications that can be of great value to a pentester. Netcat supports both TCP and UDP protocols. It can function as a client that connects to a listening port; alternatively, it can act as a server that listens on a port of your choice. Hence, it is a convenient tool that you can use as a simple client or server over TCP or UDP.
 
 **client**
 ```bash
@@ -225,7 +225,7 @@ Accept-Ranges: bytes
 
 ## Nmap
 
-[Nmap](./tools.md#nmap) (Network Mapper) is a open-source tool used for network discovery and security auditing. It also assists in the exploration of network hosts and services, providing information about open ports, operating systems, and other details.
+[Nmap](./tool.md#nmap) (Network Mapper) is a open-source tool used for network discovery and security auditing. It also assists in the exploration of network hosts and services, providing information about open ports, operating systems, and other details.
 
  Nmap's scripting engine can further extend its functionality, from fingerprinting services to exploiting vulnerabilities. A Nmap scan usually goes through the steps shown in the figure below, although many are optional and depend on the command-line arguments you provide.
 
@@ -233,7 +233,7 @@ Accept-Ranges: bytes
 
 ## Nmap Ping Scans
 
-[nmap ping scan](./tools.md#ping-scanning)
+[nmap ping scan](./tool.md#ping-scanning)
 
 | Scan Type | Example Command |
 |---|---|
@@ -269,7 +269,7 @@ How would you know which hosts are up and running? It is essential to avoid wast
 2. When a privileged user tries to scan targets outside the local network, Nmap uses **ICMP echo requests**, **TCP ACK (Acknowledge)** to port 80, **TCP SYN (Synchronize)** to port 443, and **ICMP timestamp request**.
 3. When an unprivileged user tries to scan targets outside the local network, Nmap resorts to a **TCP** 3-way handshake by sending SYN packets to ports 80 and 443.
 
-Nmap, by default, uses a [ping scan](./tools.md#ping-scanning) to find live hosts, then proceeds to scan live hosts only.
+Nmap, by default, uses a [ping scan](./tool.md#ping-scanning) to find live hosts, then proceeds to scan live hosts only.
 
 <span style="font-size: 23px;">**Nmap Host Discovery Using ARP**</span>
 
@@ -370,7 +370,7 @@ By default, Nmap will look up online hosts; however, you can use the option `-R`
 
 ## Nmap Port Scans
 
-[Nmap port Scan](./tools.md#port-scanning)
+[Nmap port Scan](./tool.md#port-scanning)
 
 | Port Scan Type | Example Command |
 |---|---|
@@ -984,7 +984,7 @@ Three popular choices for HTTP servers are:
 
 File Transfer Protocol ([FTP](./networkpro.md#ftp)) was developed to make the transfer of files between different computers with different systems efficient.
 
-FTP also sends and receives data as cleartext; therefore, we can use Telnet (or [Netcat](./tools.md#netcat)) to communicate with an FTP server and act as an FTP client.
+FTP also sends and receives data as cleartext; therefore, we can use Telnet (or [Netcat](./tool.md#netcat)) to communicate with an FTP server and act as an FTP client.
 
 A command like `STAT` can provide some added information. The `SYST` command shows the System Type of the target (UNIX in this case). `PASV` switches the mode to passive. It is worth noting that there are two modes for FTP:
 

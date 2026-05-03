@@ -24,7 +24,7 @@ outline: deep
 
 ## nmap
 
-[nmap介绍](../cyber/tools.md#nmap)
+[nmap介绍](../cyber/tool.md#nmap)
 
 [端口介绍](../cyber/networkpro.md#networking-port)
 

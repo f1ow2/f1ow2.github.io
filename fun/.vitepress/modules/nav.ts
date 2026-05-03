@@ -27,7 +27,7 @@ export const nav = [
     items: [
       {
         items: [
-          { text: 'Tools', link: '/cyber/tools.md' },
+          { text: 'Tools', link: '/cyber/tool.md' },
           { text: 'metasploit', link: '/security/Metasploit.md' },
           { text: 'burpSuite', link: '/security/BurpSuite.md' },
           { text: 'wireshark', link: '/security/wireshark.md' },

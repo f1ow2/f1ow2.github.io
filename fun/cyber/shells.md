@@ -30,7 +30,7 @@ A reverse shell, sometimes referred to as a "connect back shell," is one of the 
 
 **Set up a Netcat (nc) Listener**
 
-Let's now understand how a reverse shell works in a practical scenario using the tool [Netcat](./tools.md#netcat). This utility supports multiple OSs and allows reading and writing through a network.
+Let's now understand how a reverse shell works in a practical scenario using the tool [Netcat](./tool.md#netcat). This utility supports multiple OSs and allows reading and writing through a network.
 
 As mentioned above, a reverse shell will connect back to the attacker's machine. This machine will be waiting for a connection, so let's use Netcat to listen to a connection using the following command `nc -lvnp 443`.
 

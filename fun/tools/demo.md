@@ -10,6 +10,6 @@ const count = ref(0)
   点击次数: {{ count }}
 </button>
 
-<script>
+<!-- <script>
   console.log('此代码在页面加载时执行');
-</script>
+</script> -->

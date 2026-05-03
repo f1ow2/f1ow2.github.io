@@ -425,7 +425,7 @@ View the full module info with the info, or info -d command.
 - **RHOSTS**: Target or target network to be scanned.
 - **THREADS**: Number of threads that will be used simultaneously. More threads will result in faster scans.
 
-You can directly perform [Nmap](../cyber/tools.md#nmap) scans from the msfconsole prompt as shown below faster:
+You can directly perform [Nmap](../cyber/tool.md#nmap) scans from the msfconsole prompt as shown below faster:
 
 ```bash
 msf6 auxiliary(scanner/portscan/tcp) > nmap -sS 10.10.193.138

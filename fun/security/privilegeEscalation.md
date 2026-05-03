@@ -32,11 +32,11 @@ It's rare when performing a real-world penetration test to be able to gain a foo
 
 There are a variety of tools that we will be using to receive reverse shells and to send bind shells. In general terms, we need malicious shell code, as well as a way of interfacing with the resulting shell. We will discuss each of these briefly below:
 
-[Netcat](../cyber/tools.md#netcat):
+[Netcat](../cyber/tool.md#netcat):
 
 Netcat is the traditional "Swiss Army Knife" of networking. It is used to manually perform all kinds of network interactions, including things like banner grabbing during enumeration, but more importantly for our uses, it can be used to receive reverse shells and connect to remote ports attached to bind shells on a target system. Netcat shells are very unstable (easy to lose) by default, but can be improved by techniques that we will be covering in an upcoming task.
 
-**[Socat](../cyber/tools.md#socat):**
+**[Socat](../cyber/tool.md#socat):**
 
 Socat is like netcat on steroids. It can do all of the same things, and many more. Socat shells are usually more stable than netcat shells out of the box. In this sense it is vastly superior to netcat; however, there are two big catches:
 
