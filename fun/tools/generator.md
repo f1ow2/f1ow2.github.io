@@ -39,17 +39,17 @@ function generatePassword() {
 const generatedId = ref('')
 
 const surnames = [
-  '李', '王', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴',
-  '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗',
-  '梁', '宋', '郑', '谢', '韩', '唐', '冯', '于', '董', '萧',
-  '程', '曹', '袁', '邓', '许'
+  '蒯', '晁', '蔺', '禚', '仝', '卿', '蹇', '禤','宓', '繁', '柘', 
+  '殳', '湛', '胥', '睢', '缑', '逄', '仉', '卞', '郇', '郗', '郏', 
+  '昝', '綦', '梁', '爨', '亓', '昃', '弭', '閒', '种', '姒', '鄞', 
+  '万俟', '佡', '隰', '鉏', '璩', '乜', '厍', '钭', '佀', '贶'
 ]
 
 const givenNames = [
-  '伟', '芳', '娜', '敏', '静', '丽', '强', '磊', '军', '洋',
-  '勇', '艳', '杰', '娟', '涛', '明', '超', '秀英', '华', '平',
-  '刚', '桂花', '文', '卉', '慧', '宇', '琳', '浩', '雪', '晨',
-  '博', '曦', '瑶', '毅', '萱', '哲', '彤', '昊', '悦', '辰'
+  '龘', '靐', '鱻', '麤', '淼', '焱', '燚', '垚', '犇', '骉', '彧', 
+  '珩', '翀', '赟', '甯', '卉', '昶', '擤', '熥', '潽', '龋', '耄', 
+  '耋', '茕', '孑', '谶', '罅', '魑', '魅', '魍', '魉', '烎', '兲', 
+  '氼', '嘦', '嫑', '圐', '圙'
 ]
 
 const englishNames = [
@@ -134,6 +134,26 @@ function generateId() {
   }
 }
 
+// ==================== UUID 生成器 ====================
+const generatedUuid = ref('')
+
+function generateUuid() {
+  const hex = '0123456789abcdef'
+  let uuid = ''
+  for (let i = 0; i < 36; i++) {
+    if (i === 8 || i === 13 || i === 18 || i === 23) {
+      uuid += '-'
+    } else if (i === 14) {
+      uuid += '4'
+    } else if (i === 19) {
+      uuid += hex.charAt(Math.floor(Math.random() * 4) + 8)
+    } else {
+      uuid += hex.charAt(Math.floor(Math.random() * 16))
+    }
+  }
+  generatedUuid.value = uuid
+}
+
 // ==================== 复制功能 ====================
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => {
@@ -177,7 +197,7 @@ function copyText(text) {
   <div
     @click="generatedPassword && copyText(generatedPassword)"
     style="background-color: #f9f9f9; border: 2px dashed #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 18px; cursor: pointer; word-break: break-all; text-align: center; min-height: 24px;"
-    :style="{ borderColor: generatedPassword ? '#96c8e6' : '#ddd' }"
+    :style="{ borderColor: generatedPassword ? '#ff7777' : '#ddd' }"
   >
     {{ generatedPassword || '点击下方按钮生成密码' }}
   </div>
@@ -191,6 +211,24 @@ function copyText(text) {
 
 <hr>
 
+## 🔷 UUID 生成工具
+
+<div style="background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+  <div
+    @click="generatedUuid && copyText(generatedUuid)"
+    style="background-color: #f9f9f9; border: 2px dashed #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 18px; cursor: pointer; word-break: break-all; text-align: center; min-height: 24px; user-select: all;"
+    :style="{ borderColor: generatedUuid ? '#a78bfa' : '#ddd' }"
+  >
+    {{ generatedUuid || '点击下方按钮生成 UUID' }}
+  </div>
+
+  <div style="text-align: center;">
+    <button @click="generateUuid" style="background-color: #a78bfa; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-size: 16px; cursor: pointer;">
+      生成 UUID
+    </button>
+  </div>
+</div>
+
 ## 🆔 ID生成小工具
 
 <div style="background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
@@ -203,11 +241,14 @@ function copyText(text) {
   </div>
 
   <div style="text-align: center;">
-    <button @click="generateId" style="background-color: #ff7777; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-size: 16px; cursor: pointer;">
+    <button @click="generateId" style="background-color: #96c8e6; color: white; border: none; padding: 10px 30px; border-radius: 6px; font-size: 16px; cursor: pointer;">
       生成账号ID
     </button>
   </div>
 </div>
+
+<hr>
+
 
 <!-- 复制成功提示 -->
 <div v-if="copySuccess" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.75); color: white; padding: 15px 30px; border-radius: 8px; font-size: 16px; z-index: 9999; pointer-events: none;">

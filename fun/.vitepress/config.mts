@@ -20,7 +20,21 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: true,
   sitemap: {
-    hostname: env.VITE_SITEMAP_URL || 'https://f1ow2.github.io/'
+    hostname: env.VITE_SITEMAP_URL || 'https://f1ow2.github.io/',
+    // 使用 transformItems 钩子排除路径
+    transformItems: (items) => {
+      // 需要排除的路径列表（不带后缀）
+      const excludeItems = [
+        'tools',
+        'chat'
+      ]
+
+      return items.filter((item) => {
+        // 检查当前 url 是否包含在排除列表中
+        // 注意：item.url 通常是以 / 开头且包含 .html 的路径
+        return !excludeItems.some(exclude => item.url.includes(exclude))
+      })
+    }
   },
   markdown: {
     lineNumbers: true,

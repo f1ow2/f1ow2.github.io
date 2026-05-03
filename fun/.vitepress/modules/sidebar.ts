@@ -30,7 +30,7 @@ export const sidebar = {
       text: 'tools',
       items: [
         { text: '🔑 密码与ID生成器', link: '/tools/generator.md' },
-        { text: '📍 Bookmarklet', link: '/tools/bookmarklet.md' },
+        { text: '📍 Bookmarklet', link: '/tools/Bookmarklet.md' },
       ]
     }
   ]
