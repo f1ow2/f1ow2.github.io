@@ -970,3 +970,69 @@ Content-Type、Expires、Last-Modified、Pragma 可供使用
 的信息，执行两端的资源验证
   - **强验证器**：服务器上的资源表述只要有变动（例如版本更新或者元数据更新），那么以旧的验证头部访问一定会导致验证不过
   - **弱验证器**：服务器上资源变动时，允许一定程度上仍然可以验证通过（例如一小段时间内仍然允许缓存有效）
+
+<span style="font-size: 23px;">**验证器响应头部**</span>
+
+**Etag 响应头部**
+- 定义：
+  - ETag = entity-tag 
+    - entity-tag = [ weak ] opaque-tag 
+      - weak = `%x57.2F`       
+      - opaque-tag = DQUOTE *etagc DQUOTE 
+        - etagc = %x21 / %x23-7E / obs-text 
+- 给出当前资源表述的标签
+  - 例如：
+    - 强验证器     ETag: "xyzzy" 
+    - 弱验证器     ETag: `W/`"xyzzy"
+
+**Last-Modified 响应头部**
+- 定义：Last-Modified = HTTP-date
+- 表示对应资源表述的上次修改时间
+- 对比 Date 头部： Date = HTTP-date
+  - 表示响应包体生成的时间
+  - Last-Modified 不能晚于 Date 的值
+
+<span style="font-size: 23px;">**条件请求头部**</span>
+
+- If-Match = "*" / 1#entity-tag
+- If-None-Match = "*" / 1#entity-tag
+- If-Modified-Since = HTTP-date
+- If-Unmodified-Since = HTTP-date
+- If-Range = entity-tag / HTTP-date
+
+<span style="font-size: 19px;">**缓存更新**</span>
+
+![cacheupdate1](assets/cacheupdate1.png)
+
+![cacheupdate2](assets/cacheupdate2.png)
+
+<span style="font-size: 19px;">**增量更新**</span>
+
+当服务器支持 Range服务时，连接意外中断时已接收到部分数据
+
+![incrementupdate1](assets/incrementupdate1.png)
+
+通过 Range 请求下载其他包体时，加入验证器防止两次下载间资源已发生了变更
+
+![incrementupdate2](assets/incrementupdate2.png)
+
+如果两次下载操作中，资源已经变量，则服务器用 `412` 通知客户端，而客户端重新下载完整包体
+
+![incrementupdate3](assets/incrementupdate3.png)
+
+通过 **If-Range** 头部可以避免 2 次请求交互带来的损耗
+
+![incrementupdate4](assets/incrementupdate4.png)
+
+<span style="font-size: 19px;">**更新丢失问题**</span>
+
+![updatelose1](assets/updatelose1.png)
+![updatelose2](assets/updatelose2.png)
+![updatelose3](assets/updatelose3.png)
+![updatelose4](assets/updatelose4.png)
+
+<span style="font-size: 23px;">**服务器处理条件请求的常见规则: Nginx**</span>
+
+**ngx_http_not_modified_filter_module**
+
+
