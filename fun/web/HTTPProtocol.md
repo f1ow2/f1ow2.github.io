@@ -186,9 +186,9 @@ outline: 2
     - 向 origin server 发起的请求，path 为空时必须传递 /
   - absolute-form = absolute-URI
     - 仅用于向正向代理 proxy 发起请求时，详见正向代理与隧道
-  - authority-form = authority
+  - `authority-form = authority`
     - 仅用于 CONNECT 方法，例如 CONNECT www.example.com:80 HTTP/1.1
-  - asterisk-form = "*“
+  - asterisk-form = "*"
     - 仅用于 OPTIONS 方法
 
 <span style="font-size: 23px;">**常见方法(RFC7231)**</span>
@@ -529,7 +529,7 @@ X-Request-ID: abc123\r\n
 - inline：指定包体是以 inline 内联的方式，作为页面的一部分展示
 - attachment：指定浏览器将包体以附件的方式下载
   - 例如： Content-Disposition: attachment
-  - 例如： Content-Disposition: attachment; filename=“filename.jpg” 
+  - 例如： Content-Disposition: attachment; filename="filename.jpg" 
 - 在 multipart/form-data 类型应答中，可以用于子消息体部分
   - 如 Content-Disposition: form-data; name="fieldName"; 
 filename="filename.jpg"
@@ -1065,10 +1065,10 @@ graph TD
 
 <span style="font-size: 23px;">**总结：条件请求的"四剑客"**</span>
 
-1. **If-Modified-Since** (时间版): “有新版吗？” -> `304`。
-2. **If-None-Match** (指纹版): “指纹变了吗？” -> `304`。
-3. **If-Unmodified-Since** (时间版): “还是旧版吗？是的话我再传（断点续传）。” -> `412`。
-4. **If-Match** (指纹版): “还是那个版本吗？是的话我再改（防止覆盖）。” -> `412`。
+1. **If-Modified-Since** (时间版): "有新版吗？" -> `304`。
+2. **If-None-Match** (指纹版): "指纹变了吗？" -> `304`。
+3. **If-Unmodified-Since** (时间版): "还是旧版吗？是的话我再传（断点续传）。" -> `412`。
+4. **If-Match** (指纹版): "还是那个版本吗？是的话我再改（防止覆盖）。" -> `412`。
 
 我们可以把这两对组合看作是处理资源的两种不同**哲学**：
 
@@ -1087,13 +1087,13 @@ graph TD
 <span style="font-size: 19px;">**状态断言组合：If-Unmodified-Since + If-Match**</span>
 
 **核心目标：** **保安全（Safety/Integrity）**。
-这一对通常出现在 `PUT`、`PATCH` 或 `DELETE` 等修改类请求中，用于确保“我正在修改的，确实是我以为的那个版本”。
+这一对通常出现在 `PUT`、`PATCH` 或 `DELETE` 等修改类请求中，用于确保"我正在修改的，确实是我以为的那个版本"。
 
 *   **协同逻辑：**
-    *   **If-Match**：确保资源的“指纹”没变（最强校验）。
+    *   **If-Match**：确保资源的"指纹"没变（最强校验）。
     *   **If-Unmodified-Since**：确保资源从我上次看到它起，没有被别人改动过时间。
 *   **典型场景（断点续传）：**
-    当你在下载一个大文件时突然中断，重连时你会发送 `If-Unmodified-Since`。意思是：“如果服务器上的这个文件还没变，请把剩下的字节发给我；如果文件已经变了（出新版了），那旧的片段就没用了，请从头开始发。”
+    当你在下载一个大文件时突然中断，重连时你会发送 `If-Unmodified-Since`。意思是："如果服务器上的这个文件还没变，请把剩下的字节发给我；如果文件已经变了（出新版了），那旧的片段就没用了，请从头开始发。"
 *   **典型场景（乐观锁）：**
     在 API 开发中，防止两个管理员同时修改同一条数据。
 *   **结果：** 如果校验失败（资源已变），返回 **412 Precondition Failed**。
@@ -1163,7 +1163,7 @@ graph TD
 
 **Age头部** 是 HTTP 响应头部中的一个字段，其值是一个**以秒为单位的非负整数**。它代表了一个缓存对象（例如一张图片或一个网页）从被源服务器生成，到被中间代理服务器（如CDN）用于响应请求时，所经历的总时长
 
-- Age 头部是缓存机制中保证数据准确性的关键标识。它明确标记了一个响应在代理或CDN缓存中已驻留的时长，用以判断该缓存内容的“新鲜度”。
+- Age 头部是缓存机制中保证数据准确性的关键标识。它明确标记了一个响应在代理或CDN缓存中已驻留的时长，用以判断该缓存内容的"新鲜度"。
   - Age = delta-seconds
   - **age_value**：响应头中 Age 字段的值（若无则为 0）
 
@@ -1173,7 +1173,7 @@ graph TD
 - 传递过程中各级缓存写入的 Age 头（已有缓存时长）
 - 从收到响应到当前判断时刻的本地滞留时间（包括网络传输和缓存排队时间）
 
-**用途**：用于与 `freshness_lifetime` 进行比较，以判断该缓存响应是否仍然“新鲜”（可以直接使用，无需回源验证）。
+**用途**：用于与 `freshness_lifetime` 进行比较，以判断该缓存响应是否仍然"新鲜"（可以直接使用，无需回源验证）。
 
 **current_age 的计算**：
 
@@ -1275,12 +1275,222 @@ Expires
     - warn-text = quoted-string
     - warn-date = DQUOTE HTTP-date DQUOTE
 - 常见的 warn-code
-  - Warning: `110` - "Response is Stale“
-  - Warning: `111` - "Revalidation Failed“
-  - Warning: `112` - "Disconnected Operation“
-  - Warning: `113` - "Heuristic Expiration“
-  - Warning: `199` - "Miscellaneous Warning“
-  - Warning: `214` - "Transformation Applied“
+  - Warning: `110` - "Response is Stale"
+  - Warning: `111` - "Revalidation Failed"
+  - Warning: `112` - "Disconnected Operation"
+  - Warning: `113` - "Heuristic Expiration"
+  - Warning: `199` - "Miscellaneous Warning"
+  - Warning: `214` - "Transformation Applied"
   - Warning: `299` - "Miscellaneous Persistent Warning"
 
 ## URI重定向
+
+<span style="font-size: 19px;">**为什么需要 URI 重定向？**</span>
+
+- 提交 FORM 表单成功后需要显示内容页，怎么办？
+- 站点从 HTTP 迁移到 HTTPS，怎么办？
+- 站点部分 URI 发生了变化，但搜索引擎或者流量入口站点只收录了老的
+URI，怎么办？
+- 站点正在维护中，需要给用户展示不一样的内容，怎么办？
+- 站点更换了新域名，怎么办？
+
+<span style="font-size: 19px;">**重定向的流程**</span>
+
+当浏览器接收到**重定向响应码**时，需要读取响应头部 **Location 头部**的值，获取到新的 URI 再跳转访问该页面
+
+![重定向的流程](assets/重定向的流程.png)
+
+**Location 头部**
+
+Location = URI-reference（对 201 响应码表示新创建的资源）
+
+URI-reference = URI/relative-ref 
+- relative-ref = relative-part [ "?" query ] [ "#" fragment ] 
+  - relative-part = "//" authority path-abempty / path-absolute / path-noscheme / path empty
+
+### 重定向响应返回码
+
+- 概念
+  - 原请求：接收到重定向响应码的请求这里称为原请求
+  - 重定向请求：浏览器接收到重定向响应码后，会发起新的重定向请求
+- **永久**重定向，表示资源永久性变更到新的 URI
+  - 301（HTTP/1.0）：重定向请求通常（由于历史原因一些浏览器会把 POST 改为GET）会**使用 GET 方法**，而不管原请求究竟采用的是什么方法
+  - 308（HTTP/1.1）：重定向请求必须**使用原请求的方法和包体**发起访问
+
+- **临时**重定向，表示资源只是临时的变更 URI
+  - 302 （HTTP/1.0）：重定向请求**通常** 会 **使用 GET 方法**，而不管原请求究竟采用的是什么方法
+  - 303 （HTTP/1.1）：它并不表示资源变迁，而是用新 URI 的响应表述而为原请求服务，重定向请求会**使用 GET 方法**
+    - 例如表单提交后向用户返回新内容（亦可防止重复提交）
+  - 307 （HTTP/1.1）：重定向请求必须**使用原请求的方法和包体**发起访问
+- 特殊重定向
+  - 300：响应式内容协商中，告知客户端有多种资源表述，要求客户端选择一种自认为合适的表述
+  - 304：服务器端验证过期缓存有效后，要求客户端使用该缓存
+
+<span style="font-size: 19px;">**重定向循环**</span>
+
+- 服务器端在生成 Location 重定向 URI 时，在同一条路径上使用了之前的 URI，导致无限循环出现
+- Chrome 浏览器会提示：`ERR_TOO_MANY_REDIRECTS`
+
+## Http-Tunnel隧道
+
+用于通过 HTTP 连接传输非 HTTP协议格式的消息，常用于穿越防火墙
+-  建立隧道后，由于传输的并非HTTP 消息，因此不再遵循请求/响应模式，已变为双向传输
+
+![HTTPTunnel](assets/HTTPTunnel.png)
+
+[请求行](#request-line) authority-form = authority  用于 CONNECT 方法
+ 
+<span style="font-size: 19px;">**tunnel 隧道的常见用途：传递 SSL 消息**</span>
+
+- 防火墙拒绝 SSL 流量怎么办？
+
+![HTTPTunnel的用途](assets/HTTPTunnel的用途1.png)
+
+- 代理服务器没有证书，如何转发 SSL 流量？
+
+![HTTPTunnel的用途](assets/HTTPTunnel的用途2.png)
+
+<span style="font-size: 19px;">**Http Tunnel 隧道的认证**</span>
+
+![HTTPTunnel认证](assets/HTTPTunnel认证.png)
+
+## Web-crawler
+
+- 网络爬虫模拟人类使用浏览器浏览、操作页面的行为，对互联网的站点进行操作
+- 网络爬虫获取到一个页面后，会分析出页面里的所有 URI，沿着这些 URI 路径递归的遍历所有页面，因此被称为爬虫（ Web crawler ）、蜘蛛（ Spider ）、网络机器人（spiderbot）
+
+![crawler_baidu](assets/crawler_baidu.png)
+
+**SEO (Search Engine Optimization)，搜索引擎优化**
+- "合法"的优化：sitemap、title、keywords、https 等
+- "非法"的优化：利用 PageRank 算法漏洞
+
+**拒绝访问**
+
+- 为了对抗网络爬虫而生的图形验证码
+- 为了对抗图形验证码而生的"打码平台(captcha human bypass)"
+- 升级图形验证码
+
+<span style="font-size: 19px;">**网络爬虫如何抓取数据？**</span>
+
+- 模拟浏览器渲染引擎，需要对 JavaScript 文件分析执行、发起 Ajax 请求等
+- 爬虫爬取数据的速度 VS 互联网生成信息的速度
+  - 爬虫执行速度快，许多爬虫可以并发执行
+  - 互联网生成信息的速度远大于爬取速度
+- 优先爬取更重要的页面
+
+![webcrawler抓取数据](assets/webcrawler抓取数据.png)
+
+<span style="font-size: 19px;">**爬虫常见的请求头部**</span>
+
+- **User-Agent**：识别是哪类爬虫
+- **From**：提供爬虫机器人管理者的邮箱地址
+- **Accept**：告知服务器爬虫对哪些资源类型感兴趣
+- **Referer**：相当于包含了当前请求的页面 URI
+
+<span style="font-size: 19px;">**robots.txt：告知爬虫哪些内容不应爬取**</span>
+
+- [Robots exclusion protocol](http://www.robotstxt.org/orig.html)
+
+- robots.txt 文件内容
+  - User-agent：允许哪些机器人
+  - Disallow：禁止访问特定目录
+  - Crawl-delay：访问间隔秒数
+  - Allow：抵消 Disallow 指令
+  - Sitemap：指出站点地图的 URI
+
+![webcrawler_robots](assets/webcrawler_robots.png)
+
+## HTTP基本认证
+
+- RFC7235，一种基本的验证框架，被绝大部分浏览器所支持
+- 明文传输，如果不使用 TLS/SSL 传输则有安全问题
+
+![HTTPBasicAuthentication](assets/HTTPBasicAuthentication.png)
+
+<span style="font-size: 19px;">**认证请求**</span>
+
+**在请求中传递认证信息：Authorization = credentials**
+- credentials = auth-scheme [ 1*SP ( token68 / #auth-param ) ]
+  - auth-scheme = token
+  - token68 = 1*( ALPHA / DIGIT / "-" / "." / "_" / "~" / "+" / "/" ) *"="
+  - auth-param = token BWS "=" BWS ( token / quoted-string )
+    - BWS = OWS
+      - OWS = *( SP / HTAB )
+- 例如：authorization：Basic `ZGQ6ZWU=`
+  - 实际 ZGQ6ZWU=是 `dd:ee`的 base64 编码，表示用户名和密码
+
+由代理服务器认证：**Proxy-Authorization = credentials**
+
+<span style="font-size: 19px;">**认证响应**</span>
+
+**在响应头部中告知客户端需要认证：WWW-Authenticate = 1#challenge**
+- challenge = auth-scheme [ 1*SP ( token68 / #auth-param ) ]
+  - auth-scheme = token
+  - token68 = 1*( ALPHA / DIGIT / "-" / "." / "_" / "~" / "+" / "/" ) *"="
+  - auth-param = token BWS "=" BWS ( token / quoted-string )
+    - BWS = OWS
+      - OWS = *( SP / HTAB )
+- 例如：www_authenticate：Basic realm="test auth_basic"
+
+由代理服务器认证：**Proxy-Authenticate = 1#challenge**
+
+**认证响应码**
+- 由源服务器告诉客户端需要传递认证信息：401 Unauthorized
+- 由代理服务器认证： 407 Proxy Authentication Required
+- 认证失败：403 Forbidden
+
+## DNS
+
+[DNS in Detail](../cyber/web.md#dns-in-detail)
+
+<span style="font-size: 19px;">**递归查询**</span>
+
+![DNS递归查询](assets/DNS递归查询.png)
+
+<span style="font-size: 23px;">**DNS 报文：查询与响应**</span>
+
+- query：查询域名
+- response：返回 IP 地址
+
+![DNS报文](assets/DNS报文.png)
+
+![DNS报文2](assets/DNS报文2.png)
+
+<span style="font-size: 19px;">**Questions 格式**</span>
+
+**QNAME 编码规则**：
+- 以.分隔为多段，每段以字节数打头
+  - 单字节，前 2 比特必须为 00，只能表示2^6-1=63 字节
+- 在 ASCII 编码每段字符
+- 以 0 结尾
+
+**QTYPE 常用类型**
+
+| 值  | 类型  | 意义                 |
+|-----|-------|----------------------|
+| 1   | A     | IPv4地址             |
+| 2   | NS    | 权威域名服务器       |
+| 5   | CNAME | 别名                 |
+| 15  | MX    | 邮件交换             |
+| 16  | TXT   | 文本字符串           |
+| 28  | AAAA  | IPv6地址             |
+
+QCLASS：IN 表示 internet
+
+![DNS Question](assets/DNSQuestion.png)
+
+<span style="font-size: 19px;">**Answer 格式**</span>
+
+- NAME：前 2 位为 11，接引用 QNAME 偏移
+  - 在 DNS 头部的字符偏移数
+- TTL：Time To Live
+- RDLENGTH：指明 RDATA 的长度
+- RDATA：查询值，如 IP 地址，或者别名
+  - 别名遵循 QNAME 编码规则
+
+![DNSAnswer](assets/DNSAnswer.png)
+
+## wireshark
+
+[wireshark](../security/wireshark.md)
