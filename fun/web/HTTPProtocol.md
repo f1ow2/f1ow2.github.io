@@ -6,7 +6,7 @@ categories:
   - 教程
 tags: [web, HTTP]
 sidebar: false
-outline: deep
+outline: 2
 ---
 
 # HTTP Protocol
@@ -1033,6 +1033,254 @@ Content-Type、Expires、Last-Modified、Pragma 可供使用
 
 <span style="font-size: 23px;">**服务器处理条件请求的常见规则: Nginx**</span>
 
-**ngx_http_not_modified_filter_module**
+```mermaid
+graph TD
+    A[客户端发起带条件头的请求] --> B{存在 If-Match?}
+    %% 优先级1：If-Match（防并发覆盖，不匹配直接412）
+    B -->|是| C[校验：服务端ETag是否匹配If-Match列表]
+    C -->|不匹配| D[返回 412 Precondition Failed]
+    C -->|匹配| E{存在 If-Unmodified-Since?}
+    B -->|否| E
+
+    %% 优先级2：If-Unmodified-Since（基于时间的修改保护）
+    E -->|是| F[校验：Last-Modified ≤ If-Unmodified-Since?]
+    F -->|不满足| D
+    F -->|满足| G{存在 If-None-Match?}
+    E -->|否| G
+
+    %% 优先级3：If-None-Match（协商缓存核心，优先级高于If-Modified-Since）
+    G -->|是| H[校验：服务端ETag是否匹配If-None-Match列表]
+    H -->|匹配| I[返回 304 Not Modified（清空响应体）]
+    H -->|不匹配| J[返回 200 OK（携带完整资源）]
+
+    %% 优先级4：If-Modified-Since（仅无If-None-Match时生效）
+    G -->|否| K{存在 If-Modified-Since?}
+    K -->|是| L[校验：Last-Modified > If-Modified-Since?]
+    L -->|不满足（资源未修改）| I
+    L -->|满足（资源已更新）| J
+    K -->|否| J
+```
+
+---
+
+<span style="font-size: 23px;">**总结：条件请求的"四剑客"**</span>
+
+1. **If-Modified-Since** (时间版): “有新版吗？” -> `304`。
+2. **If-None-Match** (指纹版): “指纹变了吗？” -> `304`。
+3. **If-Unmodified-Since** (时间版): “还是旧版吗？是的话我再传（断点续传）。” -> `412`。
+4. **If-Match** (指纹版): “还是那个版本吗？是的话我再改（防止覆盖）。” -> `412`。
+
+我们可以把这两对组合看作是处理资源的两种不同**哲学**：
+
+<span style="font-size: 19px;">**缓存校验组合：If-Modified-Since + If-None-Match**</span>
+
+**核心目标：** **省流量（Performance）**。
+这一对通常出现在 `GET` 请求中，用于验证本地**缓存**是否仍然有效。
+
+*   **协同逻辑：**
+    *   现代浏览器通常会**同时发送**这两个 Header。
+    *   **优先级：** 根据 HTTP 规范，**`If-None-Match` 的优先级高于 `If-Modified-Since`**。
+    *   **原因：** 时间戳（Modified）可能不准确（比如 1 秒内多次修改），而 ETag（None-Match）是内容的哈希值，绝对精确。如果服务器看到 ETag 没变，就会直接忽略时间戳的对比。
+*   **结果：** 匹配成功则返回 **304 Not Modified**。
 
 
+<span style="font-size: 19px;">**状态断言组合：If-Unmodified-Since + If-Match**</span>
+
+**核心目标：** **保安全（Safety/Integrity）**。
+这一对通常出现在 `PUT`、`PATCH` 或 `DELETE` 等修改类请求中，用于确保“我正在修改的，确实是我以为的那个版本”。
+
+*   **协同逻辑：**
+    *   **If-Match**：确保资源的“指纹”没变（最强校验）。
+    *   **If-Unmodified-Since**：确保资源从我上次看到它起，没有被别人改动过时间。
+*   **典型场景（断点续传）：**
+    当你在下载一个大文件时突然中断，重连时你会发送 `If-Unmodified-Since`。意思是：“如果服务器上的这个文件还没变，请把剩下的字节发给我；如果文件已经变了（出新版了），那旧的片段就没用了，请从头开始发。”
+*   **典型场景（乐观锁）：**
+    在 API 开发中，防止两个管理员同时修改同一条数据。
+*   **结果：** 如果校验失败（资源已变），返回 **412 Precondition Failed**。
+
+| 组合 | 核心逻辑 | 目的 | 失败（变了）的结果 |
+| :--- | :--- | :--- | :--- |
+| **None-Match / Modified-Since** | 只要**变了**，就给我**新数据** | 性能优化 | **200 OK** (发货) |
+| **Match / Unmodified-Since** | 只要**变了**，就**别操作** | 数据一致性 | **412 Precondition Failed** (报错) |
+
+在实际的 Nginx 配置或 Web 开发中，`If-None-Match` 几乎统治了所有的静态资源缓存场景，而 `If-Match` 则是分布式系统和高级 API 设计中的常客。
+
+---
+
+## HTTP缓存
+
+### 工作原理
+
+<span style="font-size: 19px;">**HTTP 缓存：为当前请求复用前请求的响应**</span>
+
+- 目标：减少时延；降低带宽消耗
+- 可选而又必要
+
+![httpcache1](assets/httpcache1.png)
+
+**如果缓存没有过期**
+
+![httpcache2](assets/httpcache2.png)
+
+**如果缓存过期，则继续从服务器验证**
+
+![httpcache3](assets/httpcache3.png)
+
+<span style="font-size: 19px;">**私有缓存与共享缓存**</span>
+
+- **私有缓存**：仅供一个用户使用的缓存，通常只存在于如**浏览器**这样的**客户端**上
+- **共享缓存**：可以供多个用户的缓存，存在于网络中负责转发消息的**代理服务器**（对热点资源常使用共享缓存，以减轻源服务器的压力，并提升网络效率）
+  - Authentication 响应不可被代理服务器缓存
+  - 正向代理
+  - 反向代理
+
+**过期的共享缓存--代理服务器**
+
+![代理服务器共享缓存](assets/代理服务器共享缓存.png)
+
+<span style="font-size: 19px;">**缓存实现示意图**</span>
+
+![缓存实现示意图](assets/缓存实现示意图.png)
+
+### 缓存新鲜度计算
+
+<span style="font-size: 19px;">**判断缓存是否过期**</span>
+
+- response_is_fresh = (`freshness_lifetime` > **current_age**)
+  - freshness_lifetime：按优先级，取以下响应头部的值
+    - `s-maxage > max-age > Expires > 预估过期时间`
+      - 例如：
+        - Cache-Control: s-maxage=3600
+        - Cache-Control: max-age=86400
+        - Expires: Fri, 03 May 2019 03:15:20 GMT
+          - Expires = HTTP-date，指明缓存的绝对过期时间
+
+**常见的预估时间**
+
+- RFC7234 推荐：(DownloadTime– LastModified)*10%
+
+<span style="font-size: 19px;">**Age头部及 current_age 的计算**</span>
+
+**Age头部** 是 HTTP 响应头部中的一个字段，其值是一个**以秒为单位的非负整数**。它代表了一个缓存对象（例如一张图片或一个网页）从被源服务器生成，到被中间代理服务器（如CDN）用于响应请求时，所经历的总时长
+
+- Age 头部是缓存机制中保证数据准确性的关键标识。它明确标记了一个响应在代理或CDN缓存中已驻留的时长，用以判断该缓存内容的“新鲜度”。
+  - Age = delta-seconds
+  - **age_value**：响应头中 Age 字段的值（若无则为 0）
+
+**current_age**：是缓存算法内部计算出的一个变量，**提供一个标准化的、从源服务器生成响应到当前时刻为止的"总年龄"**。它综合考虑了：
+
+- 响应中携带的 Date 头（源站生成时间）
+- 传递过程中各级缓存写入的 Age 头（已有缓存时长）
+- 从收到响应到当前判断时刻的本地滞留时间（包括网络传输和缓存排队时间）
+
+**用途**：用于与 `freshness_lifetime` 进行比较，以判断该缓存响应是否仍然“新鲜”（可以直接使用，无需回源验证）。
+
+**current_age 的计算**：
+
+current_age = corrected_initial_age + resident_time;
+  - resident_time = now - response_time(接收到响应的时间);
+  - corrected_initial_age = max(apparent_age, corrected_age_value);
+    - corrected_age_value = **age_value** + response_delay;
+      - response_delay = response_time - request_time(发起请求的时间);
+    - apparent_age = max(0, response_time - date_value);
+
+### Cache-Control
+
+**Cache-Control 头部**
+
+- Cache-Control = 1#cache-directive 
+  - cache-directive = token [ "=" ( `token` / quoted-string ) ]
+    - `delta-seconds = 1*DIGIT` 
+      - RFC 规范中的要求是，至少能支持到 2147483648 (2^31)
+- 请求中的头部：`max-age`、`max-stale`、`min-fresh`、no-cache、no-store、no-transform、only-if-cached
+- 响应中的头部： `max-age`、`s-maxage` 、 must-revalidate 、proxy-revalidate 、no-cache、no-store、no-transform、public、private
+
+**Cache-Control 头部在请求中的值**
+
+- `max-age`：告诉服务器，客户端不会接受 Age 超出 max-age 秒的缓存
+- `max-stale`：告诉服务器，即使缓存不再新鲜，但陈旧秒数没有超出 max-stale 时，客户端仍
+打算使用。若 max-stale 后没有值，则表示无论过期多久客户端都可使用
+- `min-fresh`：告诉服务器，Age 至少经过 min-fresh 秒后缓存才可使用
+- no-cache：告诉服务器，不能直接使用已有缓存作为响应返回，除非带着缓存条件到上游服
+务端得到 304 验证返回码才可使用现有缓存
+- no-store：告诉各代理服务器不要对该请求的响应缓存（实际有不少不遵守该规定的代理服务
+器）
+- no-transform：告诉代理服务器不要修改消息包体的内容
+- only-if-cached：告诉服务器仅能返回缓存的响应，否则若没有缓存则返回 504 错误码
+
+**Cache-Control 头部在响应中的值**
+
+- must-revalidate：告诉客户端一旦缓存过期，必须向服务器验证后才可使用
+- proxy-revalidate：与 must-revalidate 类似，但它仅对代理服务器的共享缓存
+有效
+- **no-cache**：告诉客户端不能直接使用缓存的响应，使用前必须在源服务器验证
+得到 304 返回码。如果 no-cache 后指定头部，则若客户端的后续请求及响应
+中不含有这些头则可直接使用缓存
+- `max-age`：告诉客户端缓存 Age 超出 max-age 秒后则缓存过期
+- `s-maxage`：与 max-age 相似，但仅针对共享缓存，且优先级高于 max-age 和 
+Expires
+- public：表示无论私有缓存或者共享缓存，皆可将该响应缓存
+- **private**：表示该响应不能被代理服务器作为共享缓存使用。若 private 后指定头
+部，则在告诉代理服务器不能缓存指定的头部，但可缓存其他部分
+- no-store：告诉所有下游节点不能对响应进行缓存
+- no-transform：告诉代理服务器不能修改消息包体的内容
+
+<span style="font-size: 19px;">**其他响应头部**</span>
+
+- Pragma = 1#pragma-directive 
+  - pragma-directive = "no-cache" / extension-pragma 
+    - extension-pragma = token [ "=" ( token / quoted-string ) ]
+  - Pragma: no-cache与Cache-Control: no-cache 意义相同
+
+### 缓存条件
+
+<span style="font-size: 19px;">**什么样的 HTTP 响应会缓存？RFC7234**</span>
+
+- 请求方法可以被缓存理解（不只于 GET 方法）
+- 响应码可以被缓存理解（404、206 也可以被缓存）
+- 响应与请求的头部没有指明 no-store
+- 响应中至少应含有以下头部中的 1 个或者多个：
+  - Expires、max-age、s-maxage、public
+  - 当响应中没有明确指示过期时间的头部时，如果响应码非常明确，也可以缓存
+- 如果缓存在代理服务器上
+  - 不含有 private
+  - 不含有 Authorization
+
+<span style="font-size: 19px;">**使用缓存作为当前请求响应的条件**</span>
+
+- URI 是匹配的
+  - URI 作为主要的缓存关键字，当一个 URI 同时对应多份缓存时，选择日期最近的缓存
+  - 例如 Nginx 中默认的缓存关键字：proxy_cache_key 
+  `$scheme$proxy_host$request_uri`;
+- 缓存中的响应允许当前请求的方法使用缓存
+- 缓存中的响应 Vary 头部指定的头部必须与请求中的头部相匹配：
+  - Vary = "*" / 1#field-name
+    - Vary: *意味着一定匹配失败
+- 当前请求以及缓存中的响应都不包含 no-cache 头部（Pragma: no-cache 或者 Cache-Control: no-cache）
+- 缓存中的响应必须是以下三者之一：
+  - 新鲜的（时间上未过期）
+  - 缓存中的响应头部明确告知可以使用过期的响应（如 Cache-Control: max-stale=60）
+  - 使用条件请求去服务器端验证请求是否过期，得到 304 响应
+
+**vary缓存**
+
+![vary缓存](assets/vary缓存.png)
+
+<span style="font-size: 19px;">**Warning 头部：对响应码进行补充（缓存或包体转换）**</span>
+
+- Warning = 1#warning-value 
+  - warning-value = `warn-code` SP warn-agent SP warn-text [ SP warn-date ] 
+    - warn-code = `3DIGIT` 
+    - warn-agent = ( uri-host [ ":" port ] ) / pseudonym 
+    - warn-text = quoted-string
+    - warn-date = DQUOTE HTTP-date DQUOTE
+- 常见的 warn-code
+  - Warning: `110` - "Response is Stale“
+  - Warning: `111` - "Revalidation Failed“
+  - Warning: `112` - "Disconnected Operation“
+  - Warning: `113` - "Heuristic Expiration“
+  - Warning: `199` - "Miscellaneous Warning“
+  - Warning: `214` - "Transformation Applied“
+  - Warning: `299` - "Miscellaneous Persistent Warning"
+
+## URI重定向
