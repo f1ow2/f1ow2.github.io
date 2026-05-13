@@ -10,7 +10,8 @@ import PlayingMusicController from './PlayingMusicController.vue'
  */
 const musics = [
   'Song for the Beyond.mp3',
-  'Believe me.mp3'
+  'Believe me.mp3',
+  '花 (Live).mp3',
 ]
 // 当前音乐
 const currentMusic = ref('/music/${musics[0]}')

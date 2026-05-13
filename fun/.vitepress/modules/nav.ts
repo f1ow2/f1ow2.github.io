@@ -28,10 +28,10 @@ export const nav = [
       {
         items: [
           { text: 'Tools', link: '/cyber/tool.md' },
-          { text: 'metasploit', link: '/security/Metasploit.md' },
-          { text: 'burpSuite', link: '/security/BurpSuite.md' },
           { text: 'wireshark', link: '/security/wireshark.md' },
+          { text: 'burpSuite', link: '/security/BurpSuite.md' },
           { text: 'tcpdump', link: '/security/tcpdump.md' },
+          { text: 'metasploit', link: '/security/Metasploit.md' },
           { text: 'bruteforcingtools', link: '/security/bruteforcingtools.md' },
           { text: 'offensivetools', link: '/security/offensivetools.md' },
           { text: 'defensivetools', link: '/security/defensivetools.md' },

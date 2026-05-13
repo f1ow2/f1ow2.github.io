@@ -1461,7 +1461,7 @@ URI-reference = URI/relative-ref
 
 **QNAME 编码规则**：
 - 以.分隔为多段，每段以字节数打头
-  - 单字节，前 2 比特必须为 00，只能表示2^6-1=63 字节
+  - 单字节，前 2 比特必须为 00，只能表示 2<sup>6</sup>-1=63 字节
 - 在 ASCII 编码每段字符
 - 以 0 结尾
 
@@ -1476,17 +1476,17 @@ URI-reference = URI/relative-ref
 | 16  | TXT   | 文本字符串           |
 | 28  | AAAA  | IPv6地址             |
 
-QCLASS：IN 表示 internet
+**QCLASS：IN 表示 internet**
 
 ![DNS Question](assets/DNSQuestion.png)
 
 <span style="font-size: 19px;">**Answer 格式**</span>
 
-- NAME：前 2 位为 11，接引用 QNAME 偏移
+- **NAME：前 2 位为 `À(c0)`，接引用 QNAME 偏移**
   - 在 DNS 头部的字符偏移数
-- TTL：Time To Live
-- RDLENGTH：指明 RDATA 的长度
-- RDATA：查询值，如 IP 地址，或者别名
+- **TTL：Time To Live**
+- **RDLENGTH：指明 RDATA 的长度**
+- **RDATA：查询值，如 IP 地址，或者别名**
   - 别名遵循 QNAME 编码规则
 
 ![DNSAnswer](assets/DNSAnswer.png)
