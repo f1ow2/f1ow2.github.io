@@ -237,3 +237,16 @@ You can use the"right-click menu" or  "`Analyse --> Follow TCP/UDP/HTTP Stream`"
 | len    | Returns the byte length of a string or bytes field. |
 | count  | Returns the number of field occurrences in a frame. |
 | string | Converts a non-string field to a string. |
+
+## 解密TLS-SSL报文
+
+**原理：获得 TLS 握手阶段生成的密钥**
+  - 通过 Chrome 浏览器 DEBUG 日志中的握手信息生成密钥
+  
+**步骤**
+  - 配置 Chrome 输出 DEBUG 日志
+    - 配置环境变量 `SSLKEYLOGFILE`
+  - 在 Wireshark 中配置解析 DEBUG 日志
+    - 编辑->首选项->Protocols->TLS/SSL
+      - (Pre)-Master-Secret log filename
+
