@@ -11,16 +11,16 @@ hero:
 
   actions:
     - theme: brand
-      text: shortcut
+      text: 🖇️shortcut
       link: /shortcut.md
     - theme: brand
-      text: tools
+      text: 🔧tools
       link: /tools/generator.md
     - theme: alt
-      text: linux
+      text: 🐧linux
       link: /linux/linuxCommands.md
     - theme: alt
-      text: win 
+      text: 🪟win 
       link: /windows/WindowsCommand.md
     # - theme: alt
     #   text: go

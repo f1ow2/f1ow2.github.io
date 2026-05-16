@@ -6,7 +6,7 @@ categories:
   - 教程
 tags: [web, WebSocket]
 sidebar: false
-outline: deep
+outline: 2
 ---
 
 # HTTP/2 Protocol
@@ -17,15 +17,15 @@ outline: deep
 
 - 随着带宽的增加，延迟并没有显著下降
 - 并发连接有限
-- 同一连接同时只能在完成一个 HTTP 事务（请求/响应）才能处理下一个事务
+- 同一连接同时只能在完成一个 HTTP 事务(请求/响应)才能处理下一个事务
 - 单连接上的串行请求
-- 无状态导致的高传输量（低网络效率）
+- 无状态导致的高传输量(低网络效率)
 - HTTP/1.1 不支持服务器推送消息
 
 <span style="font-size: 23px;">**HTTP/2 特性**</span>
 
-- SPDY（2012-2016）
-- HTTP2（RFC7540，2015.5）
+- SPDY(2012-2016)
+- HTTP2(RFC7540，2015.5)
   - 在应用层上修改，基于并充分挖掘 TCP 协议性能
   - 客户端向 server 发送 request 这种基本模型不会变。
   - 老的 scheme 不会变，没有 http2://。
@@ -102,7 +102,7 @@ tcpdump -i eth0 port 80 and host nghttp2.org -w h2c.pcap
 ```
 <span style="font-size: 19px;">**H2C：客户端发送的 Magic 帧**</span>
 
-Preface（ASCII 编码，12字节）
+Preface(ASCII 编码，12字节)
 - 何时发送？
   - 接收到服务器发送来的 101 Switching Protocols
   - TLS 握手成功后
@@ -157,7 +157,7 @@ Preface（ASCII 编码，12字节）
 <span style="font-size: 19px;">**实现多路复用的关键**</span>
 
 - 接收端的实现可据此并发组装消息
-- 同一 Stream 内的 frame 必须是有序的（无法并发）
+- 同一 Stream 内的 frame 必须是有序的(无法并发)
 - SETTINGS_MAX_CONCURRENT_STREAMS 控制着并发 Stream 数
 
 <span style="font-size: 19px;">**推送依赖性请求的关键**</span>
@@ -177,7 +177,7 @@ Preface（ASCII 编码，12字节）
 
 - HTTP/2 **应用层流量控制**，只对 **DATA 数据帧**生效
 - Stream **ID=0** 是全局连接控制流，只用来传连接级控制帧，绝不传输任何业务请求 / 响应数据
-- HTTP/1.1 升级到 h2c（明文 HTTP/2）时，原 HTTP/1.1 请求会映射为流 ID=1；客户端完成请求发送后，该流立即进入 half-closed (local) 状态，仅用于接收服务器响应，不能再发送新请求数据
+- HTTP/1.1 升级到 h2c(明文 HTTP/2)时，原 HTTP/1.1 请求会映射为流 ID=1；客户端完成请求发送后，该流立即进入 half-closed (local) 状态，仅用于接收服务器响应，不能再发送新请求数据
 
 ### 9字节标准帧头部
 
@@ -189,7 +189,7 @@ Preface（ASCII 编码，12字节）
   - 所有实现必须可以支持 16KB 以下的帧
 - **2<sup>14</sup> (16,384) 至 2<sup>24</sup>-1 (16,777,215)** 
   - 传递 16KB 到 16MB 的帧时，必须接收端首先公布自己可以处理此大小
-    - 通过 SETTINGS_MAX_FRAME_SIZE 帧（Identifier=5）告知
+    - 通过 SETTINGS_MAX_FRAME_SIZE 帧(Identifier=5)告知
 
 ### 帧类型及设置帧的子类型
 
@@ -220,7 +220,7 @@ Preface（ASCII 编码，12字节）
 <span style="font-size: 19px;">**Settings 设置对象(Identifier)的类型**</span>
 
 - **设置类型**
-  - SETTINGS_HEADER_TABLE_SIZE (0x1): 通知对端索引表的最大尺寸（单位字节，初始 4096 字节）
+  - SETTINGS_HEADER_TABLE_SIZE (0x1): 通知对端索引表的最大尺寸(单位字节，初始 4096 字节)
   - SETTINGS_ENABLE_PUSH (0x2): Value设置为 0 时可禁用服务器推送功能，1 表示启用推送功能
   - SETTINGS_MAX_CONCURRENT_STREAMS (0x3): 告诉接收端允许的最大并发流数量
   - SETTINGS_INITIAL_WINDOW_SIZE (0x4): 声明发送端的窗口大小，用于Stream级别流控，初始值2^16-1 (65,535)字节
@@ -229,13 +229,13 @@ Preface（ASCII 编码，12字节）
 
 ## HPACK
 
-**HPACK**（RFC 7541）是**HTTP/2 专用头部压缩算法**，专门压缩 HTTP 请求 / 响应的 **Header头部**。
+**HPACK**(RFC 7541)是**HTTP/2 专用头部压缩算法**，专门压缩 HTTP 请求 / 响应的 **Header头部**。
 
 
 三种压缩方式
 - 静态字典
 - 动态字典
-- 压缩算法：Huffman 编码（最高压缩比 8:5）
+- 压缩算法：Huffman 编码(最高压缩比 8:5)
 
 <span style="font-size: 19px;">**静态字典**</span>
 
@@ -398,7 +398,7 @@ else
 
 <span style="font-size: 19px;">**PUSH 推送模式的禁用**</span>
 
-- SETTINGS_ENABLE_PUSH（0x2）
+- SETTINGS_ENABLE_PUSH(0x2)
   - 1表示启用推送功能
   - 0表示禁用推送功能
 
@@ -416,7 +416,7 @@ else
 
 <span style="font-size: 19px;">**Message 特性**</span>
 
-- 一条 HTTP Message 由 1 个 HEADER（可能含有 0 个或者多个持续帧构成）及 0 个或者多个 DATA 帧构成
+- 一条 HTTP Message 由 1 个 HEADER(可能含有 0 个或者多个持续帧构成)及 0 个或者多个 DATA 帧构成
 - HEADER 消息同时包含 HTTP/1.1 中的 start line 与 headers 部分
 - 取消 HTTP/1.1 中的不定长 Chunk 消息
 
@@ -508,7 +508,7 @@ else
 - 客户端与服务器都具备流量控制能力
 - 单向流控制：发送和接收独立设定流量控制
 - 以信用为基础：接收端设定上限，发送端应当遵循接收端发出的指令
-- 流量控制窗口（流或者连接）的初始值是 65535 字节
+- 流量控制窗口(流或者连接)的初始值是 65535 字节
 - 只有 DATA 帧服从流量控制
 - 流量控制不能被禁用
 
@@ -533,7 +533,7 @@ else
 
 <span style="font-size: 19px;">**SETTINGS_MAX_CONCURRENT_STREAMS 并发流**</span>
 
-- 并发仅统计 open 或者 half-close 状态的流（不包含用于推送的 reserved 状态）
+- 并发仅统计 open 或者 half-close 状态的流(不包含用于推送的 reserved 状态)
 - 超出限制后的错误码
   - PROTOCOL_ERROR
   - REFUSED_STREAM
@@ -567,3 +567,147 @@ else
 
 ---
 
+## HTTP3
+
+<span style="font-size: 19px;">**HTTP/2 的问题**</span>
+
+- TCP 以及 TCP+TLS 建链握手过多
+- TCP 由操作系统内核实现，更新缓慢
+- 多路复用与 TCP 的队头阻塞问题
+  - 资源的有序到达
+
+<img src="./assets/TCP队头阻塞.png" alt="background" width="433" >
+
+### QUIC协议
+
+iQUIC是**Internet Engineering Task Force (IETF)标准化的QUIC协议**，区别于Google早期的私有版本gQUIC，现已成为互联网传输层的**新标准**(RFC 9000，2021年5月正式发布)。HTTP/3完全基于iQUIC构建，2026年已在全球大规模部署，成为Web传输的主流选择。
+
+<span style="font-size: 19px;">**HTTP/3 与 QUIC 协议层级**</span>
+
+![QUIC协议层级](assets/QUIC协议层级.png)
+
+<span style="font-size: 19px;">**标准体系**</span>
+
+iQUIC由一系列RFC文档构成完整规范，核心与扩展如下：
+
+| 类别 | 核心RFC | 说明 |
+|------|---------|------|
+| 基础协议 | RFC 9000 | QUIC传输层核心定义(连接、流、帧、错误处理) |
+| 安全 | RFC 9001 | 使用TLS 1.3保护QUIC(强制加密) |
+| 拥塞控制 | RFC 9002 | 丢包检测与拥塞控制算法 |
+| 版本协商 | RFC 8999 | 版本独立特性，支持v1/v2平滑升级 |
+| HTTP映射 | RFC 9114 | HTTP/3协议规范 |
+| 扩展版本 | RFC 9369 | QUIC v2(2022年发布，小幅优化) |
+
+<span style="font-size: 19px;">**核心技术特性(iQUIC的“灵魂”)**</span>
+
+
+1. UDP承载 + 内置TLS 1.3(安全与穿透性)
+- 基于UDP传输，解决TCP队头阻塞，**穿透NAT/防火墙能力更强**
+- **强制TLS 1.3加密**：握手与传输合一，全程加密(包头+数据)，无明文头部
+- 支持**0-RTT快速握手**(首次连接后，后续可0往返传输数据)和**1-RTT完整握手**
+
+2. 连接标识：Connection ID(CID)(移动网络福音)
+- 连接由**16字节左右的CID**标识，而非传统“IP+端口”
+- **连接迁移**：Wi‑Fi ↔ 5G切换时无需重建连接，视频/直播/游戏**无感切换**
+- 支持**多CID机制**：同时使用多个路径，提升可靠性与吞吐量
+
+3. 多路复用 + 流独立性(解决TCP队头阻塞)
+- 单个连接内可承载**数十万逻辑流**，流间完全隔离
+- **流独立序列空间**：某流丢包仅影响自身，其他流正常传输，彻底消除队头阻塞
+- 流类型：**双向流**(请求-响应)与**单向流**(服务器推送/文件上传)
+
+4. 双层流量控制(连接级+流级)
+- 连接级：限制整个连接的总数据量，防止接收缓冲区溢出
+- 流级：限制单个流的数据量，避免“贪婪流”耗尽所有资源
+- 基于滑动窗口机制，与TCP类似但更灵活
+
+5. 帧结构(高效数据传输)
+- **长头帧**：用于握手阶段，携带完整版本、CID等信息
+- **短头帧**：用于数据传输，极度精简(仅8字节)，节省带宽
+- 核心帧类型：
+  - 控制帧：`CRYPTO`(加密数据)、`SETTINGS`(参数协商)、`WINDOW_UPDATE`(流控更新)、`PING`(保活)、`GOAWAY`(关闭连接)
+  - 数据帧：`DATA`(HTTP消息体)、`HEADERS`(HPACK压缩头部)
+
+6. 拥塞控制(可插拔架构)
+- 默认支持**CUBIC**和**BBRv3**等成熟算法
+- 应用可自定义拥塞控制策略，无需修改操作系统内核
+- 内置丢包检测与快速重传机制，适应移动网络高丢包环境
+
+
+### 解决的问题
+
+<span style="font-size: 19px;">**HTTP3 的连接迁移**</span>
+
+- 允许客户端更换 IP 地址、端口后，仍然可以复用前连接，业务不断连、不重握
+
+![HTTP3的连接迁移](assets/HTTP3的连接迁移.png)
+
+<span style="font-size: 19px;">**HTTP3解决了队头阻塞问题**</span>
+
+- UDP 报文：先天没有队列概念
+
+![HTTP3解决队头阻塞](assets/HTTP3解决队头阻塞.png)
+
+### HTTP3握手
+
+<span style="font-size: 19px;">**HTTP3：1RTT 完全握手**</span>
+
+<img src="./assets/HTTP3_1RTT 完全握手.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**会话恢复场景下的 0RTT 握手**</span>
+
+![HTTP3_0RTT握手](assets/HTTP3_0RTT握手.png)
+
+<span style="font-size: 19px;">**HTTP3：0RTT 恢复会话握手**</span>
+
+<img src="./assets/HTTP3_0RTT恢复会话握手.png" alt="background" width="533" >
+
+## 七层负载均衡
+
+<span style="font-size: 19px;">**四层负载均衡**</span>
+
+<img src="./assets/四层负载均衡.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**七层负载均衡协议转换举例**</span>
+
+![七层负载均衡协议转换举例](assets/七层负载均衡协议转换举例.png)
+
+<span style="font-size: 23px;">**HTTP 协议转换**</span>
+
+**request line 起始行**
+- URL 重写(包括 query 参数转换)
+- method 变换
+- http version 版本变换
+
+**header 头部**
+- header 名字、值作转换(如 HTTP/2 索引表中查询头部，转换为适配协议格式)
+- 负载均衡对 header 作修改
+  - 隐藏某个 header(例如隐藏 X-Accel-Expires 等头部)
+  - 新增 header(例如 CORS 允许跨域访问)
+  - 修改 header 的 value 值(例如修改 Server 头部的值)
+
+**body 包体**
+- 对内容使用通用算法(如压缩算法)转换
+- 按固定协议格式对内容进行转换
+
+<span style="font-size: 19px;">**WAF 防火墙(Web Application Firewall)**</span>
+
+**request line 请求行**
+- 检查 URL 及 query 参数是否合法(如 SQL 注入)
+- method 方法是否合法(例如阻止 TRACE 方法)
+- http version 版本是否合法(例如不接收 HTTP/1.0 请求)
+  
+**header 头部**
+- 检查 header 项是否符合应用场景要求
+  
+**body 包体**
+- 对于FORM表单等通用格式做过滤
+
+<span style="font-size: 19px;">**负载均衡算法**</span>
+
+![负载均衡算法](assets/负载均衡算法.png)
+
+<span style="font-size: 19px;">**缓存功能**</span>
+
+![缓存功能](assets/缓存功能.png)
