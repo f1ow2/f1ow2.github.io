@@ -109,7 +109,7 @@ You can use the"right-click menu" or  "`Analyse --> Follow TCP/UDP/HTTP Stream`"
 - 对已经抓取到的报文过滤显示
 - 功能强大
 
-### BPF 过滤器
+### BPF过滤器
 
 **Wireshark 捕获过滤器**
 

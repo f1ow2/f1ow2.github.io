@@ -6,14 +6,16 @@ categories:
 tags: [Tcpdump, network, Packet Capture]
 draft: true
 sidebar: false
-outline: 2
+outline: deep
 ---
 
 # Tcpdump
 
 The Tcpdump tool and its `libpcap` library are written in C and C++ and were released for Unix-like systems in the late 1980s or early 1990s. Consequently, they are very stable and offer optimal speed. The libpcap library is the foundation for various other networking tools today. Moreover, it was ported to MS Windows as winpcap.
 
-## Basic Packet Capture
+## intro
+
+### Basic Packet Capture
 
 You can run `tcpdump` without providing any arguments; however, this is only useful to test that you have it installed! In any real scenario, we must be specific about what to listen to, where to write, and how to display the packets.
 
@@ -33,7 +35,7 @@ Consider the following examples:
 - `tcpdump -i wlo1 -w data.pcap` captures packets by listening on the `wlo1` interface (the WiFi interface) and writes the packets to `data.pcap`. It will continue till the user interrupts the capture by pressing CTRL-C.
 - `tcpdump -i any -nn` captures packets on all interfaces and displays them on screen without domain name or protocol resolution.
 
-## Filtering Expressions
+### Filtering Expressions
 
 <span style="font-size: 23px;">**Logical Operators**</span>
 Three logical operators that can be handy:
@@ -86,7 +88,7 @@ DNS 主要使用两种协议：
 # What hostname (subdomain) appears in the first DNS query?
 tcpdump -r traffic.pcap port 53 -n
 ```
-## Advanced Filtering
+### Advanced Filtering
 
 <span style="font-size: 23px;">**Header Bytes**</span>
 
@@ -118,7 +120,7 @@ Based on the above, we can write:
 - `tcpdump "tcp[tcpflags] & tcp-syn != 0"` to capture TCP packets with at least the SYN (Synchronize) flag set.
 - `tcpdump "tcp[tcpflags] & (tcp-syn|tcp-ack) != 0"` to capture TCP packets with at least the SYN (Synchronize) or ACK (Acknowledge) flags set.
 
-## Displaying Packets
+### Displaying Packets
 
 Tcpdump is a rich program with many options to customize how the packets are printed and displayed. We have selected to cover the following five options:
 
@@ -131,3 +133,55 @@ Tcpdump is a rich program with many options to customize how the packets are pri
 | `tcpdump -X`   | Show packets in both hexadecimal and ASCII     |
 
 ---
+
+## how2use
+
+### BPF 过滤器
+
+[BPF 过滤器](./wireshark.md#bpf过滤器)
+
+<span style="font-size: 23px;">**BPF：Expression 表达式**</span>
+
+<img src="./assets/BPF_Expression 表达式.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**限定词**</span>
+
+[BPF 过滤器-限定词](./wireshark.md#bpf过滤器)
+
+### 捕获及停止条件
+
+- -D 列举所有网卡设备
+- -i 选择网卡设备
+- -c 抓取多少条报文
+- --time-stamp-precision 指定捕获时的时间精度，默认毫秒 micro，可选纳秒 nano
+- -s 指定每条报文的最大字节数，默认 262144 字节
+
+### 文件操作
+
+- -w 输出结果至文件（可被Wireshark读取分析）
+- -C 限制输入文件的大小，超出后以后缀加 1 等数字的形式递增。注意单位是 1,000,000 字节
+- -W 指定输出文件的最大数量，到达后会重新覆写第 1 个文件
+- -G 指定每隔N秒就重新输出至新文件，注意-w 参数应基于`strftime` 参数指定文件名
+- -r 读取一个抓包文件
+- -V 将待读取的多个文件名写入一个文件中，通过读取该文件同时读取多个文件
+
+### 输出时间戳格式
+
+- -t 不显示时间戳
+- -tt 自 1970年 1 月 1 日 0 点至今的秒数
+- -ttt 显示邻近两行报文间经过的秒数
+- -tttt 带日期的完整时间
+- -ttttt 自第一个抓取的报文起经历的秒数
+
+### 分析信息详情
+
+- -e 显示数据链路层头部
+- -q 不显示传输层信息
+- -v 显示网络层头部更多的信息，如 TTL、id 等
+- -n 显示 IP 地址、数字端口代替 hostname 等
+- -S TCP 信息以绝对序列号替代相对序列号
+- -A 以 ASCII 方式显示报文内容，适用 HTTP 分析
+- -x 以 16 进制方式显示报文内容，不显示数据链路层
+- -xx 以 16 进制方式显示报文内容，显示数据链路层
+- -X 同时以 16 进制及 ACII 方式显示报文内容，不显示数据链路层
+- -XX 同时以 16 进制及 ACII 方式显示报文内容，显示数据链路层
