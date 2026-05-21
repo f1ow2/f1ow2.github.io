@@ -6,7 +6,7 @@ categories:
   - 教程
 tags: [web, TCP]
 sidebar: false
-outline: deep
+outline: 2
 ---
 
 # TCP Protocol
@@ -611,7 +611,7 @@ ssthresh 加上 3*MSS
 
 ![SACK](assets/SACK.png)
 
-### BBR
+## BBR
 
 <span style="font-size: 19px;">**大管道向小管道传输数据引发拥堵**</span>
 
@@ -637,3 +637,274 @@ ssthresh 加上 3*MSS
   - 同时只有一个可以被准确测量
 
 <img src="./assets/最佳控制点.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**BBR 如何找到准确的 RTprop 和 BtlBw**</span>
+
+- RTT 里有排队噪声
+  - ACK 延迟确认、网络设备排队
+
+<img src="./assets/RTprop和BtlBw计算.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**基于 pacing_gain 调整**</span>
+
+- **700 ms内的测量**
+  - 10-Mbps, 40-ms链路
+- **如何检测带宽变大？**
+  - 定期提升pacing_gain
+
+<img src="./assets/基于 pacing_gain 调整.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**当线路变换时 pacing_gain 的作用**</span>
+
+- 20 秒：10-Mbps, 40-ms 升至 20 Mbps
+- 40 秒：又降至 10-Mbps
+
+<img src="./assets/当线路变换时 pacing_gain 的作用.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**对比 CUBIC 下的慢启动**</span>
+
+- **10-Mbps, 40-ms**
+- **慢启动**
+  - startup
+  - drain
+  - probe BW
+
+<img src="./assets/对比 CUBIC 下的慢启动.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**多条初始速度不同的 TCP 链路快速的平均分享带宽**</span>
+
+- **100-Mbps/10-ms**
+
+<img src="./assets/平均分享带宽.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**Google B4 WAN实践**</span>
+
+- 2-25 倍吞吐量提升
+  - 累积分布函数
+- 75%连接受限于 linux kerner 接收缓存
+- 在美国-欧洲路径上提升 linux kernal 接收缓存上限后有 133 倍提升
+
+<img src="./assets/Google B4 WAN实践.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**RTT 大幅下降**</span>
+
+- **10-Mbps, 40-ms**
+
+<img src="./assets/RTT 大幅下降.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**不同丢包率下的吞吐量：CUBIC VS BBR**</span>
+
+- **100-Mbps/100-ms**
+- **红色 CUBIC**
+- **绿色 BBR**
+
+<img src="./assets/不同丢包率下的吞吐量.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**收到 Ack 时**</span>
+
+- **更新 RTprop 、BtlBw**
+
+```javascript
+function onAck(packet) 
+  rtt = now - packet.sendtime 
+  update_min_filter(RTpropFilter, rtt) 
+  delivered += packet.size 
+  delivered_time = now 
+  deliveryRate=(delivered-packet.delivered)/(delivered_time
+packet.delivered_time) 
+  if (deliveryRate > BtlBwFilter.currentMax || ! packet.app_limited) 
+    update_max_filter(BtlBwFilter, deliveryRate) 
+  if (app_limited_until > 0) 
+    app_limited_until = app_limited_until - packet.size
+```
+
+<span style="font-size: 19px;">**当发送数据时**</span>
+
+- **pacing_gain** 
+  - 5/4, 3/4, 1, 1, 1, 1, 1, 1
+
+```javascript
+function send(packet) 
+  bdp = BtlBwFilter.currentMax × 
+RTpropFilter.currentMin 
+  if (inflight >= cwnd_gain × bdp) 
+     // wait for ack or retransmission timeout 
+     return 
+  if (now >= nextSendTime) 
+     packet = nextPacketToSend() 
+     if (!packet) 
+        app_limited_until = inflight 
+        return 
+     packet.app_limited = (app_limited_until > 0) 
+     packet.sendtime = now 
+     packet.delivered = delivered 
+     packet.delivered_time = delivered_time 
+     ship(packet) 
+     nextSendTime = now + packet.size / (pacing_gain × BtlBwFilter.currentMax) 
+  timerCallbackAt(send, nextSendTime)
+```
+## 四次握手关闭连接
+
+<span style="font-size: 19px;">**关闭连接：防止数据丢失；与应用层交互**</span>
+
+- FIN：结束
+- ACK：确认
+
+<img src="./assets/tcp关闭连接.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**两端同时关闭连接**</span>
+
+<img src="./assets/tcp两端同时关闭连接.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**TCP 状态机**</span>
+
+- **11 种状态**
+  - CLOSED
+  - LISTEN
+  - SYN-SENT
+  - SYN-RECEIVED
+  - ESTABLISHED
+  - CLOSE-WAIT
+  - LAST-ACK
+  - FIN-WAIT1
+  - FIN-WAIT2
+  - CLOSING
+  - TIME-WAIT
+
+- 3 种事件
+  - SYN
+  - FIN
+  - ACK
+
+<img src="./assets/TCP状态机.png" alt="background" width="533" >
+
+### 优化关闭连接时的TIME-WAIT状态
+
+- **MSL(Maximum Segment Lifetime)**
+  - 报文最大生存时间
+- **维持 2MSL 时长的 TIME-WAIT 状态**
+  - 保证至少一次报文的往返时间内端口是不可复用
+
+<span style="font-size: 19px;">**linux下TIME_WAIT优化**</span>
+
+**tcp_tw_reuse**
+- **net.ipv4.tcp_tw_reuse = 1**
+  - 开启后，作为客户端时新连接可以使用仍然处于 TIME-WAIT 状态的端口
+  - 由于 timestamp 的存在，操作系统可以拒绝迟到的报文
+    - net.ipv4.tcp_timestamps = 1
+
+**tcp_tw_recycle**
+
+- **net.ipv4.tcp_tw_recycle = 0**
+  - 开启后，同时作为客户端和服务器都可以使用 TIME-WAIT 状态的端口
+  - 不安全，无法避免报文延迟、重复等给新连接造成混乱
+
+**tcp_max_tw_buckets**
+
+- **net.ipv4.tcp_max_tw_buckets = 262144**
+  - time_wait 状态连接的最大数量
+  - 超出后直接关闭连接
+
+<span style="font-size: 19px;">**RST 复位报文**</span>
+
+<img src="./assets/RST复位报文.png" alt="background" width="633" >
+
+## keepalive-校验和-带外数据
+
+<span style="font-size: 19px;">**TCP 的 Keep-Alive 功能**</span>
+
+- Linux 的 tcp keepalive
+  - 发送心跳周期
+    - Linux: net.ipv4.tcp_keepalive_time = 7200
+  - 探测包发送间隔
+    - net.ipv4.tcp_keepalive_intvl = 75
+  - 探测包重试次数
+    - net.ipv4.tcp_keepalive_probes = 9
+
+<span style="font-size: 19px;">**违反分层原则的校验和**</span>
+
+- **对关键头部数据(12字节)+TCP 数据执行校验和计算**
+  - 计算中假定 checksum 为0
+
+<img src="./assets/校验和.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**应用调整 TCP 发送数据的时机**</span>
+
+<img src="./assets/应用调整 TCP 发送数据的时机.png" alt="background" width="633" >
+
+<span style="font-size: 19px;">**紧急处理数据**</span>
+
+<img src="./assets/紧急处理数据.png" alt="background" width="633" >
+
+## TCP多路复用
+
+<span style="font-size: 23px;">**面向字节流的TCP连接多路复用**</span>
+
+**Multiplexing 多路复用**
+
+- 在一个信道上传输多路信号或数据流的过程和技术
+
+![Multiplexing多路复用](assets/Multiplexing多路复用.png)
+
+<span style="font-size: 19px;">**非阻塞 socket：同时处理多个 TCP 连接**</span>
+
+<img src="./assets/tcp非阻塞socket.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**epoll+非阻塞 socket**</span>
+
+- **epoll 出现：linux 2.5.44**
+- **进程内同时刻找到缓冲区或者连接状态变化的所有 TCP 连接**
+- **3 个 API**
+  - epoll_create
+  - epoll_ctl
+  - epoll_wait
+
+<img src="./assets/epoll_非阻塞socket.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**epoll 为什么高效？**</span>
+
+- 活跃连接只在总连接的一小部分
+
+<img src="./assets/epoll连接.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**非阻塞+epoll+同步编程 = 协程**</span>
+
+<img src="./assets/非阻塞_epoll_同步编程.png" alt="background" width="633" >
+
+## 四层负载均衡
+
+<span style="font-size: 19px;">**OSI 模型下的七层 LB 与四层 LB**</span>
+
+- **七层负载均衡**
+  - 解析到应用层协议
+- **四层负载均衡**
+  - 解析到 TCP/UDP 层
+
+<img src="./assets/tcp负载均衡1.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**四层负载均衡与表示层的 TLS 卸载**</span>
+
+![四层负载均衡与表示层的TLS卸载](assets/四层负载均衡与表示层的TLS卸载.png)
+
+<span style="font-size: 19px;">**四层负载均衡与连接五元组**</span>
+
+![四层负载均衡与连接五元组](assets/四层负载均衡与连接五元组.png)
+
+<span style="font-size: 19px;">**三层路由器与四层负载均衡**</span>
+
+![三层路由器与四层负载均衡](assets/三层路由器与四层负载均衡.png)
+
+<span style="font-size: 19px;">**多层 LB**</span>
+
+- 对外 LB
+- 内部 LB
+
+<img src="./assets/多层LB.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**信任的边界**</span>
+
+<img src="./assets/信任的边界.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**UDP 负载均衡的理论依据**</span>
+
+<img src="./assets/UDP 负载均衡的理论依据.png" alt="background" width="533" >
