@@ -30,110 +30,110 @@ Learn the core concepts of how computers communicate with each other and types o
 
 ### IP Addresses(Internet Protocol)
 
- > used as a way of identifying a host on a network for a period of time, where that IP address can then be associated with another device without the IP address changing.
+used as a way of identifying a host on a network for a period of time, where that IP address can then be associated with another device without the IP address changing.
 
- > An IP address is a set of numbers that are divided into four octets. The value of each octet will summarise to be the IP address of the device on the network. This number is calculated through a technique known as IP addressing & subnetting. What's important to understand here is that IP addresses can change from device to device but cannot be active simultaneously more than once within the same network.
+An IP address is a set of numbers that are divided into four octets. The value of each octet will summarise to be the IP address of the device on the network. This number is calculated through a technique known as IP addressing & subnetting. What's important to understand here is that IP addresses can change from device to device but cannot be active simultaneously more than once within the same network.
 
  <div align=left><img width = '400' src = './assets/20250319_104847.png'></div>
 
-#### **1. 公共IP（Public IP）**
+<span style="font-size: 19px;">**公有IP(Public IP)**</span>
 
-- **定义**：全球唯一的IP地址，由互联网管理机构（如ICANN）统一分配，可直接访问互联网。
+- **定义**：全球唯一的IP地址，由互联网管理机构(如ICANN)统一分配，可直接访问互联网。
 - **特点**：
   - 全球唯一性，不会重复。
-  - 可被互联网上的其他设备直接访问（如访问网站、远程连接）。
-  - 通常由互联网服务提供商（ISP）分配给用户或企业。
+  - 可被互联网上的其他设备直接访问(如访问网站、远程连接)。
+  - 通常由互联网服务提供商(ISP)分配给用户或企业。
 - **用途**：
   - 服务器、网站托管、云服务等需要对外提供服务的场景。
-  - 家庭或企业网络的出口（如路由器的WAN口地址）。
-- **示例**：`203.0.113.45`（IPv4）、`2001:0db8:85a3::8a2e:0370:7334`（IPv6）。
+  - 家庭或企业网络的出口(如路由器的WAN口地址)。
+- **示例**：`203.0.113.45`(IPv4)、`2001:0db8:85a3::8a2e:0370:7334`(IPv6)。
 
-#### **2. 私有IP（Private IP）**
+<span style="font-size: 19px;">**私有IP(Private IP)**</span>
 
-- **定义**：在本地网络内部使用的IP地址，不可直接访问互联网，需通过NAT（网络地址转换）转换为公共IP。
+- **定义**：在本地网络内部使用的IP地址，不可直接访问互联网，需通过NAT(网络地址转换)转换为公共IP。
 - **特点**：
   - 非全球唯一，同一地址可在不同局域网中重复使用。
   - 仅在局域网内可见，无法被互联网直接访问。
   - 节省公共IP资源，提高网络安全性。
 - **用途**：
-  - 家庭、企业内部设备（如电脑、手机、打印机等）。
+  - 家庭、企业内部设备(如电脑、手机、打印机等)。
   - 减少对公共IP的需求，降低网络配置复杂度。
 - **IPv4私有地址范围**：
-  - `10.0.0.0/8`（10.0.0.0到10.255.255.255）
-  - `172.16.0.0/12`（172.16.0.0到172.31.255.255）
-  - `192.168.0.0/16`（192.168.0.0到192.168.255.255）
-- **IPv6私有地址**：ULA（Unique Local Address），如`fc00::/7`。
+  - `10.0.0.0/8`(10.0.0.0到10.255.255.255)
+  - `172.16.0.0/12`(172.16.0.0到172.31.255.255)
+  - `192.168.0.0/16`(192.168.0.0到192.168.255.255)
+- **IPv6私有地址**：ULA(Unique Local Address)，如`fc00::/7`。
 
-#### **3. 核心区别**
+**核心区别**
 
 | **对比项**       | **公共IP**                | **私有IP**                |
 |------------------|---------------------------|---------------------------|
 | **唯一性**       | 全球唯一                  | 局域网内唯一              |
 | **可访问性**     | 直接访问互联网            | 需通过NAT转换            |
-| **分配方式**     | ISP或ICANN分配            | 本地路由器自动分配（如DHCP）|
+| **分配方式**     | ISP或ICANN分配            | 本地路由器自动分配(如DHCP)|
 | **用途**         | 对外服务、互联网连接      | 内部设备通信              |
 | **安全性**       | 直接暴露于互联网          | 隐藏在NAT后，相对安全     |
 
-### **4. 如何查看IP地址？**
+<span style="font-size: 19px;">**如何查看IP地址？**</span>
 
-- **公共IP**：访问网站（如`whatismyip.com`）或路由器管理界面。
-- **私有IP**：在设备的网络设置中查看（如Windows的“IP配置”、手机的“Wi-Fi详情”）。
+- **公共IP**：访问网站(如`whatismyip.com`)或路由器管理界面。
+- **私有IP**：在设备的网络设置中查看(如Windows的“IP配置”、手机的“Wi-Fi详情”)。
 
 **总结**
 
 公共IP是互联网的“门牌号码”，用于全球通信；私有IP是家庭/企业内部的“房间号”，通过NAT技术共享一个公共IP上网。两者协同工作，既保证了互联网的正常运行，又解决了IP地址短缺和网络安全问题。
 
-#### **5. IPv6**
+### IPv6
 
-> IPv6 is a new iteration of the Internet Protocol addressing scheme to help tackle this issue. Although it is seemingly more daunting, it boasts a few benefits:
+IPv6 is a new iteration of the Internet Protocol addressing scheme to help tackle this issue. Although it is seemingly more daunting, it boasts a few benefits:
 
 - Supports up to 2^128 of IP addresses (340 trillion-plus), resolving the issues faced with IPv4
 - More efficient due to new methodologies
 
 <div align=left><img width = '400' src = './assets/20250321_113549.png'></div>
 
-#### **6. MAC Address**
+### MAC Address
 
 > Devices on a network will all have a physical network interface, which is a microchip board found on the device's motherboard. This network interface is assigned a unique address at the factory it was built at, called a MAC (Media Access Control ) address. The MAC address is a twelve-character hexadecimal number (a base sixteen numbering system used in computing to represent numbers) split into two's and separated by a colon. These colons are considered separators. For example, a4:c3:f0:85:ac:2d. The first six characters represent the company that made the network interface, and the last six is a unique number.
 
 <div align=left><img width = '400' src = './assets/20250321_114750.png'></div>
 
-### Ping(ICMP)
+### ICMP
 
-> Ping is one of the most fundamental network tools available to us. Ping uses ICMP (Internet Control Message Protocol) packets to determine the performance of a connection between devices, for example, if the connection exists or is reliable.
+Ping is one of the most fundamental network tools available to us. Ping uses ICMP (Internet Control Message Protocol) packets to determine the performance of a connection between devices, for example, if the connection exists or is reliable.
 
-ICMP（Internet Control Message Protocol）是互联网控制消息协议，属于TCP/IP协议栈的核心协议之一，主要用于在IP网络中传递控制和错误消息。以下是关于ICMP的关键信息：
+ICMP(Internet Control Message Protocol)是互联网控制消息协议，属于TCP/IP协议栈的核心协议之一，主要用于在IP网络中传递控制和错误消息。以下是关于ICMP的关键信息：
 
-#### **主要功能**
+<span style="font-size: 19px;">**主要功能**</span>
 
 1. **错误报告**  
-   - 当IP数据包无法到达目标时，发送错误消息（如目标不可达、超时等）。
+   - 当IP数据包无法到达目标时，发送错误消息(如目标不可达、超时等)。
 2. **诊断功能**  
-   - **Ping**：通过ICMP回显请求（类型8）和应答（类型0）测试网络连通性。
-   - **Traceroute**：利用ICMP超时消息（类型11）跟踪数据包路径。
+   - **Ping**：通过ICMP回显请求(类型8)和应答(类型0)测试网络连通性。
+   - **Traceroute**：利用ICMP超时消息(类型11)跟踪数据包路径。
 3. **网络信息查询**  
-   - 提供主机或路由器的状态信息（如地址掩码请求、时间戳请求）。
+   - 提供主机或路由器的状态信息(如地址掩码请求、时间戳请求)。
 
-#### **常见ICMP消息类型**
+<span style="font-size: 19px;">**常见ICMP消息类型**</span>
 
 | 类型代码 | 消息类型           | 用途描述                     |
 |----------|--------------------|------------------------------|
-| 0        | 回显应答（Echo Reply） | 响应Ping请求                 |
-| 8        | 回显请求（Echo Request） | 发起Ping测试                 |
-| 3        | 目标不可达（Destination Unreachable） | 数据包无法到达目标           |
-| 11       | 超时（Time Exceeded） | 数据包生存时间（TTL）耗尽    |
+| 0        | 回显应答(Echo Reply) | 响应Ping请求                 |
+| 8        | 回显请求(Echo Request) | 发起Ping测试                 |
+| 3        | 目标不可达(Destination Unreachable) | 数据包无法到达目标           |
+| 11       | 超时(Time Exceeded) | 数据包生存时间(TTL)耗尽    |
 
-#### **典型应用场景**
+<span style="font-size: 19px;">**典型应用场景**</span>
 
 1. **网络诊断**  
    - 使用`ping`命令验证主机是否可达。
    - 使用`traceroute`或`tracert`追踪网络路径。
 2. **故障排查**  
-   - 通过目标不可达消息（类型3）定位路由或防火墙问题。
+   - 通过目标不可达消息(类型3)定位路由或防火墙问题。
 3. **监控网络状态**  
    - 检测网络延迟、丢包率等指标。
 
-#### **如何测试ICMP？**
+<span style="font-size: 19px;">**如何测试ICMP？**</span>
 
 1. **Ping命令**  
 
@@ -148,11 +148,11 @@ ICMP（Internet Control Message Protocol）是互联网控制消息协议，属�
    tracert example.com    # 在Windows中使用
    ```
 
-#### **注意事项**
+**注意事项**
 
 - **可靠性**：ICMP不保证消息的可靠传输，可能因网络拥塞或防火墙规则被丢弃。
-- **安全性**：某些网络环境会禁用ICMP（如限制Ping），导致诊断工具失效。
-- **替代方案**：若ICMP被屏蔽，可尝试使用TCP/UDP端口探测（如`telnet`或`nmap`）。
+- **安全性**：某些网络环境会禁用ICMP(如限制Ping)，导致诊断工具失效。
+- **替代方案**：若ICMP被屏蔽，可尝试使用TCP/UDP端口探测(如`telnet`或`nmap`)。
 
 如果需要更具体的操作示例或问题分析，可以进一步说明场景哦！ (^_^)
 
@@ -160,38 +160,38 @@ ICMP（Internet Control Message Protocol）是互联网控制消息协议，属�
 
 ### introduction
 
-LAN（Local Area Network，局域网）是一种覆盖范围较小的计算机网络，通常局限于家庭、办公室、学校或园区内。以下是关于LAN的关键信息：
+LAN(Local Area Network，局域网)是一种覆盖范围较小的计算机网络，通常局限于家庭、办公室、学校或园区内。以下是关于LAN的关键信息：
 
 **核心特点**
 
 1. **覆盖范围**  
-   - 通常在几公里以内（如家庭、一栋楼或一个园区）。
+   - 通常在几公里以内(如家庭、一栋楼或一个园区)。
 2. **高传输速率**  
-   - 支持10Mbps至10Gbps甚至更高的传输速度（如光纤网络）。
+   - 支持10Mbps至10Gbps甚至更高的传输速度(如光纤网络)。
 3. **低延迟**  
-   - 数据传输延迟较低，适合实时应用（如视频会议、在线游戏）。
+   - 数据传输延迟较低，适合实时应用(如视频会议、在线游戏)。
 4. **私有性**  
-   - 多为私有网络，通过路由器或防火墙与外部网络（如互联网）隔离。
+   - 多为私有网络，通过路由器或防火墙与外部网络(如互联网)隔离。
 
 **优势**
 
 1. **成本效益**
-   - 使用共享资源（如打印机、存储设备）降低成本。
+   - 使用共享资源(如打印机、存储设备)降低成本。
 2. **易于管理**
    - 集中化管理设备和用户权限。
 3. **高安全性**
-   - 通过防火墙和访问控制列表（ACL）保护内部网络。
+   - 通过防火墙和访问控制列表(ACL)保护内部网络。
 
 **LAN的组成**
 
 1. **硬件设备**  
    - **交换机/集线器**：连接多台设备，实现数据交换。
-   - **路由器**：连接LAN与外部网络（如互联网），分配IP地址。
-   - **网线/无线接入点（AP）**：提供有线或无线连接。
+   - **路由器**：连接LAN与外部网络(如互联网)，分配IP地址。
+   - **网线/无线接入点(AP)**：提供有线或无线连接。
    - **终端设备**：计算机、手机、打印机、智能家居设备等。
 2. **协议与技术**  
-   - **以太网**：主流有线LAN技术（如IEEE 802.3）。
-   - **Wi-Fi**：无线LAN技术（如IEEE 802.11a/b/g/n/ac/ax）。
+   - **以太网**：主流有线LAN技术(如IEEE 802.3)。
+   - **Wi-Fi**：无线LAN技术(如IEEE 802.11a/b/g/n/ac/ax)。
    - **TCP/IP**：基础通信协议，负责IP地址分配和数据传输。
 
 **常见LAN类型**
@@ -199,8 +199,8 @@ LAN（Local Area Network，局域网）是一种覆盖范围较小的计算机�
 1. **家庭LAN**  
    - 由无线路由器、电脑、手机、智能家电等组成，通过DHCP自动分配IP地址。
 2. **企业LAN**  
-   - 采用分层架构（核心层、汇聚层、接入层），支持VLAN划分、QoS（服务质量）管理。
-3. **无线LAN（WLAN）**  
+   - 采用分层架构(核心层、汇聚层、接入层)，支持VLAN划分、QoS(服务质量)管理。
+3. **无线LAN(WLAN)**  
    - 通过无线AP覆盖区域，适合移动办公或临时网络搭建。
 
 **典型应用场景**
@@ -217,10 +217,10 @@ LAN（Local Area Network，局域网）是一种覆盖范围较小的计算机�
 **LAN配置示例**
 
 1. **家庭LAN设置**  
-   - 连接路由器，通过管理界面（如`192.168.1.1`）配置Wi-Fi名称和密码。
-   - 启用DHCP功能，自动分配IP地址（如`192.168.1.x`）。
+   - 连接路由器，通过管理界面(如`192.168.1.1`)配置Wi-Fi名称和密码。
+   - 启用DHCP功能，自动分配IP地址(如`192.168.1.x`)。
 2. **企业LAN配置**  
-   - 使用交换机划分VLAN隔离不同部门（如财务、研发）。
+   - 使用交换机划分VLAN隔离不同部门(如财务、研发)。
    - 部署防火墙或VPN设备保障网络安全。
 
 **常见问题与解决**
@@ -235,20 +235,20 @@ LAN（Local Area Network，局域网）是一种覆盖范围较小的计算机�
 **限制**
 
 1. 覆盖范围有限
-   - 仅适用于小范围区域，扩展到广域网（WAN）需要额外设备。
+   - 仅适用于小范围区域，扩展到广域网(WAN)需要额外设备。
 2. 依赖性高
-   - 中心设备（如路由器或交换机）故障可能导致整个网络中断。
+   - 中心设备(如路由器或交换机)故障可能导致整个网络中断。
 
 **相关工具与命令**
 
 1. **Windows**  
    - `ipconfig`：查看IP地址和网络配置。
-   - `ping`：测试设备连通性（如`ping 192.168.1.1`）。
+   - `ping`：测试设备连通性(如`ping 192.168.1.1`)。
    - `arp -a`：查看局域网内的MAC地址与IP映射。
 2. **Linux/macOS**  
    - `ifconfig`或`ip addr`：查看网络接口信息。
    - `traceroute`：追踪数据包路径。
-   - `nmap`：扫描局域网内的活动设备（如`nmap -sn 192.168.1.0/24`）。
+   - `nmap`：扫描局域网内的活动设备(如`nmap -sn 192.168.1.0/24`)。
 
 ### LAN Topology
 
@@ -256,69 +256,67 @@ LAN（Local Area Network，局域网）是一种覆盖范围较小的计算机�
    Bus Topology
    Star Topology
 
-#### Switch and Router
+### Switch
 
-**Switch**
+Switches are dedicated devices within a network that are designed to aggregate multiple other devices such as computers, printers, or any other networking-capable device using ethernet. These various devices plug into a switch's port. Switches are usually found in larger networks such as businesses, schools, or similar-sized networks, where there are many devices to connect to the network. Switches can connect a large number of devices by having ports of 4, 8, 16, 24, 32, and 64 for devices to plug into.
 
-> Switches are dedicated devices within a network that are designed to aggregate multiple other devices such as computers, printers, or any other networking-capable device using ethernet. These various devices plug into a switch's port. Switches are usually found in larger networks such as businesses, schools, or similar-sized networks, where there are many devices to connect to the network. Switches can connect a large number of devices by having ports of 4, 8, 16, 24, 32, and 64 for devices to plug into.
+Switches are much more efficient than their lesser counterpart (hubs/repeaters). Switches keep track of what device is connected to which port. This way, when they receive a packet, instead of repeating that packet to every port like a hub would do, it just sends it to the intended target, thus reducing network traffic.
 
-> Switches are much more efficient than their lesser counterpart (hubs/repeaters). Switches keep track of what device is connected to which port. This way, when they receive a packet, instead of repeating that packet to every port like a hub would do, it just sends it to the intended target, thus reducing network traffic.
+### Router
 
-**Router**
+It's a router's job to connect networks and pass data between them. It does this by using routing (hence the name router!).
 
-> It's a router's job to connect networks and pass data between them. It does this by using routing (hence the name router!).
-
-> Routing is the label given to the process of data travelling across networks. Routing involves creating a path between networks so that this data can be successfully delivered.
+Routing is the label given to the process of data travelling across networks. Routing involves creating a path between networks so that this data can be successfully delivered.
 
 ![switch and router](<assets/switch and router.png>)
 
-**Switch 和 Router 区别**
+### Switch和Router区别
 
 路由器和交换机是网络中常见的设备，但功能和用途有明显区别，以下是它们的主要区别：
 
-##### **1. 功能不同**
+**1. 功能不同**
 
 - **路由器**  
-  - 连接不同网络（如将家庭局域网连接到互联网）。  
-  - 分配IP地址（通过DHCP），实现多设备共享上网。  
-  - 支持NAT（网络地址转换），隐藏内部网络结构。  
-  - 具备防火墙、VPN、QoS（流量控制）等高级功能。
+  - 连接不同网络(如将家庭局域网连接到互联网)。  
+  - 分配IP地址(通过DHCP)，实现多设备共享上网。  
+  - 支持NAT(网络地址转换)，隐藏内部网络结构。  
+  - 具备防火墙、VPN、QoS(流量控制)等高级功能。
 
 - **交换机**  
-  - 连接同一局域网内的多台设备（如电脑、打印机）。  
+  - 连接同一局域网内的多台设备(如电脑、打印机)。  
   - 快速转发数据帧，实现设备间直接通信。  
   - 扩展网络端口数量，提升局域网内数据传输效率。
 
-##### **2. 工作层次不同**
+**2. 工作层次不同**
 
-- **路由器**：工作在网络层（OSI第三层），基于IP地址转发数据。  
-- **交换机**：工作在数据链路层（OSI第二层），基于MAC地址转发数据。
+- **路由器**：工作在网络层(OSI第三层)，基于IP地址转发数据。  
+- **交换机**：工作在数据链路层(OSI第二层)，基于MAC地址转发数据。
 
-##### **3. 应用场景**
+**3. 应用场景**
 
 - **路由器**  
   - 家庭/企业网络接入互联网。  
-  - 跨网络通信（如不同楼层或分支之间）。  
+  - 跨网络通信(如不同楼层或分支之间)。  
   - 需要网络安全或高级管理功能时。
 
 - **交换机**  
-  - 扩展局域网内设备连接（如办公室、网吧）。  
-  - 需要高速内网传输（如视频监控、文件共享）。  
+  - 扩展局域网内设备连接(如办公室、网吧)。  
+  - 需要高速内网传输(如视频监控、文件共享)。  
   - 无需连接外网的场景。
 
-##### **4. 连接方式**
+**4. 连接方式**
 
-- **路由器**：通常连接广域网（如光纤、ADSL）和局域网。  
+- **路由器**：通常连接广域网(如光纤、ADSL)和局域网。  
 - **交换机**：直接连接同一局域网内的设备，或级联到路由器扩展端口。
 
-##### **5. 安全性**
+**5. 安全性**
 
-- **路由器**：可设置防火墙、访问控制列表（ACL），保护内网安全。  
+- **路由器**：可设置防火墙、访问控制列表(ACL)，保护内网安全。  
 - **交换机**：默认无安全功能，需配合路由器或单独配置。
 
-##### **总结选择建议**
+**总结选择建议**
 
-- **家庭用户**：通常只需路由器（带交换功能）即可满足上网和设备连接需求。  
+- **家庭用户**：通常只需路由器(带交换功能)即可满足上网和设备连接需求。  
 - **企业/大型网络**：路由器负责连接外网和核心管理，交换机负责扩展内网端口和高速传输。  
 - **特殊需求**：如高速内网传输、视频监控等，可额外添加交换机。
 
@@ -387,15 +385,15 @@ This process is illustrated in the diagram below:
 
 > At every individual layer that data travels through, specific processes take place, and pieces of information are added to this data, which is what we'll come to discuss in the upcoming tasks within this room. However, for now, we only need to understand that this process is called encapsulation and what the OSI model looks like in the diagram below:
 
-OSI（Open System Interconnect 开放式系统互联）模型是一个分层的网络架构模型，用于描述计算机网络通信的各个阶段。它分为七个层级，每一层都有特定的功能，从而使网络设备和系统之间能够标准化通信。这七层从上到下是：
+OSI(Open System Interconnect 开放式系统互联)模型是一个分层的网络架构模型，用于描述计算机网络通信的各个阶段。它分为七个层级，每一层都有特定的功能，从而使网络设备和系统之间能够标准化通信。这七层从上到下是：
 
-1. **物理层**（Physical Layer）：涉及网络硬件设备之间的物理连接，如电缆、信号和接口等。
-2. **数据链路层**（Data Link Layer）：处理物理地址（如MAC地址）并确保数据帧在物理介质上传输的正确性。
-3. **网络层**（Network Layer）：负责数据的路由和逻辑地址（如IP地址）的管理。
-4. **传输层**（Transport Layer）：确保数据的可靠传输，控制流量和纠错，常用协议有TCP和UDP。
-5. **会话层**（Session Layer）：管理和维护通信会话，包括建立、维护和终止连接。
-6. **表示层**（Presentation Layer）：负责数据的翻译、加密和压缩等操作。
-7. **应用层**（Application Layer）：提供直接为用户应用程序服务的接口，例如网页浏览器、电子邮件等。
+1. **物理层**(Physical Layer)：涉及网络硬件设备之间的物理连接，如电缆、信号和接口等。
+2. **数据链路层**(Data Link Layer)：处理物理地址(如MAC地址)并确保数据帧在物理介质上传输的正确性。
+3. **网络层**(Network Layer)：负责数据的路由和逻辑地址(如IP地址)的管理。
+4. **传输层**(Transport Layer)：确保数据的可靠传输，控制流量和纠错，常用协议有TCP和UDP。
+5. **会话层**(Session Layer)：管理和维护通信会话，包括建立、维护和终止连接。
+6. **表示层**(Presentation Layer)：负责数据的翻译、加密和压缩等操作。
+7. **应用层**(Application Layer)：提供直接为用户应用程序服务的接口，例如网页浏览器、电子邮件等。
 
 这个模型的意义在于提供了一个通用框架，使各种设备和网络可以互相兼容。
 
@@ -568,7 +566,7 @@ The application layer is the top layer, and you might have encountered many of i
 
 > TCP (or Transmission Control Protocol for short) is another one of these rules used in networking.
 
-- 传输控制协议 （TCP） 是一种面向连接的协议，需要 TCP 三次握手来建立连接。TCP 提供可靠的数据传输、流量控制和拥塞控制。HTTP、POP3、IMAP 和 SMTP 等更高级别的协议使用 TCP
+- 传输控制协议 (TCP) 是一种面向连接的协议，需要 TCP 三次握手来建立连接。TCP 提供可靠的数据传输、流量控制和拥塞控制。HTTP、POP3、IMAP 和 SMTP 等更高级别的协议使用 TCP
 
 > This protocol is very similar to the OSI model. The TCP/IP protocol consists of four layers and is arguably just a summarised version of the OSI model. These layers are:
 > - Application
@@ -647,7 +645,7 @@ In the illustration, we can see that Alice has sent Bob a **"FIN"** packet. Beca
 
 The **User Datagram Protocol** (UDP) is another protocol that is used to communicate data between devices.
 
-用户数据报协议 （UDP） 是一种无连接协议;UDP 不需要建立连接。UDP 适用于依赖快速查询的协议 （如 DNS） 和优先考虑实时通信的协议 （如音频/视频会议和广播）。
+用户数据报协议 (UDP) 是一种无连接协议;UDP 不需要建立连接。UDP 适用于依赖快速查询的协议 (如 DNS) 和优先考虑实时通信的协议 (如音频/视频会议和广播)。
 
 > Unlike its brother TCP, UDP is a **stateless** protocol that doesn't require a constant connection between the two devices for data to be sent. For example, the Three-way handshake does not occur, nor is there any synchronisation between the two devices.
 
@@ -701,7 +699,7 @@ The **User Datagram Protocol** (UDP) is another protocol that is used to communi
 
 > We have only briefly covered the more common protocols in cybersecurity. You can find a table of the 1024 common ports listed for more information.
 
-> What is worth noting here is that these protocols only follow the standards. I.e. you can administer applications that interact with these protocols on a different port other than what is the standard (running a web server on 8080 instead of the 80 standard port). Note, however, applications will presume that the standard is being followed, so you will have to provide a **colon （:）** along with the port number.
+> What is worth noting here is that these protocols only follow the standards. I.e. you can administer applications that interact with these protocols on a different port other than what is the standard (running a web server on 8080 instead of the 80 standard port). Note, however, applications will presume that the standard is being followed, so you will have to provide a **colon (:)** along with the port number.
 
 
 ## Extending Your Network
@@ -745,7 +743,7 @@ Firewalls perform packet inspection to determine the answers to these questions.
 
 ### VPN Basics
 
-虚拟专用网络（VPN）是在两个网络之间创建安全 "隧道 "的一种方式。 例如，你可以在 TryHackMe 上使用 VPN 访问机器运行所在的专用网络。 VPN 也常用于员工不在现场（如在家工作或因公务出差）时登录工作场所。 VPN 还可用于网络（如咖啡店）不提供加密的地方，是防止他人读取你的网络流量的好方法。
+虚拟专用网络(VPN)是在两个网络之间创建安全 "隧道 "的一种方式。 例如，你可以在 TryHackMe 上使用 VPN 访问机器运行所在的专用网络。 VPN 也常用于员工不在现场(如在家工作或因公务出差)时登录工作场所。 VPN 还可用于网络(如咖啡店)不提供加密的地方，是防止他人读取你的网络流量的好方法。
 
 > A **Virtual Private Network** (or VPN for short) is a technology that allows devices on separate networks to communicate securely by creating a dedicated path between each other over the Internet (known as a tunnel). Devices connected within this tunnel form their own private network.
 
@@ -773,7 +771,7 @@ TryHackMe uses a VPN to connect you to our vulnerable machines without making th
 - Service providers such as ISPs don't think you are attacking another machine on the Internet (which could be against the terms of service)
 - The VPN provides security to TryHackMe as vulnerable machines are not accessible using the Internet.
 
-Secure Shell(SSH)是一种加密网络协议，用于设备之间的安全通信。 SSH 使用高级加密系统（AES）等加密算法对数据进行加密，通常用于远程登录计算机或服务器。
+Secure Shell(SSH)是一种加密网络协议，用于设备之间的安全通信。 SSH 使用高级加密系统(AES)等加密算法对数据进行加密，通常用于远程登录计算机或服务器。
 
 VPN technology has improved over the years. Let's explore some existing VPN technologies below:
 

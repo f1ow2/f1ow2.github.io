@@ -88,12 +88,12 @@ export const nav = [
       },
       {
         items: [
+          { text: 'IP protocol', link: '/web/IPProtocol.md' },
+          { text: 'TCP protocol', link: '/web/TCPProtocol.md' },
+          { text: 'TLS/SSL protocol', link: '/web/TLSProtocol.md' },
           { text: 'HTTP protocol', link: '/web/HTTPProtocol.md' },
           { text: 'WebSocket protocol', link: '/web/WebSocketProtocol.md' },
           { text: 'HTTP/2 protocol', link: '/web/HTTP2Protocol.md' },
-          { text: 'TLS/SSL protocol', link: '/web/TLSProtocol.md' },
-          { text: 'TCP protocol', link: '/web/TCPProtocol.md' },
-          { text: 'IP protocol', link: '/web/IPProtocol.md' },
         ]
       }
     ]
