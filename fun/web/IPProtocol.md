@@ -382,4 +382,254 @@ outline: deep
 
 ## ICMP协议
 
-[Internet Control Message Protocol](../cyber/network.md#icmp)
+<span style="font-size: 19px;">**[Internet Control Message Protocol](../cyber/network.md#icmp)**</span>
+
+- **RFC792**
+- **IP 协议的助手**
+  - 告知错误
+  - 传递信息
+
+<img src="./assets/ICMP1.png" alt="background" width="533" >
+
+**ICMP协议格式**
+
+- **承载在 IP 之上**
+- **组成字段**
+  - 类型(Type)
+  - 子类型(Code)
+  - 校验和
+
+<img src="./assets/ICMP报文.png" alt="background" width="633" >
+
+**ICMPv4 报文类型**
+
+- **错误报文**
+  - 3：目的地不可达
+  - 4：发生拥塞，要求发送方降低速率
+  - 5：告诉主机更好的网络路径
+  - 11：路径超出 TTL 限制
+  - 12：其他问题
+
+- **信息报文**
+  - 0：连通性测试中的响应
+  - 8：连通性测试中的请求
+  - 9：路由器通告其能力
+  - 10：路由器通知请求
+  - 13：时间戳请求
+  - 14：时间戳应答
+  - 17：掩码请求
+  - 18：掩码应答
+  - 30：Traceroute
+
+<span style="font-size: 19px;">**目的地不可达报文：Type=3**</span>
+
+- **常用子类型 Code**
+  - 0：网络不可达
+  - 1：主机不可达
+  - 2：协议不可达
+  - 3：端口不可达
+  - 4：要分片但 DF 为1
+  - 10：不允许向特定主机通信
+  - 13：管理受禁
+
+<img src="./assets/ICMP_目的地不可达报文.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**Echo 与 Echo Reply 报文**</span>
+
+- **ping 联通性测试**
+
+<img src="./assets/ICMP_Echo与Echo Reply 报文.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**TTL 超限：Type=11**</span>
+
+- **traceroute/tracert**
+
+<img src="./assets/ICMP_TTL超限报文.png" alt="background" width="533" >
+
+<img src="./assets/ICMP_TTL 超限.png" alt="background" width="633" >
+
+## 多播与IGMP协议
+
+<img src="./assets/单播广播与组播.png" alt="background" width="633" >
+
+<span style="font-size: 19px;">**广播地址**</span>
+
+- 以太网地址：ff:ff:ff:ff:ff:ff
+- IP 地址
+
+<img src="./assets/广播地址.png" alt="background" width="633" >
+
+<span style="font-size: 19px;">**组播IP地址**</span>
+
+- 预留组播地址
+  - 224.0.0.1：子网内的所有系统组
+  - 224.0.0.2：子网内的所有路由器组
+  - 224.0.1.1：用于 NTP 同步系统时钟
+  - 224.0.0.9：用于 RIP-2 协议
+
+<img src="./assets/组播IP地址1.png" alt="background" width="433" >
+
+![组播IP地址2](assets/组播IP地址2.png)
+
+<span style="font-size: 19px;">**组播以太网地址**</span>
+
+- **以太网地址：01:00:5e:00:00:00 到 01:00:5e:7f:ff:ff**
+- **低 23 位：映射 IP 组播地址至以太网地址**
+
+![组播以太网地址](assets/组播以太网地址.png)
+
+<span style="font-size: 23px;">**IGMP(Internet Group Management Protocol)协议**</span>
+
+- **Type 类型**
+  - 0x11 Membership Query [RFC3376]
+  - 0x22 Version 3 Membership Report [RFC3376]
+  - 0x12 Version 1 Membership Report [RFC-1112] 
+  - 0x16 Version 2 Membership Report [RFC-2236] 
+  - 0x17 Version 2 Leave Group [RFC-2236]
+
+<img src="./assets/IGMP.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**0x22 Membership Report：状态变更通知**</span>
+
+<img src="./assets/0x22_Membership Report.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**Group Record 格式**</span>
+
+- **Record Type 类型**
+  - 当前状态
+    - 1: MODE_IS_INCLUDE
+    - 2: MODE_IS_EXCLUDE
+  - 过滤模式变更(如从 INCLUDE 奕为 EXCLUDE)
+    - 3: CHANGE_TO_INCLUDE
+    - 4: CHANGE_TO_EXCLUDE
+  - 源地址列表变更(过滤模式同时决定状态)
+    - 5: ALLOW_NEW_SOURCES
+    - 6: BLOCK_OLD_SOURCES
+
+<img src="./assets/Group Record 格式.png" alt="background" width="533" >
+
+---
+
+## IPv6地址
+
+<span style="font-size: 23px;">**支持万物互联的 IPv6 地址**</span>
+
+<span style="font-size: 19px;">**IPv6 目的**</span>
+
+- 更大的地址空间：128 位长度
+- 更好的地址空间管理
+- 消除了 NAT 等寻址技术
+- 更简易的 IP 配置管理
+- 优秀的选路设计
+- 更好的多播支持
+- 安全性
+- 移动性
+
+<span style="font-size: 19px;">**IPv6 地址的冒分十六进制表示法**</span>
+
+- **首零去除**
+- **零压缩**
+  - FF00:4501:0:0:0:0:0:32
+    - FF00:4501::32
+  - 805B:2D9D:DC28:0:0:FC57:0:0
+    - 805B:2D9D:DC28::FC57:0:0
+    - 805B:2D9D:DC28:0:0:FC57::
+  - 环回地址0:0:0:0:0:0:0:1
+    - ::1
+
+<img src="./assets/IPv6地址表示法.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**IPv6 地址分布**</span>
+
+<img src="./assets/IPv6地址分布.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**不同作用域下的多播**</span>
+
+- **Scope ID**
+  - 14：全局作用域
+  - 8：组织作用域
+  - 5：场点作用域
+  - 2：本地链路作用域
+  - 1：本机作用域
+
+<img src="./assets/不同作用域下的多播ScopeID.png" alt="background" width="533" >
+
+<img src="./assets/不同作用域下的多播.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**网络地址与主机地址**</span>
+
+- **全局路由前缀：48**
+  - 可任意划分为多级
+- **子网ID：16**
+  - 可任意划分为多级
+- **接口ID：64**
+  - 直接映射 MAC 地址
+
+![网络地址与主机地址](assets/网络地址与主机地址.png)
+
+<span style="font-size: 19px;">**IEEE802 48 位 MAC 地址映射主机地址(EUI-64)**</span>
+
+- 取 OUI(组织唯一标识)放左 24 比特
+- 中间 16 比特置为 FFFE
+- 置 OUI 第 7 位为 1 表示全局
+
+![IEEE802_48位MAC地址映射主机地址](assets/IEEE802_48位MAC地址映射主机地址.png)
+
+## IPv6报文及分片
+
+<span style="font-size: 19px;">**IPv6主首部格式**</span>
+
+- Version
+- Traffic Class
+  - TOS
+- Flow Label：QOS 控制
+- Payload Length 
+  - Total Length
+- Next Header
+- HopLimit
+  - TTL
+- 删除字段
+  - IHL
+  - Identification, Flags, Fragment Offset
+  - Header Checksum
+
+![IPv6主首部格式](assets/IPv6主首部格式.png)
+
+<span style="font-size: 19px;">**IPv6 报文格式**</span>
+
+- 40 字节主首部
+- 可选的扩展首部
+- 数据
+
+<img src="./assets/IPv6报文格式.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**IPv6 首部链**</span>
+
+<img src="./assets/IPv6首部链1.png" alt="background" width="433" >
+
+![IPv6 首部链2](assets/IPv6首部链2.png)
+
+<span style="font-size: 19px;">**分片扩展首部**</span>
+
+- **Fragment Offset**
+  - 单位 8 字节
+- **MoreFragments**
+  - 0 表示最后分片
+  - 1 表示非最后分片
+- **identification**
+  - 扩展 IPv4 相同头部至 4 字节
+
+<img src="./assets//分片扩展首部.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**IPv6 的分片**</span>
+
+- **不可分片部分**
+  - 主首部
+  - 部分扩展首部
+- **可分片部分**
+  - 数据
+  - 部分扩展首部
+
+![IPv6 的分片](assets/IPv6的分片.png)
+
+---

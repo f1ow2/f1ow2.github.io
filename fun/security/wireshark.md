@@ -95,6 +95,13 @@ You can use the"right-click menu" or  "`Analyse --> Follow TCP/UDP/HTTP Stream`"
 
 ## how2use
 
+<span style="font-size: 19px;">**常用过滤**</span>
+
+*过滤出包含jpeg图片格式的HTTP2请求*
+```bash
+http2.headers.content_type contains "image/jpeg"
+```
+
 <span style="font-size: 19px;">**数据包列表面板的标记符号**</span>
 
 ![wireshark数据包标记符号](assets/wireshark数据包标记符号.png)
@@ -142,7 +149,7 @@ You can use the"right-click menu" or  "`Analyse --> Follow TCP/UDP/HTTP Stream`"
 <span style="font-size: 19px;">**Dir：设置网络出入方向**</span>
 
 - src、dst、src or dst、src and dst
-- ra、ta、addr1、addr2、addr3、addr4（仅对 IEEE 802.11 Wireless LAN 有效）
+- ra、ta、addr1、addr2、addr3、addr4(仅对 IEEE 802.11 Wireless LAN 有效)
 
 <span style="font-size: 19px;">**Proto：指定协议类型**</span>
 
@@ -249,4 +256,92 @@ You can use the"right-click menu" or  "`Analyse --> Follow TCP/UDP/HTTP Stream`"
   - 在 Wireshark 中配置解析 DEBUG 日志
     - 编辑->首选项->Protocols->TLS/SSL
       - (Pre)-Master-Secret log filename
+
+## 报文统计规律
+
+<span style="font-size: 23px;">**从 wireshark 报文统计中找规律**</span>
+
+
+<span style="font-size: 19px;">**报文统计**</span>
+
+- **搭配 "显示过滤器" 使用**
+- **统计方式**
+  - 报文总体分布：捕获文件属性与数据包长度分布
+  - 端点统计与会话统计
+  - 协议分级统计
+  - HTTP/HTTP2 等应用层协议统计
+  - TCP 协议连接统计
+  - IO 流统计与数据流统计
+
+<span style="font-size: 19px;">**报文总体分布**</span>
+
+- **捕获文件属性**
+  - when：何时抓包
+  - where：哪个 IP 接口在抓包
+  - how：捕获过滤器是什么？
+  - how much：多少报文？多少字节？多快速率？
+- **报文长度分布：信息传输效率**
+  - 各种长度报文的分布
+
+<span style="font-size: 19px;">**协议分级统计(配合显示过滤器)**</span>
+
+- **分组数量/字节数百分比(同层)**
+- **绝对分组数量/字节数**
+- **速率(比特/秒)**
+- **协议消息统计**
+  - 结束"分组"
+  - 结束字节
+  - 结束速率
+
+<span style="font-size: 19px;">**端点统计/会话统计**</span>
+
+- **OSI 不同层次统计**
+  - 数据链路层(解析名称：MAC/IP/PORT)
+    - 通讯双方/单端点、分组数、字节数、报文方向、速率、持续时间
+  - 网络层
+  - 传输层
+    - UDP/TCP，端口统计
+
+- **快速应用过滤器及着色规则**
+
+<span style="font-size: 19px;">**HTTP/HTTP2 统计**</span>
+
+- **HTTP**
+  - 分组统计：请求方法与响应码统计
+  - 请求：基于 Host 和 URI 统计
+  - 负载均衡：基于 IP 与 Host 统计
+  - 请求序列：对请求同一 Domain 下的 URI 统计
+- **HTTP2**
+  - 帧类型统计
+
+<span style="font-size: 19px;">**TCP 连接信息统计**</span>
+
+- **基于 TCP 连接特性统计，可切换方向**
+  - RTT 时间
+  - 吞吐量
+  - 窗口大小
+  - 序列号
+
+<span style="font-size: 19px;">**IO 图表与数据流统计**</span>
+
+- **IO 图表**
+  - 绘制出不同颜色、各类型(折线、直方、点)图
+  - 以时间作为 X 轴(可选择时间间隔)
+  - 可设置过滤器下的报文信息为Y轴
+    - 报文数量、字节数、统计函数
+
+- **数据流**
+  - 可选择基于显示过滤器，显示各端之间的数据流量
+
+<span style="font-size: 19px;">**专家系统**</span>
+
+- **Error：错误信息，包括 Wireshark 解析失败信息**
+- **Warning：异常警告信息**
+  - RST 复位关闭、TCP 窗口关闭、TCP 乱序报文等
+- **Note：正常通信中的异常通信报文**
+  - TCP 重复 ACK、TCP 重传报文、Keepalive、TLS 复用密钥、零窗口探查等
+- **Chat：通信的基本信息**
+
+
+
 
