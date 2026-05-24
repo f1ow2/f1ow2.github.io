@@ -11,9 +11,9 @@ outline: deep
 
 # Python Security Programming
 
-Python安全编程基础（CTF方向）
+## intro
 
-## python介绍
+Python安全编程基础（CTF方向）
 
 **开源**
 
@@ -638,6 +638,21 @@ KeyError: 'ftps'
 ---
 
 ## 文件操作
+
+- 文本文件
+- 二进制文件
+
+<span style="font-size: 23px;">**Python文件操作函数清单**</span>
+
+| 所属模块 | 函数名 |
+|---------|--------|
+| 文件打开与关闭 | `open()` 、`close()` |
+| 文件读取 | `read()` 、`readline()` 、`readlines()` |
+| 文件写入 | `write()` 、`writelines()` |
+| 文件定位 | `seek()` 、`tell()` |
+| 上下文管理器 | `with` 语句 |
+| 路径操作 | `Path.open()` 、`os.path.exists()` 、`os.path.join()` |
+| 目录与文件管理 | `os.listdir()` 、`os.walk()` 、`os.makedirs()` 、`shutil.copy()` |
 
 
 ---
