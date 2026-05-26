@@ -1,6 +1,6 @@
 ---
 name: feishu-skills-reference
-description: 飞书 CLI 常用技能速查表，包含 IM、文档、日历、会议等核心技能
+description: 飞书 CLI 常用技能速查表，包含文档、协作、工作流等核心技能
 ---
 
 # 飞书 CLI 常用技能

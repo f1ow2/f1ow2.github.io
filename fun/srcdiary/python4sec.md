@@ -61,7 +61,7 @@ w-h-o- -a-r-e- -u-!->>>
 - 起始下标默认为0
 - 结束下标不包含该下标本身，省略时表示一直取到字符串的终点。
 - 步长默认为1
-- [::-1]表示逆序
+- **[::-1]表示逆序**
 
 ```bash
 >>> a='python'
@@ -654,15 +654,42 @@ KeyError: 'ftps'
 | 路径操作 | `Path.open()` 、`os.path.exists()` 、`os.path.join()` |
 | 目录与文件管理 | `os.listdir()` 、`os.walk()` 、`os.makedirs()` 、`shutil.copy()` |
 
+### 日志分析
+
+- **pv**: PageView, 网站的访问请求数
+- **uv**: UniqueView, 网站独立访客(IP)数,同一天内相同的IP只被记录一次
+
+
+```python
+#!/usr/bin/python
+
+with open('access_log', 'r') as f1, \
+    open('access_log-0409', 'w') as f2:
+    pv = 0
+    ips = set()
+    # 状态码
+    codes = []
+
+    for line in f1:
+        # 取出 09/Apr 日志
+        if  '09/Apr/2026' in line:
+            f2.write(line)
+            pv = pv + 1
+            ips.add(line.split()[0])
+            codes.append(line.split()[8])
+    print('pv:', pv)
+    print('uv:', len(ips))
+    print('状态码统计:', {code:codes.count(code) for code in codes})
+```
+---
+
+## 自定义函数
+
 
 ---
 
 ## 异常处理
 
-
----
-
-## 自定义函数
 
 
 ---
