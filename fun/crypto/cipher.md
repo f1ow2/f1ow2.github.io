@@ -48,7 +48,10 @@ print(res)
 
 ![Bacon Table](assets/BaconTable.png)
 
+*转换为标准密文*
 ```python
+#!/usr/bin/python
+
 str = 'hellO everyone,Are YOU huNGrY? woUld you li To eAt BAcon'
 
 res = ''
@@ -64,24 +67,39 @@ table = ''.maketrans('AB','BA')
 print(res.translate(table))
 ```
 **解密**
-```bash
+```python
 #!/usr/bin/python
 
-a = ["aaaaa","aaaab","aaaba","aaabb","aabaa","aabab","aabba","aabbb","abaaa","abaab","ababa","ababb","abbaa","abbab","abbba","abbbb","baaaa","baaab","baaba","baabb","babaa","babab","babba","babbb","bbaaa","bbaab"]
+"""
+bacon密码相关函数
+"""
 
-b = [chr(i) for i in range(ord('a'), ord('z') + 1)]
+bacon24 = ["aaaaa", "aaaab", "aaaba", "aaabb", "aabaa", "aabab", "aabba", "aabbb", "abaaa", "abaab", "ababa", "ababb", "abbaa", "abbab", "abbba", "abbbb", "baaaa", "baaab", "baaba", "baabb", "babaa", "babab", "babba", "babbb"]
+alpha24 = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', '(ij)', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', '(uv)', 'w', 'x', 'y', 'z']
+table24 = dict(zip(bacon24, alpha24))
 
-table = dict(zip(a,b))
-# table = {i:j for i,j in zip(a,b)}
-# print(table)
+bacon26 = ["aaaaa", "aaaab", "aaaba", "aaabb", "aabaa", "aabab", "aabba", "aabbb", "abaaa", "abaab", "ababa", "ababb", "abbaa", "abbab", "abbba", "abbbb", "baaaa", "baaab", "baaba", "baabb", "babaa", "babab", "babba", "babbb", "bbaaa", "bbaab"]
+alpha26 = [chr(i) for i in range(ord('a'), ord('z') + 1)]
+table26 = dict(zip(bacon26, alpha26))
 
-s = input("请输入密文:").strip().lower()
-res = ''
-for i in range(0, len(s), 5):
-    res += table.get(s[i:i+5], '#')
-print(res)
+
+def bacon_decode24(ciphertext):
+    """24码 bacon解密"""
+    s = ciphertext.replace(' ', '').lower()
+    return ''.join(table24.get(s[i:i+5], '#') for i in range(0, len(s), 5))
+
+
+def bacon_decode26(ciphertext):
+    """26码 bacon解密"""
+    s = ciphertext.replace(' ', '').lower()
+    return ''.join(table26.get(s[i:i+5], '#') for i in range(0, len(s), 5))
+
+
+if __name__ == '__main__':
+    s = input("请输入密文: ")
+    print("24码:", bacon_decode24(s))
+    print("26码:", bacon_decode26(s))
 ```
----
 
 ## Caesar cipher
 
@@ -95,8 +113,8 @@ print(res)
 
 *tools.py*
 ```python
-# caesar转换 text-待转换的文本   n-移动位数(正数右移，负数左移) 
 def caesar_transfer(text, n):
+    """caesar转换 text-待转换的文本   n-移动位数(正数右移，负数左移)"""
     res = ''
     for i in text:
         if i.isupper():
