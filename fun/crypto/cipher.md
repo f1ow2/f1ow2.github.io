@@ -70,10 +70,6 @@ print(res.translate(table))
 ```python
 #!/usr/bin/python
 
-"""
-bacon密码相关函数
-"""
-
 bacon24 = ["aaaaa", "aaaab", "aaaba", "aaabb", "aabaa", "aabab", "aabba", "aabbb", "abaaa", "abaab", "ababa", "ababb", "abbaa", "abbab", "abbba", "abbbb", "baaaa", "baaab", "baaba", "baabb", "babaa", "babab", "babba", "babbb"]
 alpha24 = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', '(ij)', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', '(uv)', 'w', 'x', 'y', 'z']
 table24 = dict(zip(bacon24, alpha24))
@@ -82,23 +78,18 @@ bacon26 = ["aaaaa", "aaaab", "aaaba", "aaabb", "aabaa", "aabab", "aabba", "aabbb
 alpha26 = [chr(i) for i in range(ord('a'), ord('z') + 1)]
 table26 = dict(zip(bacon26, alpha26))
 
-
-def bacon_decode24(ciphertext):
-    """24码 bacon解密"""
+def bacon_decode(ciphertext):
+    """bacon解密"""
     s = ciphertext.replace(' ', '').lower()
-    return ''.join(table24.get(s[i:i+5], '#') for i in range(0, len(s), 5))
-
-
-def bacon_decode26(ciphertext):
-    """26码 bacon解密"""
-    s = ciphertext.replace(' ', '').lower()
-    return ''.join(table26.get(s[i:i+5], '#') for i in range(0, len(s), 5))
-
+    return ''.join(table24.get(s[i:i+5], '#') for i in range(0, len(s), 5)), \
+           ''.join(table26.get(s[i:i+5], '#') for i in range(0, len(s), 5))
 
 if __name__ == '__main__':
     s = input("请输入密文: ")
-    print("24码:", bacon_decode24(s))
-    print("26码:", bacon_decode26(s))
+    plaintext24, plaintext26 = bacon_decode(s)
+    print("24码:", plaintext24)
+    print("26码:", plaintext26)
+
 ```
 
 ## Caesar cipher

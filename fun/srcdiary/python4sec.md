@@ -26,6 +26,51 @@ Python安全编程基础(CTF方向)
 - 在Python中，一切皆对象。
 - Python是一种解释型语言(脚本语言)。
 
+## 模块导入与使用
+
+**模块**是 Python 中组织代码的基本单元，一个 `.py` 文件就是一个模块。通过导入模块，可以复用其他文件中定义的函数、类和变量。
+- 标准模块: python自带的，无需安装
+- 第三方模块:  [pypi](https://pypi.org/)，需通过 `pip` 等工具额外安装
+- `help('modules')`命令，列出本机所有可用模块
+
+<span style="font-size: 19px;">**导入模块**</span>
+
+`tools.py`
+```python
+def fool1():
+  print('执行了, fool1')
+def fool2():
+  print('执行了, fool2')
+
+print("tools模块名: ", __name__)
+
+# 判断是否是 入口文件
+if __name__ == '__main__':
+    print('tools 当前文件代码')
+```
+导入模块或函数
+
+`start.py`
+```python
+# import tools 导入模块
+# import tools as tl 导入模块，起别名
+# from tools import fool1, fool2 导入函数
+# from tools import fool1 as f1, fool2 as f2 
+
+tools.fool1()
+tl.fool1()
+fool1()
+f1()
+```
+<span style="font-size: 19px;">**`__name__`属性**</span>
+
+每个模块都有一个 `__name__` 属性：
+
+- 当脚本被直接运行时：`__name__ == '__main__'`
+- 当脚本作为模块导入时：`__name__` 等于模块名（如 `tools`）
+
+
+
 ---
 
 ## Python数据对象
@@ -376,7 +421,7 @@ print(list(even_gen))  # [0, 2, 4, 6, 8]
 5.0
 ```
 
-<span style="font-size: 23px;">**`map()`函数**</span>
+#### map函数
 
 - `map()`函数的语法格式：`map(函数,列表)`
 - 可以把一个函数依次映射到序列的每个元素上，并返回一个map对象作为结果。
@@ -728,23 +773,28 @@ with open('access_log', 'r') as f1, \
     ips = set()
     # 状态码
     codes = []
+    # 访问的资源(页面)
+    webs = []
 
     for line in f1:
         # 取出 09/Apr 日志
         if  '09/Apr/2026' in line:
             f2.write(line)
             pv = pv + 1
-            ips.add(line.split()[0])
-            codes.append(line.split()[8])
+            split_line = line.split()
+            ips.add(split_line[0])
+            codes.append(split_line[8])
+            webs.append(split_line[6])
     print('pv:', pv)
     print('uv:', len(ips))
     print('状态码统计:', {code:codes.count(code) for code in codes})
+
+    webs_dic = {web:webs.count(web) for web in webs}
+    print('访问资源统计:', sorted(webs_dic.items(), key=lambda x: x[1], reverse=True ))
 ```
 ---
 
 ## 自定义函数
-
-### intro
 
 **函数(function)**: 一段实现特定功能的代码。
 
@@ -770,52 +820,156 @@ with open('access_log', 'r') as f1, \
 - 定义函数帮助文档：将一段字符串放在函数声明之后，函数体之前，并用三引号包起来
 - `help(函数名)` 查询函数帮助信息
 
-### 参数
+**参数**
 
 - **位置参数(Positional Arguments)**: 调用函数时按参数定义位置传入的值。
 - **可变位置参数(`*args`)**: `*args` 接收任意多个位置参数，将它们打包成一个**元组**。
 - **默认参数(Default Arguments)**: 在定义时为参数指定默认值，调用时可省略。
 
----
+### filter函数
 
-## 模块导入与使用
+`filter()` 是 Python 内置函数，用于**根据一个函数的返回值（True/False）过滤可迭代对象中的元素**，返回一个**迭代器**（Python 3）或列表（Python 2）。
 
-模块：把一堆函数代码放到一个文件中，以后备用
+**语法**
 
-`tools.py`
 ```python
-def fool1():
-  print('执行了, fool1')
-def fool2():
-  print('执行了, fool2')
-def fool3():
-  print('执行了, fool3')
-
-print("tools模块名: ", __name__)
-
-# 判断是否是 入口文件
-if __name__ == '__main__':
-    print('tools 当前文件代码')
+filter(function, iterable)
 ```
-导入模块或函数
+- **function**：判断函数，接收一个参数，返回布尔值（`True` 保留，`False` 过滤掉）。如果为 `None`，则过滤掉所有等效为 `False` 的元素（例如 `0`、`None`、`False`、空序列等）。
+- **iterable**：可迭代对象（如列表、元组、字符串等）。
 
-`start.py`
+**示例**
+
 ```python
-# import tools 导入模块
-# import tools as tl 导入模块，起别名
-# from tools import fool1, fool2 导入函数
-# from tools import fool1 as f1, fool2 as f2 
+# 保留偶数
+nums = [1, 2, 3, 4, 5, 6]
+even = filter(lambda x: x % 2 == 0, nums)
+print(list(even))          # [2, 4, 6]
 
-tools.fool1()
-tl.fool1()
-fool1()
-f1()
+# function = None：过滤掉假值
+items = [0, 1, False, 2, '', 3, None]
+truthy = filter(None, items)
+print(list(truthy))        # [1, 2, 3]
+
+# 使用普通函数
+def is_positive(n):
+    return n > 0
+
+result = filter(is_positive, [-3, 0, 5, -1, 8])
+print(list(result))        # [5, 8]
+
 ```
 
+### lambda表达式
+
+Lambda 表达式是 Python 中创建**小型匿名函数**的一种简洁方式。它主要用于需要简单函数但不想用 `def` 正式定义的地方。
+
+**语法**
+
+```python
+lambda 参数列表: 表达式
+```
+- **参数列表**：逗号分隔的参数（可有默认值，甚至 `*args, **kwargs`）
+- **表达式**：单个表达式，该表达式的值就是函数的返回值（**不能包含语句**，如 `return`、`print`、赋值等）
+
+**示例**
+
+```python
+# 两数求和
+add = lambda x, y: x + y
+
+# sorted 按绝对值排序
+nums = [-5, 2, -1, 4]
+sorted_nums = sorted(nums, key=lambda x: abs(x))
+print(sorted_nums)   # [-1, 2, 4, -5]
+
+# filter 过滤偶数
+evens = list(filter(lambda x: x % 2 == 0, range(10)))
+print(evens)         # [0, 2, 4, 6, 8]
+
+# map 平方每个元素
+squares = list(map(lambda x: x**2, [1, 2, 3]))
+print(squares)       # [1, 4, 9]
+```
 ---
 
 ## 异常处理
 
+**异常**：程序在没有语法错误的前提下，在运行过程中所产生的特定错误，Python解释器无法检测出来。 
+- 异常主要是程序运行时由于某些条件不符合而引发的错误。 
+- 比如除0或打开一个不存在的文件。
 
 
----
+**异常处理**是 Python 中**优雅地应对程序运行时错误**的机制，避免程序因未处理的错误而崩溃。
+
+**基本结构**
+
+```python
+try:
+    # 可能引发异常的代码
+    result = 10 / 0
+except ZeroDivisionError:
+    # 捕获特定异常后的处理
+    print("除数不能为 0")
+except (TypeError, ValueError) as e:
+    # 捕获多种异常，并通过 as 获取异常对象
+    print(f"出错了：{e}")
+else:
+    # 无异常发生时执行（可选）
+    print("一切正常")
+finally:
+    # 无论是否异常都会执行（可选，常用于释放资源）
+    print("执行清理工作")
+```
+
+**常见异常类型**
+
+| 异常                  | 含义                       |
+|-----------------------|----------------------------|
+| `ZeroDivisionError`   | 除数为 0                   |
+| `TypeError`           | 类型错误                   |
+| `ValueError`          | 值错误（如 int('abc')）    |
+| `IndexError`          | 索引越界                   |
+| `KeyError`            | 字典键不存在               |
+| `FileNotFoundError`   | 文件不存在                 |
+| `AttributeError`      | 对象没有该属性             |
+| `ImportError`         | 导入模块失败               |
+
+**捕获所有异常（谨慎使用）**
+
+```python
+try:
+    risky_code()
+except Exception as e:
+    print(f"捕获到异常：{e}")
+```
+> **注意**：`except:`（不指定类型）会捕获 `SystemExit`、`KeyboardInterrupt` 等系统级异常，通常不推荐。使用 `except Exception:` 更安全。
+
+**抛出异常（`raise`）**
+
+```python
+def set_age(age):
+    if age < 0:
+        raise ValueError("年龄不能为负数")
+    print(f"年龄设为 {age}")
+
+# 重新抛出异常
+try:
+    set_age(-5)
+except ValueError as e:
+    print("处理前：", e)
+    raise   # 继续向上传播
+```
+<span style="font-size: 19px;">**自定义异常**</span>
+
+```python
+class MyCustomError(Exception):
+    """自定义异常类"""
+    pass
+
+class ValidationError(ValueError):
+    pass
+
+# 使用
+raise MyCustomError("出错了")
+```
