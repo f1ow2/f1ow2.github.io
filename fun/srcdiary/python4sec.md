@@ -62,12 +62,70 @@ tl.fool1()
 fool1()
 f1()
 ```
+<span style="font-size: 19px;">**模块相关信息**</span>
+
+- `dir()`函数，查看模块中包含的类、属性和方法。
+- `help()`函数，查看模块、类或是方法的帮助信息。
+
+以双下划线开头，并且以双下划线结尾的是特殊属性：
+- `__file__`，用于显示模块文件的位置。
+- `__doc__`，用于表示模块的文档字符串，也就是模块的帮助信息。
+- `__name__`属性，用于识别程序的使用方式，即程序是在作为模块被导入，还是在独立运行。
+
+
 <span style="font-size: 19px;">**`__name__`属性**</span>
 
 每个模块都有一个 `__name__` 属性：
 
 - 当脚本被直接运行时：`__name__ == '__main__'`
-- 当脚本作为模块导入时：`__name__` 等于模块名（如 `tools`）
+- 当脚本作为模块导入时：`__name__` 等于模块名(如 `tools`)
+
+### pip
+
+**pip(Python Package Installer)** 是Python生态中官方、成熟的包管理工具，负责从Python包索引(PyPI)查找、下载、安装、卸载和管理第三方库。它极大地简化了Python开发中依赖管理的复杂度。
+
+<span style="font-size: 19px;">**核心命令**</span>
+
+📦 **包管理**
+- **安装包**：`pip install <package-name>`。
+  - **指定版本**：`pip install <package-name>==1.0.0`。
+  - **版本范围**：`pip install "<package-name>>=1.0.0,<2.0.0"`。
+  - **升级包**：`pip install --upgrade <package-name>`。
+  - **从本地文件安装**：`pip install /path/to/package.whl`。
+
+- **卸载包**：`pip uninstall <package-name>`。
+- **列出已安装包**：`pip list`。
+- **查看包信息**：`pip show <package-name>`。例如，可以查看其依赖项(Requires)。
+- **检查依赖冲突**：`pip check` 用于验证环境中是否有不兼容的依赖包。
+
+⚙️ **高级操作**
+- **配置管理**：`pip config list` 查看配置，`pip config set global.index-url <url>` 设置全局镜像源等。
+- **缓存管理**：`pip cache dir` 查看缓存目录，`pip cache purge` 清除缓存。
+- **生成锁定文件**：`pip freeze > requirements.txt`。
+- **从锁定文件安装**：`pip install -r requirements.txt`。
+
+<span style="font-size: 19px;">**配置国内镜像源**</span>
+
+- **临时使用**：
+```bash
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple <package-name>
+```
+- **永久配置**：在用户目录下的pip配置文件（Windows: `%APPDATA%\pip\pip.ini`， Linux/macOS: `~/.pip/pip.conf`）中添加以下内容：
+
+```ini
+[global]
+index-url = http://mirrors.aliyun.com/pypi/simple/
+
+[install]
+trusted-host=mirrors.aliyun.com
+```
+- **命令行配置**
+```bash
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+pip config set install.trusted-host mirrors.aliyun.com
+# 验证是否生效
+pip config list
+```
 
 
 
@@ -828,15 +886,15 @@ with open('access_log', 'r') as f1, \
 
 ### filter函数
 
-`filter()` 是 Python 内置函数，用于**根据一个函数的返回值（True/False）过滤可迭代对象中的元素**，返回一个**迭代器**（Python 3）或列表（Python 2）。
+`filter()` 是 Python 内置函数，用于**根据一个函数的返回值(True/False)过滤可迭代对象中的元素**，返回一个**迭代器**(Python 3)或列表(Python 2)。
 
 **语法**
 
 ```python
 filter(function, iterable)
 ```
-- **function**：判断函数，接收一个参数，返回布尔值（`True` 保留，`False` 过滤掉）。如果为 `None`，则过滤掉所有等效为 `False` 的元素（例如 `0`、`None`、`False`、空序列等）。
-- **iterable**：可迭代对象（如列表、元组、字符串等）。
+- **function**：判断函数，接收一个参数，返回布尔值(`True` 保留，`False` 过滤掉)。如果为 `None`，则过滤掉所有等效为 `False` 的元素(例如 `0`、`None`、`False`、空序列等)。
+- **iterable**：可迭代对象(如列表、元组、字符串等)。
 
 **示例**
 
@@ -869,8 +927,8 @@ Lambda 表达式是 Python 中创建**小型匿名函数**的一种简洁方式�
 ```python
 lambda 参数列表: 表达式
 ```
-- **参数列表**：逗号分隔的参数（可有默认值，甚至 `*args, **kwargs`）
-- **表达式**：单个表达式，该表达式的值就是函数的返回值（**不能包含语句**，如 `return`、`print`、赋值等）
+- **参数列表**：逗号分隔的参数(可有默认值，甚至 `*args, **kwargs`)
+- **表达式**：单个表达式，该表达式的值就是函数的返回值(**不能包含语句**，如 `return`、`print`、赋值等)
 
 **示例**
 
@@ -915,10 +973,10 @@ except (TypeError, ValueError) as e:
     # 捕获多种异常，并通过 as 获取异常对象
     print(f"出错了：{e}")
 else:
-    # 无异常发生时执行（可选）
+    # 无异常发生时执行(可选)
     print("一切正常")
 finally:
-    # 无论是否异常都会执行（可选，常用于释放资源）
+    # 无论是否异常都会执行(可选，常用于释放资源)
     print("执行清理工作")
 ```
 
@@ -928,14 +986,14 @@ finally:
 |-----------------------|----------------------------|
 | `ZeroDivisionError`   | 除数为 0                   |
 | `TypeError`           | 类型错误                   |
-| `ValueError`          | 值错误（如 int('abc')）    |
+| `ValueError`          | 值错误(如 int('abc'))    |
 | `IndexError`          | 索引越界                   |
 | `KeyError`            | 字典键不存在               |
 | `FileNotFoundError`   | 文件不存在                 |
 | `AttributeError`      | 对象没有该属性             |
 | `ImportError`         | 导入模块失败               |
 
-**捕获所有异常（谨慎使用）**
+**捕获所有异常(谨慎使用)**
 
 ```python
 try:
@@ -943,9 +1001,9 @@ try:
 except Exception as e:
     print(f"捕获到异常：{e}")
 ```
-> **注意**：`except:`（不指定类型）会捕获 `SystemExit`、`KeyboardInterrupt` 等系统级异常，通常不推荐。使用 `except Exception:` 更安全。
+> **注意**：`except:`(不指定类型)会捕获 `SystemExit`、`KeyboardInterrupt` 等系统级异常，通常不推荐。使用 `except Exception:` 更安全。
 
-**抛出异常（`raise`）**
+**抛出异常(`raise`)**
 
 ```python
 def set_age(age):

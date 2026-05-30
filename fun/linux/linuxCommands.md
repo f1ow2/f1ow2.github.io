@@ -363,9 +363,7 @@ chmod -R 755 目录名
 - x：表示执行权限(execute)。
 
 ```zsh
-
 sudo chmod a+w /etc/hosts
-
 ```
 
 ---
