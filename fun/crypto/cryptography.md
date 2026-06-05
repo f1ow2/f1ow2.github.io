@@ -94,8 +94,8 @@ In the following simplified numerical example, we see the RSA algorithm in actio
 
 1. Bob chooses two prime numbers: p = 157 and q = 199. He calculates n = p × q = 31243.
 2. With ϕ(n) = n − p − q + 1 = 31243 − 157 − 199 + 1 = 30888, Bob selects e = 163 such that e is relatively prime to ϕ(n); moreover, he selects d = 379, where e × d = 1 mod ϕ(n), i.e., e × d = 163 × 379 = 61777 and 61777 mod 30888 = 1. The public key is (n,e), i.e., (31243,163) and the private key is $(n,d), i.e., (31243,379).
-3. Let's say that the value they want to encrypt is x = 13, then Alice would calculate and send y = *x<sup>e</sup>* mod n = 13<sup>163</sup> mod 31243 = 16341.
-4. Bob will decrypt the received value by calculating x = *y<sup>d</sup>* mod n = 16341<sup>379</sup> mod 31243 = 13. This way, Bob recovers the value that Alice sent.
+3. Let's say that the value they want to encrypt is x = 13, then Alice would calculate and send y = $x^e$ mod n = $13^{163}$ mod 31243 = 16341.
+4. Bob will decrypt the received value by calculating x = $y^d$ mod n = $16341^{379}$ mod 31243 = 13. This way, Bob recovers the value that Alice sent.
 
 The proof that the above algorithm works can be found in [modular arithmetic](https://www.britannica.com/science/modular-arithmetic) . It is worth repeating that in this example, we picked a three-digit prime number, while in an actual application, p and q would be at least a 300-digit prime number each.
 
@@ -107,9 +107,9 @@ The proof that the above algorithm works can be found in [modular arithmetic](ht
 
 1. Alice and Bob agree on the **public variables**: a large prime number p and a generator g, where 0 < g < p. These values will be disclosed publicly over the communication channel. Although insecurely small, we will choose p = 29 and g = 3 to simplify our calculations.
 2. Each party chooses a private integer. As a numerical example, Alice chooses a = 13, and Bob chooses b = 15. Each of these values represents a **private key** and must not be disclosed.
-3. It is time for each party to calculate their **public key** using their private key from step 2 and the agreed-upon public variables from step 1. Alice calculates A = g<sup>a</sup> mod p = 3<sup>13</sup> mod 29 = 19 and Bob calculates B = g<sup>b</sup> mod p = 3<sup>15</sup> mod 29 = 26. These are the public keys.
-4. Alice and Bob send the keys to each other. Bob receives A = g<sup>a</sup> mod p = 19, i.e., Alice's public key. And Alice receives B = g<sup>b</sup> mod p = 26, i.e., Bob's public key. This step is called the key exchange.
-5. Alice and Bob can finally calculate the shared secret using the received public key and their own private key. Alice calculates B<sup>a</sup> mod p = 26<sup>13</sup> mod 29 = 10 and Bob calculates A<sup>b</sup> mod p = 19<sup>15</sup> mod 29 = 10. Both calculations yield the same result, g<sup>ab</sup> mod p = 10, the shared secret key.
+3. It is time for each party to calculate their **public key** using their private key from step 2 and the agreed-upon public variables from step 1. Alice calculates A = $g^a$ mod p = $3^{13}$ mod 29 = 19 and Bob calculates B = $g^b$ mod p = $3^{15}$ mod 29 = 26. These are the public keys.
+4. Alice and Bob send the keys to each other. Bob receives A = $g^a$ mod p = 19, i.e., Alice's public key. And Alice receives B = $g^b$ mod p = 26, i.e., Bob's public key. This step is called the key exchange.
+5. Alice and Bob can finally calculate the shared secret using the received public key and their own private key. Alice calculates $B^a$ mod p = $26^13$ mod 29 = 10 and Bob calculates $A^b$ mod p = $19^{15}$ mod 29 = 10. Both calculations yield the same result, $g^{ab}$ mod p = 10, the shared secret key.
 
 ![Diffie-Hellman Key Exchange](<assets/Diffie-Hellman Key Exchange.svg>)
 
@@ -254,7 +254,7 @@ When you log into TryHackMe, the server uses hashing to verify your password. In
 
 A hash collision is when two different inputs give the same output. Hash functions are designed to avoid collisions as best as possible. Furthermore, hash functions are designed to prevent an attacker from being able to create, i.e., engineer, a collision intentionally. However, because the number of inputs is practically unlimited and the number of possible outputs is limited, this leads to a pigeonhole effect.
 
-As a numeric example, if a hash function produces a 4-bit hash value, we only have 16 different hash values. The total number of possible hash values is 2<sup>number_of_bits</sup> = 2<sup>4</sup> = 16. The probability of a collision is relatively very high.
+As a numeric example, if a hash function produces a 4-bit hash value, we only have 16 different hash values. The total number of possible hash values is 2<sup>number_of_bits</sup> = $2^4$ = 16. The probability of a collision is relatively very high.
 
 The **pigeonhole effect** states that the number of items (pigeons) is more than the number of containers (pigeonholes); some containers must hold more than one item. In other words, in this context, there are a fixed number of different output values for the hash function, but you can give it any size input. As there are more inputs than outputs, some inputs must inevitably give the same output. If you have 21 pigeons and 16 pigeonholes, some of the pigeons are going to share the pigeonholes. Consequently, collisions are unavoidable. However, a good hash function ensures that the probability of a collision is negligible.
 

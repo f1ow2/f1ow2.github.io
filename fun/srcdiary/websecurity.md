@@ -10,6 +10,13 @@ outline: deep
 
 # Web Security
 
+<span style="font-size: 19px;">**web安全要点**</span>
+
+<img src="./assets/web安全要点.jpg" alt="background" width="533" >
+
+- 前端不可信
+- web安全的根本在于，web应用在实现**HTTP协议**的过程中，没有做足够充足强大的约束，导致攻击者能够利用其中的薄弱环节进行攻击。
+
 ## flow
 
 ![渗透测试基本流程2](assets/渗透测试基本流程2.png)
@@ -143,16 +150,25 @@ mysql -uusername -ppasswd
 #查看版本
 select version();
 
+# 查询 MySQL 数据库的数据文件存储目录
+SELECT @@basedir AS 安装目录, @@datadir AS 数据目录;
+
+# 显示编译 MySQL 时使用的操作系统
+SELECT @@version_compile_os;
+
 #查看当前用户
 select user();
 
 #查看当前打开的数据库
 select database();
 
+#查看所有的数据库
 show databases;
 
-use table_name;
+#打开名为mysql的数据库
+use mysql;
 
+#查看数据库中所包含的数据表
 show tables;
 
 DESC users;

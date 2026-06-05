@@ -61,16 +61,16 @@ docker info | grep -A 3 "Registry Mirrors"
 ## docker-compose
 
 
-`docker-compose.yaml`
+`docker compose.yaml`
 
 ```bash
 # 部署
 docker compose up -d
 
 # 更新
-docker-compose down  #停止容器
-docker-compose pull  #拉取新的docker镜像
-docker-compose up -d  #启动容器
+docker compose down  #停止容器
+docker compose pull  #拉取新的docker镜像
+docker compose up -d  #启动容器
 docker image prune  #删除旧的镜像文件
 
 # 卸载

@@ -126,9 +126,6 @@ pip config set install.trusted-host mirrors.aliyun.com
 # 验证是否生效
 pip config list
 ```
-
-
-
 ---
 
 ## Python数据对象

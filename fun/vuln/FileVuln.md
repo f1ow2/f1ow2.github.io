@@ -28,6 +28,8 @@ outline: 2,3
 除了`.php`之外，服务端有可能也会将以下扩展名当作PHP文件解析执行：
 - `.phtml`、`.phps`、`.php3`、`.php4`、`.php5`、`.pht`
 
+- **/etc/apache2/mods-enabled/php5.conf**: `<FilesMatch ".+\.ph(p[345]?|t|tml)$">`
+
 ---
 
 **.htaccess绕过**

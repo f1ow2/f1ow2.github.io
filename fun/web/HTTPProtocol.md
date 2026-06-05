@@ -943,7 +943,7 @@ Content-Type、Expires、Last-Modified、Pragma 可供使用
 
 <span style="font-size: 19px;">**资源 URI 与资源表述 Representation**</span>
 
-**资源 R 可被定义为随时间变化的函数 M<sub>R</sub>(t)**
+**资源 R 可被定义为随时间变化的函数 $M_R(t)$** 
 
 - 静态资源：创建后任何时刻值都不变，例如指定版本号的库文件
 - 动态资源：其值随时间而频繁地变化，例如某新闻站点首页
@@ -1461,7 +1461,7 @@ URI-reference = URI/relative-ref
 
 **QNAME 编码规则**：
 - 以.分隔为多段，每段以字节数打头
-  - 单字节，前 2 比特必须为 00，只能表示 2<sup>6</sup>-1=63 字节
+  - 单字节，前 2 比特必须为 00，只能表示 $2^6$-1=63 字节
 - 在 ASCII 编码每段字符
 - 以 0 结尾
 

