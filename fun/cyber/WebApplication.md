@@ -1070,6 +1070,14 @@ select group_concat(name separator "&") as name from hacking_tools where amount 
 在MySQL中通过`load_file()`函数**读取**系统文件
 - 文件路径必须使用绝对路径
 - 必须要保证mysql用户对文件具有读取权限
+- 如果想要完成任意目录下文件读取需要在`/etc/my.conf`(my.ini)中将`secure_file_priv`的值置为空。
+
+```sql
+[mysqld]
+secure_file_priv=
+
+show global variables like "%secure_file_priv%";
+```
 
 ```bash
 MariaDB [(none)]> select load_file('/var/www/html/flag.txt');

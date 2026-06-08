@@ -364,6 +364,10 @@ User Account Control (UAC) helps prevent malware from damaging a PC and helps or
 
 The Unified Extensible Firmware Interface (UEFI) provides an interface between the operating system (OS) and the platform firmware. The UEFI replaces the BIOS.
 
+## UNC
+
+UNC (Universal Naming Convention) /通用命名规则。Windows主机默认存在，Linux主机默认不存在。格式 `\\servername\sharename`，其中 `servername` 是服务器名。`sharename` 是共享资源的名称。
+
 ## URL
 
 A **Uniform Resource Locator** (URL) is a web address that lets you access all kinds of online content—whether it's a webpage, a video, a photo, or other media. It guides your browser to the right place on the Internet.
