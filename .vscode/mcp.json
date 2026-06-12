@@ -5,6 +5,15 @@
 				"mcp-server-fetch"
 			],
 			"command": "uvx"
+		},
+		"burp": {
+			"command": "D:/soft/BurpSuite/jre/bin/java",
+			"args": [
+				"-jar",
+				"D:/soft/BurpSuite/mcp-proxy.jar",
+				"--sse-url",
+				"http://127.0.0.1:9876"
+			]
 		}
 	}
 }

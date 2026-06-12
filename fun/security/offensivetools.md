@@ -150,7 +150,7 @@ THM{c8eeb0468febbadea859baeb33b2541b}
 
 ## SQLMap
 
-SQLMap is a free and open-source penetration testing tool that automates finding and exploiting SQL injection vulnerabilities on web applications. It can extract data from databases, execute commands on the underlying operating system, and even take control of the target server.
+[SQLMap](https://sqlmap.org/) is a free and open-source penetration testing tool that automates finding and exploiting SQL injection vulnerabilities on web applications. It can extract data from databases, execute commands on the underlying operating system, and even take control of the target server.
 
 **Options**
 
