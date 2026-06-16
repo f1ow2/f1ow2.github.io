@@ -441,6 +441,70 @@ Sensitive information can be potentially leveraged to further an attacker's acce
 
 Whenever you're assessing a web application for security issues, one of the first things you should do is review the page source code to see if you can find any exposed login credentials or hidden links.
 
+### iframe
+
+`<iframe>`（Inline Frame，内联框架）是 HTML 中非常强大但也伴随安全争议的一个标签。
+
+简单来说，`<iframe>` 允许你在当前的网页中，“嵌入”另一个网页。
+
+**基本语法与使用**
+
+```html
+<iframe src="https://example.com" width="600" height="400" title="示例网站"></iframe>
+```
+**常见属性**：
+*   **`src`**：要嵌入的网页的 URL 地址。
+*   **`width` 和 `height`**：设置框架的宽度和高度（支持像素或百分比）。
+*   **`title`**：对嵌入内容的描述（极重要，有助于提升网页的无障碍访问/SEO）。
+*   **`border` / `frameborder`**：控制是否有边框（现代开发一般用 CSS `border: none;` 来隐藏边框）。
+
+<span style="font-size: 19px;">**常见应用场景**</span>
+
+日常上网时，其实经常在和 `<iframe>` 交互：
+
+1.  **嵌入第三方视频**：比如把 YouTube、Bilibili 的视频播放器嵌入到你自己的个人博客中。
+2.  **嵌入地图**：在“联系我们”页面嵌入谷歌地图或高德地图。
+3.  **嵌入广告**：很多网站的横幅广告、侧边栏广告都是通过 `<iframe>` 加载的广告联盟页面。
+4.  **第三方支付/登录插件**：比如微信扫码登录、支付宝支付弹窗，为了安全和独立性，常放在 `<iframe>` 中。
+
+<span style="font-size: 19px;">**致命缺点**</span>
+
+虽然好用，但 `<iframe>` 在现代 Web 开发中被视为一种**“双刃剑”**：
+
+1. 安全隐患（点击劫持与钓鱼）
+黑客可以将你的网站嵌入到他们的透明 `<iframe>` 中，诱骗用户点击，实施**点击劫持**。或者，被嵌入的第三方网页如果含有恶意代码，可能会尝试读取父页面的数据。
+
+2. 性能问题
+   *   `<iframe>` 会阻塞父页面的 `onload` 事件（即使嵌入的网页加载很慢，用户也会觉得你的网页一直在转圈）。
+   *   它会消耗更多的内存和连接数，因为浏览器需要为它单独初始化一个完整的窗口环境。
+
+3. 破坏 SEO 和响应式设计
+搜索引擎的爬虫很难很好地索引 `<iframe>` 内部的内容。此外，在手机等移动端设备上，`<iframe>` 的尺寸适配和滚动条控制非常麻烦。
+
+<span style="font-size: 19px;">**现代防御与安全配置：`sandbox` 属性**</span> 
+
+为了解决安全问题，HTML5 引入了 **`sandbox`（沙箱）** 属性。这是目前使用 `<iframe>` 时的**最佳实践**。
+
+如果只写 `<iframe sandbox src="...">`，浏览器会对该框架施加极严格的限制：
+*   禁止运行 JavaScript。
+*   禁止提交表单。
+*   禁止弹窗。
+*   禁止与父页面同源（即使同域名也会被视为跨域）。
+
+可以通过指定值，**按需开放**权限：
+
+```html
+<iframe 
+  src="https://example.com" 
+  sandbox="allow-scripts allow-forms allow-same-origin">
+</iframe>
+```
+*   `allow-scripts`：允许执行 JS。
+*   `allow-forms`：允许提交表单。
+*   `allow-same-origin`：允许视作同源（允许读 Cookie/LocalStorage，如果域名相同的话）。
+*   `allow-popups`：允许弹窗（如 `target="_blank"` 的链接）。
+
+
 ### HTML Injection
 
 HTML Injection is a vulnerability that occurs when unfiltered user input is displayed on the page. If a website fails to sanitise user input (filter any "malicious" text that a user inputs into a website), and that input is used on the page, an attacker can inject HTML code into a vulnerable website.

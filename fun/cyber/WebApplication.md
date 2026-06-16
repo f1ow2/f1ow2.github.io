@@ -1116,6 +1116,8 @@ Notice that each of the 3 parts of the token is simply plaintext encoded with ba
 
 **Note:** The signature contains binary data, so even if you decode it, you won't be able to make much sense of it anyways.
 
+---
+
 ## Socket
 
 Socket (套接字) 是计算机网络编程中一个非常核心的概念，它是**应用程序与网络协议栈进行通信的接口**。你可以把它想象成：
@@ -1161,3 +1163,11 @@ Socket 接口通常以函数或类的形式存在，开发者通过调用这些�
 ### 总结
 
 Socket 是网络编程的基石，它抽象了底层复杂的网络通信细节，为应用程序提供了一个统一的接口，使得程序可以方便地通过网络进行数据传输。无论是简单的 Web 访问，还是复杂的分布式系统，Socket 都是其背后不可或缺的技术。
+
+---
+
+## AJAX
+
+AJAX 是在**不重新加载**整个页面的情况下并**更新部分网页**的技术。
+
+当需要异步与服务器交换数据时，需要 **XMLHttpRequest对象** 来异步交换。
