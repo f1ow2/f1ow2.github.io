@@ -258,7 +258,7 @@ ISO （国际标谁化组织）制定的包括了地球上**所有文化、所�
 
 ### JSFuck
 
-[JSFuck](https://github.com/aemkei/jsfuck) 使用6 个字符 []()!+ 来编写 JavaScript 程序
+[JSFuck](https://github.com/aemkei/jsfuck) 使用6 个字符 `[]()!+` 来编写 JavaScript 程序
 
 <img src="./assets/JSFuck.png" alt="background" width="633" >
 
