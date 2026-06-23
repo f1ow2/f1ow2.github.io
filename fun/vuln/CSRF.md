@@ -21,6 +21,15 @@ outline: deep
 
 [同源策略与跨域访问](../web/HTTPProtocol.md#同源策略与跨域访问)
 
+---
+
+## 攻击链
+
+*CVE-2019-9787*
+![CSRF-XSS-RCE攻击链](assets/CSRF-XSS-RCE攻击链.png)
+
+---
+
 ## 其它类似攻击
 
 ### 点击劫持

@@ -16,7 +16,11 @@ sudo journalctl -u docker.service -n 50 --no-pager
 ```
 **使用代理拉取**
 ```bash
-HTTPS_PROXY=http://127.0.0.1:10808 docker pull alpine:latest
+HTTP_PROXY=http://192.168.31.85:10808 HTTPS_PROXY=http://192.168.31.85:10808 docker pull alpine:latest
+```
+**指定官方注册表**
+```bash
+docker pull docker.io/library/ubuntu:latest
 ```
 
 **后台执行**
