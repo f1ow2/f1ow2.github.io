@@ -112,6 +112,7 @@ export const nav = [
       },
       {
         items: [
+          { text: 'CVE', link: '/vuln/cve.md' },
           { text: 'CSRF', link: '/vuln/CSRF.md' },
           { text: 'XSS', link: '/vuln/XSS.md' },
           { text: 'RCE', link: '/vuln/RCE.md' },

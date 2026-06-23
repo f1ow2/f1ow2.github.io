@@ -14,10 +14,6 @@ outline: 2
 ```bash
 sudo journalctl -u docker.service -n 50 --no-pager
 ```
-**使用代理拉取**
-```bash
-HTTP_PROXY=http://192.168.31.85:10808 HTTPS_PROXY=http://192.168.31.85:10808 docker pull alpine:latest
-```
 **指定官方注册表**
 ```bash
 docker pull docker.io/library/ubuntu:latest
@@ -53,6 +49,9 @@ sudo systemctl daemon-reload
 **重启 Docker 生效**
 ```bash
 sudo systemctl daemon-reload
+```
+
+```bash
 sudo systemctl restart docker
 ```
 
