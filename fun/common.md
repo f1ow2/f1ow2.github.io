@@ -332,6 +332,10 @@ Sender Policy Framework (SPF) is an email authentication method designed to dete
 
 **Single sign-on** (SSO) is a session and user authentication service that permits a user to use one set of login credentials -- for example, a username and password -- to access multiple applications. SSO can be used by enterprises, small and midsize organizations, and individuals to ease the management of multiple credentials.
 
+## SSRF
+
+SSRF(**Server-Side Request Forgery**，服务器端请求伪造) 是一种网络安全漏洞，攻击者通过诱使服务器发起恶意请求，访问攻击者本不应能访问的内部资源。服务器充当了"代理人"的角色——攻击者无法直接访问内部系统，但可以借助服务器去访问。
+
 ## Static Analysis
 
 The process of analyzing malware without executing it, but in a controlled environment.

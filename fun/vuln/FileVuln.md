@@ -86,6 +86,24 @@ if (move_uploaded_file($tmpName, $path)) {
 }
 ?>	
 ```
+---
+
+### 文件混淆
+
+<span style="font-size: 19px;">**混淆文件扩展名(Obfuscating file extensions)**</span>
+
+**PoC**
+
+```bash
+exploit.php.jpg
+exploit.php%00.jpg
+exploit.php;.jpg
+exploit.php.
+exploit%2Ephp
+exploit.p.phphp
+```
+
+---
 
 ### SVG与文件上传
 
@@ -285,6 +303,14 @@ PHP伪协议能否发挥功能，与PHP配置文件`php.ini`里的两个重要�
 它发生在 Web 应用程序（如 PHP、JSP、ASP.NET 等网站）在引入或包含（Include）外部文件时，**没有对用户输入的文件路径进行严格的过滤或限制**，导致攻击者可以传入一个指向远程恶意服务器的 URL，从而让服务器下载并执行该远程恶意文件。
 
 - CORS（跨源资源共享）为远程文件包含提供了可能， 只要建立起源之间的信任关系，就可以触发远程文件包含。
+
+
+### Path Traversal
+
+路径遍历（[Path Traversal](../security/webpentesting.md#path-traversal)），也被称为目录遍历（Directory Traversal），这种漏洞允许攻击者在运行应用程序的的服务器上，读取或写入未授权的**任意文件**。这通常可能包括敏感的系统文件、应用程序代码、配置文件或用户数据。
+
+[portswigger Path traversal](https://portswigger.net/web-security/file-path-traversal)
+
 ---
 
 ## File Download
@@ -293,7 +319,6 @@ PHP伪协议能否发挥功能，与PHP配置文件`php.ini`里的两个重要�
 
 此时如果 攻击者提交的不是一个程序预期的的文件名，而是一个精心构造的路径(比如`../../../etc/passwd`),则很有可能会直接将该指定的文件下载下来。 从而导致后台敏感信息(密码文件、源代码等)被下载。
 所以，在设计文件下载功能时，如果下载的目标文件是由前端传进来的，则一定要对传进来的文件进行安全考虑。 切记：所有与前端交互的数据都是不安全的，不能掉以轻心！
-
 
 ---
 
