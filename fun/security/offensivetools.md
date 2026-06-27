@@ -232,7 +232,8 @@ wpscan --url http://192.168.27.147/wordpress --enumerate u
 
 ## AntSword
 
-蚁剑是一款著名的WebShell客户端工具
+[蚁剑](https://www.yuque.com/antswordproject/antsword)是一款著名的WebShell客户端工具
 
 - 主程序：https://github.com/AntSwordProject/antSword
 - 加载器：https://github.com/AntSwordProject/AntSword-Loader
+- 插件：https://github.com/AntSword-Store

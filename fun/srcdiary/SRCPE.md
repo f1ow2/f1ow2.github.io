@@ -56,8 +56,8 @@ find命令用法
 
 [SUID find command](./tips.md#suid-提权枚举-suid)
 
-- `find / -perm -4000 2> /dev/null`
-- `find / -perm –u=s 2> /dev/null`
+- `find / -perm -4000 2>/dev/null`
+- `find / -perm –u=s 2>/dev/null`
 - `2> /dev/null`表示屏蔽错误信息
 
 ### set
