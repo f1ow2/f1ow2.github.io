@@ -60,6 +60,10 @@ nmao -sS -p- 192.168.80.22
 ```bash
 X-Forwarded-For: 127.0.0.1
 ```
+```bash
+X-Custom-Ip-Authorization: 127.0.0.1
+```
+
 ### intruder
 
 1. **sniper**: 狙击手，使用单一词典，每次仅变更一个参数，如果 uname、password 都是变量，会先让uname 遍历字典，password 不变，后变 password，uname 不变。

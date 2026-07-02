@@ -244,6 +244,9 @@ National Institute of Standards and Technology (NIST). This organisation develop
 
 Windows New Technology LAN Manager (NTLM) is a suite of security protocols offered by Microsoft to authenticate users’ identity and protect the integrity and confidentiality of their activity.
 
+# OAST
+**Out-of-Band Application Security Testing(OAST)** 带外应用安全测试,指在安全漏洞扫描或漏洞挖掘过程中，**专门通过引入一个由攻击者/测试者控制的外部服务器，来捕捉目标系统因漏洞触发而发出的带外请求（如 DNS, HTTP, SMB 等）**。
+
 ## OPSEC
 
 **Operational Security (OPSEC)** is a set of principals and tactics used to attempt to protect the security of an operator or operation. An example of this may be using code names instead of your real names, or using a proxy to conceal your IP address.

