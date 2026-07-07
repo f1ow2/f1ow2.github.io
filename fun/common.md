@@ -10,25 +10,25 @@ The **Access-Control-Allow-Origin** (ACAO) header is included in the response fr
 
 ## ACL
 
-ACL（Access Control List，访问控制列表）是在代理服务器中定义哪些请求路径是允许访问的，哪些是被禁止的。
+ACL(Access Control List，访问控制列表)是在代理服务器中定义哪些请求路径是允许访问的，哪些是被禁止的。
 
 🔍 在 HTTP/2 请求走私攻击的场景中，有几个关键点与 ACL 直接相关：
 
 - 当前端代理解析 HTTP/2 请求时，它只看到请求的第一部分，例如 `/hello`，这是 ACL 允许的路径。
 - 但该请求实际上被分成两个 HTTP/1.1 请求，第二个请求指向的是 `/admin`，这是受限制的路径——ACL 不允许访问。
-- 因此，通过“请求走私”技巧，攻击者能够利用一个合法路径（如 `/hello`）偷偷将一个非法路径（如 `/admin`）的请求发送到后端服务器。
+- 因此，通过“请求走私”技巧，攻击者能够利用一个合法路径(如 `/hello`)偷偷将一个非法路径(如 `/admin`)的请求发送到后端服务器。
 - 从代理的角度来看，请求似乎合法，没有违反 ACL，但实际后端接收到了一个违规请求。
 
 ✨ 简而言之：攻击者利用代理只检查请求的第一部分这一特点，绕过了 ACL 的限制，将非法请求隐藏在合法请求之中。
 
 ## ALPN
 
-Application Layer Protocol Negotiation（ALPN）是一种 **TLS 扩展机制**，用于在建立安全连接时协商使用哪种应用层协议——比如 HTTP/1.1 或 HTTP/2。
+Application Layer Protocol Negotiation(ALPN)是一种 **TLS 扩展机制**，用于在建立安全连接时协商使用哪种应用层协议——比如 HTTP/1.1 或 HTTP/2。
 
 🔍 ALPN 的作用是什么？
 
 - 它允许客户端和服务器在 **TLS 握手阶段**就确定使用的协议，**无需额外的网络往返**。
-- 这对于支持多个协议的服务（例如同时支持 HTTP/1.1 和 HTTP/2 的网站）非常重要。
+- 这对于支持多个协议的服务(例如同时支持 HTTP/1.1 和 HTTP/2 的网站)非常重要。
 - ALPN 通过在 TLS 的 `ClientHello` 消息中附加一个协议列表，服务器从中选择一个并在 `ServerHello` 中返回。
 
 📦 应用场景举例
@@ -80,12 +80,12 @@ Beacon Object Files (BOF) is a set of compiled code written in a C-language that
 
 ## CIDR
 
-CIDR（Classless Inter-Domain Routing，无类域间路由）是一种 **IP地址分配和路由优化技术**，用于提高网络地址空间的利用率和路由效率。
+CIDR(Classless Inter-Domain Routing，无类域间路由)是一种 **IP地址分配和路由优化技术**，用于提高网络地址空间的利用率和路由效率。
 
 🌐 CIDR 的核心概念
 - **打破传统分类地址**：CIDR 不再使用 A、B、C 类地址，而是采用灵活的地址块划分方式。
 - **使用前缀长度表示网络范围**：例如 `192.168.0.0/24` 表示前 24 位是网络地址，剩下的是主机地址。
-- **支持可变长度子网掩码（VLSM）**：可以根据实际需求划分大小不同的子网。
+- **支持可变长度子网掩码(VLSM)**：可以根据实际需求划分大小不同的子网。
 
 📦 CIDR 表示法示例
 | CIDR 表示 | 网络地址范围 | 可用主机数 |
@@ -148,6 +148,12 @@ A computer operating system that provides a file system for operations such as r
 
 The process of analyzing malware by running it in a controlled environment like a sandbox.
 
+## Encryption Oracle
+
+**Encryption Oracle(加密预言机)** 指的是一种攻击模型或场景，其中攻击者可以访问一个系统(即“预言机”)，该副本允许攻击者输入任意 **明文(Plaintext)**，并自动返回对应的 **密文(Ciphertext)**。
+
+简单来说，就像一个“黑盒子”，你给它看任何你想加密的信息，它就会告诉你加密后的样子，但不会让你知道加密的具体密钥或内部逻辑。
+
 ## EDR
 
 Endpoint detection and response (EDR) is a series of tools that monitor devices for activity that could indicate a threat.
@@ -192,6 +198,10 @@ HTML stands for **HyperText Markup Language**. It is the standard markup languag
 
 Intrusion Detection System (IDS) is a system that detects unauthorised network and system intrusions. Examples include detecting unauthorised devices connected to the local network and unauthorised users accessing a system or modifying a file.
 
+## IDORs
+
+**Insecure direct object references (IDORs)** are a subcategory of access control vulnerabilities. IDORs occur if an application uses user-supplied input to access objects directly and an attacker can modify the input to obtain unauthorized access. It was popularized by its appearance in the OWASP 2007 Top Ten. It's just one example of many implementation mistakes that can provide a means to **bypass access controls**.
+
 ## IPS
 
 Intrusion Prevention System (IPS) is a device or application that detects and stops intrusions attempts proactively. They are usually deployed in front of the protected asset and block any potential threat from reaching their target.
@@ -214,7 +224,7 @@ The Link-Local Multicast Name Resolution (LLMNR) is a protocol based on the Doma
 
 ## MD5
 
-Message Digest 5 (MD5) is a cryptographic hash function that takes any input and produces a 128-bit hexadecimal number. The output of an MD5 hash function is called a digest. MD5 digests are often used to verify the integrity of files or data; however, MD5 is no longer considered secure and should not be used for sensitive applications.
+**Message Digest 5 (MD5)** is a cryptographic hash function that takes any input and produces a 128-bit hexadecimal number. The output of an MD5 hash function is called a digest. MD5 digests are often used to verify the integrity of files or data; however, MD5 is no longer considered secure and should not be used for sensitive applications.
 
 ## MFA
 
@@ -244,8 +254,8 @@ National Institute of Standards and Technology (NIST). This organisation develop
 
 Windows New Technology LAN Manager (NTLM) is a suite of security protocols offered by Microsoft to authenticate users’ identity and protect the integrity and confidentiality of their activity.
 
-# OAST
-**Out-of-Band Application Security Testing(OAST)** 带外应用安全测试,指在安全漏洞扫描或漏洞挖掘过程中，**专门通过引入一个由攻击者/测试者控制的外部服务器，来捕捉目标系统因漏洞触发而发出的带外请求（如 DNS, HTTP, SMB 等）**。
+## OAST
+**Out-of-Band Application Security Testing(OAST)** 带外应用安全测试,指在安全漏洞扫描或漏洞挖掘过程中，**专门通过引入一个由攻击者/测试者控制的外部服务器，来捕捉目标系统因漏洞触发而发出的带外请求(如 DNS, HTTP, SMB 等)**。
 
 ## OPSEC
 
@@ -365,15 +375,15 @@ Time to live (TTL) refers to the amount of time or “hops” that a packet is s
 
 ## UAC
 
-User Account Control (UAC) helps prevent malware from damaging a PC and helps organizations deploy a better-managed desktop. With UAC, apps and tasks always run in the security context of a non-administrator account, unless an administrator specifically authorizes administrator-level access to the system. UAC can block the automatic installation of unauthorized apps and prevent inadvertent changes to system settings.
+**User Account Control (UAC)** helps prevent malware from damaging a PC and helps organizations deploy a better-managed desktop. With UAC, apps and tasks always run in the security context of a non-administrator account, unless an administrator specifically authorizes administrator-level access to the system. UAC can block the automatic installation of unauthorized apps and prevent inadvertent changes to system settings.
 
 ## UEFI
 
-The Unified Extensible Firmware Interface (UEFI) provides an interface between the operating system (OS) and the platform firmware. The UEFI replaces the BIOS.
+The **Unified Extensible Firmware Interface (UEFI)** provides an interface between the operating system (OS) and the platform firmware. The UEFI replaces the BIOS.
 
 ## UNC
 
-UNC (Universal Naming Convention) /通用命名规则。Windows主机默认存在，Linux主机默认不存在。格式 `\\servername\sharename`，其中 `servername` 是服务器名。`sharename` 是共享资源的名称。
+**UNC (Universal Naming Convention)** 通用命名规则。Windows主机默认存在，Linux主机默认不存在。格式 `\\servername\sharename`，其中 `servername` 是服务器名。`sharename` 是共享资源的名称。
 
 ## URL
 

