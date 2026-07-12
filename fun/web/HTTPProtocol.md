@@ -1494,3 +1494,31 @@ URI-reference = URI/relative-ref
 ## wireshark
 
 [wireshark](../security/wireshark.md)
+
+## FTP 和 HTTP 协议对比
+
+FTP(File Transfer Protocol) 和 HTTP(Hypertext Transfer Protocol) 都属于应用层协议，底层通常依赖 TCP，但设计目标完全不同：FTP 面向文件传输，HTTP 面向超文本资源访问和 Web 应用交互。
+
+| 对比项 | FTP | HTTP |
+| ------ | --- | ---- |
+| 主要用途 | 上传、下载、管理远程文件 | 请求和响应 Web 资源，如 HTML、图片、接口数据 |
+| 默认端口 | TCP 21 控制连接，TCP 20 或动态端口传输数据 | TCP 80，HTTPS 使用 TCP 443 |
+| 连接模型 | 控制连接和数据连接分离 | 请求和响应通常复用同一个连接 |
+| 工作方式 | 先登录，再通过命令操作文件 | 客户端发送请求，服务端返回响应 |
+| 状态特征 | 依赖登录会话，天然有状态 | 协议本身无状态，常用 Cookie、Session、Token 维持状态 |
+| 常见命令/方法 | `USER`、`PASS`、`LIST`、`RETR`、`STOR` | `GET`、`POST`、`PUT`、`DELETE`、`HEAD`、`OPTIONS` |
+| 传输内容 | 文件和目录列表 | 文档、图片、脚本、JSON、表单数据等资源 |
+| 安全性 | 明文 FTP 会泄露账号、密码和文件内容，可用 FTPS/SFTP 替代 | 明文 HTTP 可被监听和篡改，通常用 HTTPS 加密 |
+| 防火墙/NAT | 多连接模式容易受防火墙和 NAT 影响 | 单一请求响应模型更容易穿透防火墙和代理 |
+
+**核心区别**
+
+- FTP 更像远程文件管理工具，关注文件的上传、下载、目录切换和列表查看。
+- HTTP 更像资源访问协议，关注客户端对某个 URL 资源发起请求并获取响应。
+- FTP 的控制通道和数据通道分离，因此主动模式、被动模式会影响连接方向和端口选择。
+- HTTP 无状态，所以 Web 登录态通常由 Cookie、Session、JWT 等机制在协议之上实现。
+
+**安全测试关注点**
+
+- FTP：匿名登录、弱口令、明文凭据、目录权限、可写目录、敏感文件泄露。
+- HTTP：认证授权、会话管理、输入校验、访问控制、缓存策略、Header 配置、HTTPS 部署。

