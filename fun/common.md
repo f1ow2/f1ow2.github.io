@@ -329,6 +329,10 @@ Security Information and Event Management system that is used to aggregate secur
 
 The manipulation of individuals to divulge sensitive information, through various forms of communication
 
+## SOAP
+
+SOAP(**Simple Object Access Protocol**，简单对象访问协议) 是一种传统的后端网络服务架构协议。在 RESTful API（我们现在常用的 JSON 接口）流行之前，它是企业级系统之间进行数据交换的绝对霸主。基于**XML**格式、走HTTP/HTTPS传输的**老式后端接口协议**，用来前后端 / 系统之间传数据、调用服务。
+
 ## SOP
 
 **Same-origin policy** ([SOP](./webapp/ClientSideAttacks.md#understanding-sop)) is a critical security mechanism that restricts how a document or script loaded by one origin can interact with a resource from another origin. It helps isolate potentially malicious documents, reducing possible attack vectors.

