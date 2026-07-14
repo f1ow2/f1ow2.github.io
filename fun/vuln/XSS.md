@@ -13,10 +13,15 @@ outline: 2
 
 [XSS advance](../webapp/ClientSideAttacks.md#xss)
 
-[Cross-Site Scripting](../common.md#xss) 简称为“CSS”，为避免与前端叠成样式表的缩写"CSS"冲突，故又称XSS。一般XSS可以分为如下几种常见类型：
-1. 反射性XSS
-2. 存储型XSS
-3. DOM型XSS
+[XSS cheat sheet](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet)
+
+[Cross-Site Scripting](../common.md#xss) 简称为“CSS”，为避免与前端叠成样式表的缩写"CSS"冲突，故又称XSS。
+
+| 类型 | 区别 |
+| :--- | :--- |
+| 反射型 XSS | 攻击代码在 URL 里，输出在 HTTP 响应中 |
+| 存储型 XSS | 攻击代码在数据库里，输出在 HTTP 响应中 |
+| DOM 型 XSS | 攻击代码在 URL 里，输出在 DOM 节点中 |
 
 - 注入恶意 JS 代码
 
@@ -25,14 +30,9 @@ XSS是一种发生在前端浏览器端的漏洞，所以其危害的对象也�
 - **输入过滤**：对输入进行过滤，不允许可能导致XSS攻击的字符输入;
 - **输出转义**：根据输出点的位置对输出到前端的内容进行适当转义;
 
-## 反射型 XSS
+<span style="font-size: 19px;">**PoC**</span>
 
-应用程序或 API 包括**未经验证和未经转义的用户输入， 直接作为 HTML 输出的一部分**。一个成功的攻击可以让攻击者在受害者的浏览器中执行任意的 HTML 和 JavaScript 。
-
-- **特点**：非持久化，必须用户点击带有特定参数的链接才能引起。
-- **影响范围**：仅执行脚本的用户。
-
-**payload**
+**`eval()`**
 
 ```javascript
 <script>alert(233);</script>
@@ -45,6 +45,24 @@ XSS是一种发生在前端浏览器端的漏洞，所以其危害的对象也�
 ```javascript
 <script>alert(document.cookie)</script>
 ```
+
+**`innerHTML`**
+
+```html
+<img src="x" onerror="alert(1)">
+```
+
+```html
+<svg onload="alert(1)">
+```
+
+## 反射型 XSS
+
+应用程序或 API 包括**未经验证和未经转义的用户输入， 直接作为 HTML 输出的一部分**。一个成功的攻击可以让攻击者在受害者的浏览器中执行任意的 HTML 和 JavaScript 。
+
+- **特点**：非持久化，必须用户点击带有特定参数的链接才能引起。
+- **影响范围**：仅执行脚本的用户。
+
 ---
 
 ## 存储型XSS
@@ -120,7 +138,70 @@ session.cookie_httponly =1
 
 DOM型XSS 漏洞 其实是一种特殊类型的反射型 XSS，通过 **JS 操作 DOM 树**动态地**输出数据到页面**，而不依赖于将数据提交给服务器端，它是基于 DOM 文档对象模型的一种漏洞。
 
-**payload**
+<span style="font-size: 19px;">**Taint-flow vulnerabilities**</span>
+
+**Common sources**
+
+```html
+document.URL
+document.documentURI
+document.URLUnencoded
+document.baseURI
+location
+document.cookie
+document.referrer
+window.name
+history.pushState
+history.replaceState
+localStorage
+sessionStorage
+IndexedDB (mozIndexedDB, webkitIndexedDB, msIndexedDB)
+Database
+```
+
+**Common sinks**
+
+```html
+document.write()
+document.writeln()
+document.domain
+element.innerHTML
+element.outerHTML
+element.insertAdjacentHTML
+element.onevent
+```
+*jQuery functions*
+```javascript
+add()
+after()
+append()
+animate()
+insertAfter()
+insertBefore()
+before()
+html()
+prepend()
+replaceAll()
+replaceWith()
+wrap()
+wrapInner()
+wrapAll()
+has()
+constructor()
+init()
+index()
+jQuery.parseHTML()
+$.parseHTML()
+```
+
+**PoC**
+
+*`document.write` sink & `location.search` source*
+```javascript
+"><script>alert(document.domain)</script>
+"><svg onload=alert(1)>
+```
+
 
 *dvwa-XSS(DOM)*
 ```bash
