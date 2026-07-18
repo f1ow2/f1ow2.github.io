@@ -443,9 +443,7 @@ Whenever you're assessing a web application for security issues, one of the firs
 
 ### iframe
 
-`<iframe>`（Inline Frame，内联框架）是 HTML 中非常强大但也伴随安全争议的一个标签。
-
-简单来说，`<iframe>` 允许你在当前的网页中，“嵌入”另一个网页。
+`<iframe>`(内联框架，Inline Frame)是 HTML 中的一个标签，用于在当前网页中嵌入另一个网页或文档。
 
 **基本语法与使用**
 

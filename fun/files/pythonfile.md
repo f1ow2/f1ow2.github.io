@@ -23,7 +23,9 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3
 
 ***https.py***
 
+::: details https.py
 <<< ./python/https.py
+:::
 
 ---
 

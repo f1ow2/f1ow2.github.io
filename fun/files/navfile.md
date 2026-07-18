@@ -11,3 +11,7 @@
 ## xss-payloads
 
 🚀[xss payload](./xss_payload.md)
+
+## CSRF-payload
+
+🚀[xss payload](./CSRF_payload.md)

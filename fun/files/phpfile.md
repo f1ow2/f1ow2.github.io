@@ -40,8 +40,9 @@
 
 ## php-reverse-shell
 
+::: details php-reverse-shell.php
 <<< ./php/php-reverse-shell.php
-
+:::
 
 ---
 
