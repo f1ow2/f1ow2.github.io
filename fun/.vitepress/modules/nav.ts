@@ -105,8 +105,11 @@ export const nav = [
         items: [
           { text: 'SRC', link: '/srcdiary/srcskills.md' },
           { text: 'tips', link: '/srcdiary/tips.md' },
-          { text: 'web security', link: '/srcdiary/websecurity.md' },
           { text: 'python security', link: '/srcdiary/python4sec.md' },
+          { text: 'Web Security', link: '/srcdiary/websecurity.md' },
+          { text: 'client side', link: '/srcdiary/ClientSide.md' },
+          { text: 'advanced', link: '/srcdiary/Advanced.md' },
+          { text: 'Web LLM', link: '/srcdiary/WebLLM.md' },
           { text: 'privilege escalation', link: '/srcdiary/SRCPE.md' },
         ]
       },
