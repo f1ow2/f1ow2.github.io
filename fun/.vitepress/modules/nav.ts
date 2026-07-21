@@ -107,6 +107,7 @@ export const nav = [
           { text: 'tips', link: '/srcdiary/tips.md' },
           { text: 'python security', link: '/srcdiary/python4sec.md' },
           { text: 'Web Security', link: '/srcdiary/websecurity.md' },
+          { text: 'server side', link: '/srcdiary/ServerSide.md' },
           { text: 'client side', link: '/srcdiary/ClientSide.md' },
           { text: 'advanced', link: '/srcdiary/Advanced.md' },
           { text: 'Web LLM', link: '/srcdiary/WebLLM.md' },
