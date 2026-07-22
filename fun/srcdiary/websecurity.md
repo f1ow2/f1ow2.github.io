@@ -70,6 +70,20 @@ X-Custom-Ip-Authorization: 127.0.0.1
 2. **Battering ram**: 攻城锤, 使用单一词典，有多个变量，同时变更为同一值。
 3. **Pitchfork**: 音叉，每个变量一个字典。一次失败后，三个变量同时改变，一个变量不会与另一个变量所有情况匹配到。
 4. **Cluster bomb**: 集束炸弹，笛卡尔积，形式，每隔一个变量要与另一个变量所有情况测试到，在多个字典情况下，测试时间非常漫长。
+  
+<span style="font-size: 19px;">**Payload processing**</span>
+
+**Match\replace**
+
+| 占位符 | 使用 | 示例占位符替换 |
+| :--- | :--- | :--- |
+| `{file}` | 请指定文件名。 | `/etc/passwd` |
+| `{base}` | 替换 `{base}` 为标记为有效载荷的值。 | `1337` |
+| `{domain}` | 请指定网站域名。 | `COLLAB_ID.oastify.com` |
+| `foo@{domain}` | 在电子邮件地址中指定网站域名。 | `example.com` |
+
+`\{base\}` → `custome`
+
 
 ### Macro
 
@@ -81,6 +95,16 @@ X-Custom-Ip-Authorization: 127.0.0.1
 - **刷新 session/cookie**：当目标返回 401、302 到登录页时，自动重新获取会话。
 - **更新 CSRF token**：每次攻击请求前自动访问页面，提取新的 token 并替换到请求里。
 - **配合 Scanner/Intruder/Repeater**：让这些工具在测试时始终使用有效会话。
+
+<span style="font-size: 19px;">**应用**</span>
+
+**1.使用暴力破解绕过双重身份验证**
+
+[2FA bypass using a brute-force attack](https://portswigger.net/web-security/authentication/multi-factor/lab-2fa-bypass-using-a-brute-force-attack)
+
+**2.维护已认证会话**
+
+Session → Session handling rules → Add → Check session is valid → 勾选If session is invalid, perform the action below: → Run a macro...
 
 ---
 

