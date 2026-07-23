@@ -6,7 +6,7 @@ categories:
 tags: [SRC, skills]
 draft: true
 sidebar: false
-outline: deep
+outline: 2
 ---
 
 # SRC Skills
@@ -42,21 +42,15 @@ outline: deep
 
 国家信息安全漏洞库: https://www.cnnvd.org.cn/home/childHome
 
-![src 平台](<assets/src 平台.png>)
+[SRC导航online](https://www.anquanke.com/src)
+
+[SRC漏洞赏金平台](./srcnav.md)
 
 ## what
 
 能突破系统限制，但是对任何人产生不了危害，对自己有危害。 ❌
 
 能突破系统限制，可以对企业或个人造成影响，有受益方或损失方。 ✔️
-
-## 工具
-
-### fiddler
-
-https://www.telerik.com/download/fiddler
-
-https://telerik-fiddler.s3.amazonaws.com/fiddler/addons/fiddlercertmaker.exe
 
 ## 信息收集
 
@@ -68,13 +62,9 @@ https://telerik-fiddler.s3.amazonaws.com/fiddler/addons/fiddlercertmaker.exe
 
 [Google](https://www.google.com): `site:baidu.com`
 
-
 [SEO](https://seo.chinaz.com/)
 
-
-## 操作
-
-### 越权
+## 越权
 
 做自己权限外的事情
 
@@ -100,9 +90,7 @@ A用户向后端发起购买请求，后端收到请求后去数据库里面查�
 
 ---
 
-## tips
-
----
+## 值
 
 ### 数值
 

