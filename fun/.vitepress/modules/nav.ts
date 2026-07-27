@@ -118,10 +118,11 @@ export const nav = [
         items: [
           { text: 'CVE', link: '/vuln/cve.md' },
           { text: 'CSRF', link: '/vuln/CSRF.md' },
-          { text: 'XSS', link: '/vuln/XSS.md' },
           { text: 'RCE', link: '/vuln/RCE.md' },
+          { text: 'XSS', link: '/vuln/XSS.md' },
           { text: 'File Vuln', link: '/vuln/FileVuln.md' },
           { text: 'Sql Inject', link: '/vuln/SqlInject.md' },
+          { text: 'SSRF', link: '/vuln/SSRF.md' },
           { text: 'Over Permission', link: '/vuln/OverPermission.md' },
         ]
       },

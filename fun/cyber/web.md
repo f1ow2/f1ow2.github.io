@@ -154,6 +154,29 @@ Public DNS Servers，中文常称为**公共 DNS 服务器**，是指由第三�
 
 选择哪个公共 DNS 服务器取决于你的具体需求（如速度、安全性、隐私偏好等）以及你所处的地理位置。你可以尝试不同的公共 DNS 服务器，然后选择一个最适合你的。
 
+### DNS Rebinding
+
+**DNS 重绑定（DNS Rebinding）** 是一种利用 DNS 解析机制绕过浏览器同源策略（Same-Origin Policy, SOP）或服务器端 SSRF 防御黑名单的攻击技术。
+
+通过将一个域名在短时间内先解析为恶意公网 IP，再动态重新绑定（Rebind）到受害者内网 IP（如 `127.0.0.1` 或 `192.168.x.x`），攻击者能够以合法的域名同源身份与受害者内网服务通信。
+
+**同源策略（SOP）与 DNS 的关系**
+
+浏览器的同源策略基于 **协议（Protocol）+ 域名（Domain）+ 端口（Port）**。
+浏览器只判断域名字符串是否相同，而**不校验域名对应的具体 IP 地址**。
+
+如果域名 `attacker.com` 初始解析为公网 IP `1.2.3.4`，随后 DNS 记录改变，被解析为 `127.0.0.1`，对于浏览器而言：
+- 访问 `http://attacker.com/` 的网页；
+- 该网页发起的 AJAX 请求仍然指向 `http://attacker.com/api`。
+- 浏览器认为这是**同源请求**，因此允许读取响应内容！
+
+**常见利用工具**
+
+* **[Singularity of Origin](https://github.com/nccgroup/singularity)**：功能强大的 DNS Rebinding 攻击框架，支持自动探测内网端口与自动化利用。
+* **[rbndr](https://github.com/taviso/rbndr)**：Tavis Ormandy 编写的简易 DNS 轮询解析服务。
+* **[DNSChef](https://github.com/ipspace/dnschef)**：可配置的 DNS 代理工具，用于测试 DNS 重绑定逻辑。
+
+
 ### practice
 
 nslookup 是一个网络命令行工具，用于查询 DNS（域名系统）记录。

@@ -102,6 +102,10 @@ features:
 
 ## tools
 
+* [requestrepo](https://requestrepo.com/requests)
+  
+* [DNS Rebinding](https://lock.cmpxchg8b.com/rebinder.html)
+ 
 * [AppDevTools](https://appdevtools.com/)
 
 * [CyberChef](https://gchq.github.io/CyberChef/)

@@ -6,7 +6,11 @@
 
 ## python-files
 
-🚀[pythonfile](./pythonfile.md)
+🐍[pythonfile](./pythonfile.md)
+
+## java-files
+
+☕[pythonfile](./javafile.md)
 
 ## xss-payloads
 

